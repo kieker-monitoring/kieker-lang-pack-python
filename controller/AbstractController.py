@@ -2,8 +2,9 @@
 
 #
 import logging
-
-class AbstractController :
+from abc import ABC, abstractmethod
+class AbstractController(ABC) :
+    
     
     def __init__(self, domain, tcp_enabled, reader_thread, port, buffer_capacity,
                terminated):
@@ -14,14 +15,19 @@ class AbstractController :
         self.buffer_capacity=buffer_capacity
         self.terminated=terminated
         self.logger=logging.getLogger('ControllerLogger')
-        
+   
+    @abstractmethod    
     def initialize(self):
         if self.tcp_enabled==True :
             self.logger.info('Start Thread reader')
             self.threading.start()
     
-
+    @abstractmethod
     def cleanup(self):
         if self.tcp_enabled:
             self.logger.info('Terminate')
-        
+    
+    
+    @abstractmethod
+    def toString(self):
+        pass
