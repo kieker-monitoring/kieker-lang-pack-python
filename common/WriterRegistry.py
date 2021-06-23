@@ -18,6 +18,9 @@ class WriterRegistry(IWriteRegistry) :
           else:
               return valueid
           
-    def regster(value):
-         #TODO
-         pass
+    def register(self,value):
+         if value not in self.storage:
+             value_id=self.nextId+1
+             self.storage.update({'value':value_id})
+             #self.registryListener.onNewRegistryEntry(value,value_id)
+         
