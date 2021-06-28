@@ -20,6 +20,8 @@ class BinaryLogStreamHandler(AbstractLogStreamHandler):
        self.buffer.put(record.getLoggingTimeStamp)
        record.serialize(self.serializer)
   
+    def close():
+        self.buffer.rewind
     
   
         

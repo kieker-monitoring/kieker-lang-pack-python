@@ -41,4 +41,4 @@ def toString(self):
     return 'foo'
           
 def new_monitoring_record(self,record):
-              self.writer_queue.put(record)
+              self.monitoring_writer.writeMonitoringRecord(record)

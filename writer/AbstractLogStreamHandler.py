@@ -13,3 +13,6 @@ class  AbstractLogStreamHandler (ABS):
     def serialize(record,identification:int):
          pass
         
+    @abstractmethod
+    def close(self):
+        pass
