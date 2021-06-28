@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import AbstractMonitoringWriter
-from records import Serializer
+from writer.AbstractMonitoringWriter import AbstractMonitoringWriter
+from common.records.Serializer import Serializer
 class FileWriter(AbstractMonitoringWriter):
-    def __init__(self,writer_registry, max_entries, log_stream_handler, file_path,string_buffer):
+    def __init__(self, file_path, string_buffer):
         #self.writer_registry=writer_registry
         self.file_path=file_path
         #self.max_entries=max_entries
@@ -13,7 +13,7 @@ class FileWriter(AbstractMonitoringWriter):
     
     def writeMonitoringRecord(self, record):
         record.serialize(self.serializer)    
-        write_string=map(''.join(map(str, self.string_buffer)))
+        write_string=''.join(map(str, self.string_buffer))
         self.file.write(write_string)
       
         

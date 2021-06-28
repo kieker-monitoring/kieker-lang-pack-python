@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
+
 import logging
 from abc import ABC, abstractmethod
 class AbstractController(ABC) :
@@ -14,6 +15,7 @@ class AbstractController(ABC) :
         self.port=port
         self.terminated=terminated
         self.logger=logging.getLogger('ControllerLogger')
+    
    
     @abstractmethod    
     def initialize(self):

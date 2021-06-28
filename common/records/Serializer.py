@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-class Serailizer:
+class Serializer:
     def __init__(self,string_byte):
         self.string_byte=string_byte
         
