@@ -6,13 +6,12 @@ from abc import ABC, abstractmethod
 class AbstractController(ABC) :
     
     
-    def __init__(self, domain, tcp_enabled, reader_thread, port, buffer_capacity,
+    def __init__(self, domain, tcp_enabled, reader_thread, port,
                terminated):
         self.domain=domain
         self.tcp_enabled=tcp_enabled
         self.reader_function=reader_thread
         self.port=port
-        self.buffer_capacity=buffer_capacity
         self.terminated=terminated
         self.logger=logging.getLogger('ControllerLogger')
    

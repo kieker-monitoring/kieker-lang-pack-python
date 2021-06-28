@@ -5,4 +5,4 @@ class Serailizer:
         self.string_byte=string_byte
         
     def put(self,value):
-           self.string_byte.append(value)
+           self.string_byte.append(value+"; ")
