@@ -1,6 +1,26 @@
 # -*- coding: utf-8 -*-
-from writer.AbstractMonitoringWriter import AbstractMonitoringWriter
+
+from abc import ABC, abstractmethod
+class AbstractMonitoringWriter(ABC):
+      
+    @abstractmethod
+    def onStarting():
+        pass
+    
+    @abstractmethod
+    def  writeMonitoringRecord(self, monitoringRecord):
+        pass
+    
+    @abstractmethod
+    def on_terminating(self):
+        pass
+    @abstractmethod
+    def to_string():
+       pass
+     
+
 from common.records.Serializer import Serializer
+       
 class FileWriter(AbstractMonitoringWriter):
     def __init__(self, file_path, string_buffer):
         #self.writer_registry=writer_registry
@@ -27,4 +47,4 @@ class FileWriter(AbstractMonitoringWriter):
         return "string"
         
         
-            
+                    
