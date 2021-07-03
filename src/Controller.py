@@ -33,8 +33,11 @@ class AbstractController(ABC) :
 
 
     
-from controller.AbstractController import AbstractController
+
+
 class MonitoringController:
+    
+    
   def  __init__(self, writer_controller,time_source_controller):
         self.writer_controller=writer_controller
         self.time_source_controller=time_source_controller
@@ -45,8 +48,11 @@ class MonitoringController:
 
 
     
-import AbstractController
+
+
 class TimeSourceController(AbstractController):
+    
+    
     def __init__(self, time_source):
        # super().__init__()
         self.time_source=time_source
@@ -62,21 +68,23 @@ class TimeSourceController(AbstractController):
 
 
 import logging
-#from queue import Queue
-from controller.AbstractController import AbstractController
+
+from src.Writer import FileWriter
 class WriterController:
-    def __init__(self,monitoring_writer):
-        self.monitoring_writer=monitoring_writer
+    
+    
+    def __init__(self,monitoring_writer, path):
+        self.monitoring_writer=FileWriter(path, [])
+    
     
     def initialize(self):
         pass 
     
+    
     def cleanup(self):
         pass
-    #  self.LOGGER.debug('Initialize')     
-     # if self.monitoring_writer_thread!=None:
-      #    self.monitoring_writer_thread.terminate()
-    def toString(self):
+
+
         return 'foo'
     def new_monitoring_record(self,record):
         self.monitoring_writer.writeMonitoringRecord(record)    

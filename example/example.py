@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from controller import MonitoringController
-from common.records.DummyRecord import DummyRecord
-from controller.WriterController import WriterController
-from writer.FileWriter import FileWriter
-from controller.MonitoringController import MonitoringController
-def  function1():
-    arr=[]
-   
+
+from src.Record import DummyRecord
+from src.Controller import WriterController, MonitoringController
+from src.Writer import FileWriter
+from src.Controller import MonitoringController
+def  function1():   
     record=DummyRecord("param1", "param2")
-    writer=FileWriter("test8.log", arr)
-    writer_cont=WriterController(writer)
+   
+    writer_cont=WriterController(writer,"aa.log", [])
     
     monit_cont=MonitoringController(writer_cont,None)
     

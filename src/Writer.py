@@ -19,7 +19,7 @@ class AbstractMonitoringWriter(ABC):
        pass
      
 
-from common.records.Serializer import Serializer
+from src.Record import Serializer
        
 class FileWriter(AbstractMonitoringWriter):
     def __init__(self, file_path, string_buffer):
