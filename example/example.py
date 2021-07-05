@@ -8,7 +8,7 @@ from src.Controller import MonitoringController
 def  function1():   
     record=DummyRecord("param1", "param2")
    
-    writer_cont=WriterController(writer,"aa.log", [])
+    writer_cont=WriterController("aa.log", [])
     
     monit_cont=MonitoringController(writer_cont,None)
     
