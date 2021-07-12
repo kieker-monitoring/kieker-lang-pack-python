@@ -57,13 +57,16 @@ class TimeSourceController(AbstractController):
 
 
 
-from src.Writer import FileWriter
+from src.Writer import FileWriter, TCPWriter
 
 
 class WriterController:
 
     def __init__(self, path):
-        self.monitoring_writer = FileWriter(path, [])
+        if path is not None:
+            self.monitoring_writer = FileWriter(path, [])
+        else:
+            self.monitoring_writer = TCPWriter('127.0.0.1', 65432, [], 1000)
 
     def initialize(self):
         pass
