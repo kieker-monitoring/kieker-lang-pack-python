@@ -2,58 +2,59 @@ import inspect
 
 
 class ModuleAspectizer:
-    def __init__(self):
+    def __init__(self,decorator):
         self.modules = list()
         self.classes = list()
-        self.decorator = None
+        self.decorator = decorator
         self.functions = list()
 
     def add_module(self, module):
         self.modules.append(module)
-   
+
     def decorate_module_functions(self):
         if self.decorator is None:
             raise TypeError
         try:
             for module in self.modules:
-                for name, member in inspect.getmember(module):
+                for name, member in inspect.getmembers(module):
                     if (inspect.getmodule(member) == module and
-                        inspect.isfunction(member)):
-                        if(member == self.decorate_module or
+                    inspect.isfunction(member)):
+                        if(member == self.decorate_module_functions or
                            member == self.decorator):
                             continue
-                        module.__dict__[name]=self.decorator(member)
+                        module.__dict__[name] = self.decorator(member)
         except (ValueError, TypeError):
             print("No modules to decorate")
 
-      def decorate_class_methods(self):
-          if self.decorator is None:
+    def decorate_class_methods(self):
+        if self.decorator is None:
             raise TypeError
         try:
             for module in self.modules:
-                for name, member in inspect.getmember(module):
+                for name, member in inspect.getmembers(module):
                     if (inspect.getmodule(member) == module and
                         inspect.isclass(member)):
                         for key, value in member.__dict__.items():
                             if inspect.ismethod(value):
-                                member.__dict__[key]=self.decorator(value)
+                                member.__dict__[key] = self.decorator(value)
         except (ValueError, TypeError):
             print("No modules to decorate")
 
+
 class ClassAspectizer:
     def __init__(self):
-        self.classes=list()
-        self.decorator=None
+        self.classes = list()
+        self.decorator = None
         pass
-    
+
     def add_class(self, clazz):
         self.classes.append(clazz)
-    
+
     def decorate_class_members(self):
         if self.decorator is None:
             raise TypeError
 
 
 class CustomAspectizer:
-    #TODO MAYBE
+    # TODO MAYBE
     pass
