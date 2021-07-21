@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#import test5
 def simplefunction(x):
     return x+1
 class Test:

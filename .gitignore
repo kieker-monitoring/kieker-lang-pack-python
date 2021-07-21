@@ -5,9 +5,14 @@ __pycache__/
 test.py
 test2.py
 test3.py
+test4.py
+test5.py
+test6.py
+test7.py
+test*.py
 # C extensions
 *.so
-
+/Django example
 # Distribution / packaging
 .Python
 build/
@@ -121,6 +126,7 @@ venv.bak/
 
 # mkdocs documentation
 /site
+
 
 # mypy
 .mypy_cache/
