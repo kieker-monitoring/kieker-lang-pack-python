@@ -1,11 +1,32 @@
 import inspect
+from monitoring.Record import (TraceMetadata, BeforeOperationEvent, 
+                               AfterOperationFailedEvent, AfterOperationEvent)
+from monitoring.Controller import MonitoringController
+def mydecorator(func):
+    def wrapper(*args, **kwargs):
+        monitoring_controller= MonitoringController()
+        
+        try:
+            result=func(*args, **kwargs)
+        except Exception as e:
+            raise e
+        print (result)
+        print("world")
+        return result
+    return wrapper
 
+class Instrumental:
+    def __new__(cls, name, bases, local_dict):
+        for attr in local_dict:
+            if callable(local_dict[attr]):
+                local_dict[attr] = mydecorator(local_dict[attr])
+        return type.__new__(cls, name, bases, local_dict)
 
 class ModuleAspectizer:
     def __init__(self,decorator):
         self.modules = list()
         self.classes = list()
-        self.decorator = decorator
+        self.decorator = mydecorator
         self.functions = list()
 
     def add_module(self, module):

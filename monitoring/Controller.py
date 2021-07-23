@@ -32,8 +32,8 @@ class AbstractController(ABC):
 
 class MonitoringController:
 
-    def __init__(self, writer_controller, time_source_controller):
-        self.writer_controller = writer_controller
+    def __init__(self, writer_controller=None, time_source_controller=None):
+        self.writer_controller = WriterController("monitoring.log")
         self.time_source_controller = time_source_controller
 
     def new_monitoring_record(self, record):
