@@ -31,14 +31,16 @@ class FileWriter(AbstractMonitoringWriter):
         # self.writer_registry=writer_registry
         self.file_path = file_path
         # self.max_entries=max_entries
-        self.file = open(self.file_path, "x")
+        self.file_path = self.file_path
         self.string_buffer = string_buffer
         self.serializer = Serializer(self.string_buffer)
 
     def writeMonitoringRecord(self, record):
         record.serialize(self.serializer)
         write_string = ''.join(map(str, self.string_buffer))
-        self.file.write(write_string)
+        file=open(self.file_path, 'a')
+        file.write(write_string)
+        file.close()
 
     def onStarting(self):
         pass

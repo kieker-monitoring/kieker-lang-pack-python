@@ -2,10 +2,10 @@
 import time
 import sys
 import threading
-
+from tools.Aspect import Instrumental
 
 class Catalog:
-
+    __metaclass__=Instrumental
     def get_book(complex_query):
         try:
             if complex_query:
@@ -17,7 +17,7 @@ class Catalog:
 
 
 class CRM:
-
+    __metaclass__=Instrumental
     def __init__(self, catalog):
         self.catalog = catalog
 
@@ -26,7 +26,7 @@ class CRM:
 
 
 class Bookstore:
-
+    __metaclass__=Instrumental
     def __init__(self):
         self.catalog = Catalog(self)
         self.crm = CRM(self.catalog)
@@ -55,5 +55,5 @@ def main():
         threading.start(run_bookstore, args=(bookstore,))
 
 
-if __name__ == 'main':
+if __name__ == 'main()':
     main()
