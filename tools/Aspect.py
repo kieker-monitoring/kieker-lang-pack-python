@@ -4,38 +4,44 @@ from monitoring.Record import (TraceMetadata, BeforeOperationEvent,
 from monitoring.Controller import MonitoringController
 import time
 import calendar
-
+import types
 def instrument(func):
     def wrapper(*args, **kwargs):
+        print('test')
         monitoring_controller = MonitoringController()
         timestamp=calendar.timegm(time.gmtime())
-        class_signature=func.__self__.__class__
+        class_signature=func.__class__
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
-            time.ctime(timestamp)), 42,42,func.__name__, class_signature )
+            time.ctime(timestamp), 42, 42, func.__name__, class_signature ))
         try:
             result=func(*args, **kwargs)
         except Exception as e:
+            timestamp=calendar.timegm(time.gmtime())
             monitoring_controller.new_monitoring_record(AfterOperationFailedEvent(
-            time.ctime(timestamp)), 42, 42, func.__name__, 
+            time.ctime(timestamp), 42, 42, func.__name__, 
             class_signature, repr(e)))
             raise e
-         monitoring_controller.new_monitoring_record(AfterOperationEvent(
-            time.ctime(timestamp)), 42,42,func.__name__, class_signature )
+            monitoring_controller.new_monitoring_record(AfterOperationEvent(
+            time.ctime(timestamp), 42,42,func.__name__, class_signature ))
         return result
     return wrapper
 
-class Instrumental:
-    def __new__(cls, name, bases, local_dict):
-        for attr in local_dict:
-            if callable(local_dict[attr]):
-                local_dict[attr] = instrument(local_dict[attr])
-        return type.__new__(cls, name, bases, local_dict)
-
+class Instrumental(type):
+    def __new__(cls, name, bases, attr):
+        # Replace each function with
+        # a print statement of the function name
+        # followed by running the computation with the provided args and returning the computation result
+        for name, value in attr.items():
+            if name is "__init__":
+                continue
+            if type(value) is types.FunctionType or type(value) is types.MethodType:
+                attr[name] = instrument(value)
+        return type.__new__(cls, name, bases, attr)
 class ModuleAspectizer:
     def __init__(self,decorator):
         self.modules = list()
         self.classes = list()
-        self.decorator = mydecorator
+        self.decorator = instrument
         self.functions = list()
 
     def add_module(self, module):

@@ -22,7 +22,7 @@ class AbstractMonitoringWriter(ABC):
         pass
 
 
-from src.Record import Serializer
+from monitoring.Record import Serializer
 
 
 class FileWriter(AbstractMonitoringWriter):
@@ -39,8 +39,8 @@ class FileWriter(AbstractMonitoringWriter):
         record.serialize(self.serializer)
         write_string = ''.join(map(str, self.string_buffer))
         file=open(self.file_path, 'a')
-        file.write(write_string)
-        file.close()
+        file.write(write_string+'\n')
+        #file.close()
 
     def onStarting(self):
         pass

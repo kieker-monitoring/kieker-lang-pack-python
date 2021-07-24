@@ -33,7 +33,7 @@ class AbstractController(ABC):
 class MonitoringController:
 
     def __init__(self, writer_controller=None, time_source_controller=None):
-        self.writer_controller = WriterController("monitoring.log")
+        self.writer_controller = WriterController("./monitoring.log")
         self.time_source_controller = time_source_controller
 
     def new_monitoring_record(self, record):
@@ -57,7 +57,7 @@ class TimeSourceController(AbstractController):
 
 
 
-from src.Writer import FileWriter, TCPWriter
+from monitoring.Writer import FileWriter, TCPWriter
 
 
 class WriterController:
