@@ -38,9 +38,12 @@ class FileWriter(AbstractMonitoringWriter):
     def writeMonitoringRecord(self, record):
         record.serialize(self.serializer)
         write_string = ''.join(map(str, self.string_buffer))
+        self.string_buffer.clear()
         file=open(self.file_path, 'a')
-        file.write(write_string+'\n')
-        #file.close()
+        #file.write('\n')
+        file.write(write_string)
+        
+        file.close()
 
     def onStarting(self):
         pass

@@ -7,22 +7,28 @@ import calendar
 import types
 def instrument(func):
     def wrapper(*args, **kwargs):
-        print('test')
+        print('before')
         monitoring_controller = MonitoringController()
         timestamp=calendar.timegm(time.gmtime())
         class_signature=func.__class__
+        
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
-            time.ctime(timestamp), 42, 42, func.__name__, class_signature ))
+            time.ctime(timestamp), "before", 42, func.__name__, class_signature ))
+        
         try:
             result=func(*args, **kwargs)
+        
         except Exception as e:
             timestamp=calendar.timegm(time.gmtime())
+            
             monitoring_controller.new_monitoring_record(AfterOperationFailedEvent(
             time.ctime(timestamp), 42, 42, func.__name__, 
             class_signature, repr(e)))
+            
             raise e
-            monitoring_controller.new_monitoring_record(AfterOperationEvent(
-            time.ctime(timestamp), 42,42,func.__name__, class_signature ))
+        print ('after')
+        monitoring_controller.new_monitoring_record(AfterOperationEvent(
+        time.ctime(timestamp), "after",42,func.__name__, class_signature ))
         return result
     return wrapper
 

@@ -7,9 +7,10 @@ class Serializer:
         self.string_byte = string_byte
 
     def put(self, value):
-        self.string_byte.append(str(value)+"; ")
-
-
+        if(value is not '\n'):
+            self.string_byte.append(str(value)+"; ")
+        else:
+            self.string_byte.append(value)
 class DummyRecord:
 
     def __init__(self, foo_parameter, bar_parameter):
@@ -83,7 +84,7 @@ class TraceMetadata:
         serializer.put(self.hostname)
         serializer.put(self.parent_trace_id)
         serializer.put(self.parent_order_id)
-
+        serializer.put('\n')
 class BeforeOperationEvent:
     def __init__(self, timestamp, trace_id, order_index, 
                  operation_signature, class_signature):
@@ -99,7 +100,7 @@ class BeforeOperationEvent:
         serializer.put(self.order_index)
         serializer.put(self.operation_signature)
         serializer.put(self.class_signature)
-
+        serializer.put('\n')
 class AfterOperationEvent:
     def __init__(self, timestamp, trace_id, order_index, 
                  operation_signature, class_signature):
@@ -116,7 +117,7 @@ class AfterOperationEvent:
         serializer.put(self.order_index)
         serializer.put(self.operation_signature)
         serializer.put(self.class_signature)
-        
+        serializer.put('\n')
 
 class AfterOperationFailedEvent:
     def __init__(self, timestamp, trace_id, order_index, 
@@ -135,3 +136,4 @@ class AfterOperationFailedEvent:
         serializer.put(self.operation_signature)
         serializer.put(self.class_signature)
         serializer.put(self.exception)
+        serializer.put('\n')
