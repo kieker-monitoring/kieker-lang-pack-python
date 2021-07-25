@@ -10,7 +10,7 @@ def get_filename_from_path(filepath):
 
 
 def check_arguments():
-    if len(sys.args) < 3:
+    if len(sys.argv) < 3:
         print('Not enogh arguments')
         sys.exit()
     for i in range(1, 3):
@@ -24,8 +24,8 @@ def main():
     check_arguments()
 
     # Read arguments
-    program_to_instrument = sys.args[1]
-    instrumentation_advices = sys.args[2]
+    program_to_instrument = sys.argv[1]
+    instrumentation_advices = sys.argv[2]
 
     # Read advice file and instrumentize modules
     filename = os.path.basename(instrumentation_advices)
