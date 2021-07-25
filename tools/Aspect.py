@@ -32,6 +32,15 @@ def instrument(func):
         return result
     return wrapper
 
+# copy right UMSCHREIBEN!!!
+def trace(cls):
+   
+    for name, m in inspect.getmembers(cls, lambda x: inspect.isfunction(x) or inspect.ismethod(x)):
+        if not name.startswith('__'):
+            setattr(cls, name, instrument(m))
+
+    return cls
+
 class Instrumental(type):
     def __new__(cls, name, bases, attr):
         # Replace each function with
@@ -44,7 +53,7 @@ class Instrumental(type):
                 attr[name] = instrument(value)
         return type.__new__(cls, name, bases, attr)
 class ModuleAspectizer:
-    def __init__(self,decorator):
+    def __init__(self):
         self.modules = list()
         self.classes = list()
         self.decorator = instrument
@@ -79,8 +88,36 @@ class ModuleAspectizer:
                         for key, value in member.__dict__.items():
                             if inspect.ismethod(value):
                                 member.__dict__[key] = self.decorator(value)
+                                module.__dict__[name] = member
         except (ValueError, TypeError):
             print("No modules to decorate")
+    
+    def appro(self):
+        if self.decorator is None:
+            raise TypeError
+        try:
+            for module in self.modules:
+                for name, value in inspect.getmembers(module, inspect.isclass):
+                    setattr(module, name, trace(value))
+        except (ValueError, TypeError):
+            print("No modules to decorate")
+        
+    def set_metaclass(self):
+        for module in self.modules:
+            classes=inspect.getmembers(module, inspect.isclass and inspect.getmembers(module) == module)
+            for name, value in classes:
+                print(name)
+                value=type.__new__(Instrumental,
+                                           name, value.__bases__,
+                                           dict(value.__dict__))
+                print(type(value))
+                module.__dict__[name]=value
+            for cl in classes:
+                print(str(cl))
+                
+    def instrumentize(self):
+        self.decorate_module_functions()
+        self.appro()
 
 
 class ClassAspectizer:
