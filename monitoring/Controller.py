@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from abc import ABC, abstractmethod
-
+from monitoring.util import TimeStamp
 
 class AbstractController(ABC):
     def __init__(self, domain, tcp_enabled, reader_thread, port,
@@ -34,7 +34,7 @@ class MonitoringController:
 
     def __init__(self, writer_controller=None, time_source_controller=None):
         self.writer_controller = WriterController("./monitoring.log")
-        self.time_source_controller = time_source_controller
+        self.time_source_controller = TimeSourceController(TimeStamp())
 
     def new_monitoring_record(self, record):
         return self.writer_controller.new_monitoring_record(record)
@@ -45,7 +45,7 @@ class TimeSourceController(AbstractController):
     def __init__(self, time_source):
         # super().__init__()
         self.time_source = time_source
-
+    
     def initialize(self):
         pass
 
@@ -54,7 +54,9 @@ class TimeSourceController(AbstractController):
 
     def toString(self):
         pass
-
+    
+    def get_time(self):
+        return self.time_source.get_time()
 
 
 from monitoring.Writer import FileWriter, TCPWriter

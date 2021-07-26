@@ -1,34 +1,33 @@
 import inspect
-from monitoring.Record import (TraceMetadata, BeforeOperationEvent,
+from monitoring.Record import (BeforeOperationEvent,
                                AfterOperationFailedEvent, AfterOperationEvent)
 from monitoring.Controller import MonitoringController
-import time
-import calendar
 import types
 
 
 def instrument(func):
     def wrapper(*args, **kwargs):
-        print('before') 
+        print('before')
         monitoring_controller = MonitoringController()
-        timestamp = calendar.timegm(time.gmtime())
-        class_signature = func.__class__        
+        timestamp = monitoring_controller.time_source_controller.get_time()
+        class_signature = func.__qualname__.split(".", 1)[0]
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
-            time.ctime(timestamp), "before", 42, func.__name__, class_signature ))
+               timestamp, "before", None, func.__name__, class_signature))
         
         try:
             result=func(*args, **kwargs)
         except Exception as e:
             print('after failed')
-            timestamp = calendar.timegm(time.gmtime())
+            timestamp = monitoring_controller.time_source_controller.get_time()
             monitoring_controller.new_monitoring_record(AfterOperationFailedEvent(
-            time.ctime(timestamp), "after failed", 42, func.__name__,
+            timestamp, "after failed", None, func.__name__,
             class_signature, repr(e)))
             
             raise e
         print ('after')
+        timestamp = monitoring_controller.time_source_controller.get_time()
         monitoring_controller.new_monitoring_record(AfterOperationEvent(
-        time.ctime(timestamp), "after",42,func.__name__, class_signature ))
+        timestamp, "after",None,func.__name__, class_signature ))
         return result
     return wrapper
 
@@ -53,10 +52,8 @@ class Instrumental(type):
 class ModuleAspectizer:
     """This class collects modules and automatically instruments them"""
     def __init__(self):
-        self.modules = list()
-        self.classes = list()
+        self.modules = list()      
         self.decorator = instrument
-        self.functions = list()
 
     def add_module(self, module):
         self.modules.append(module)

@@ -23,24 +23,22 @@ def main():
 
     check_arguments()
     # Read arguments
-    program_to_instrument = os.path.abspath(sys.argv[1])
+    program_to_instrument = os.path.abspath(sys.argv[1])  # Not used, but leave it
     instrumentation_advices = os.path.abspath(sys.argv[2])
 
     # Read advice file and instrumentize modules
-    
+
     # Delete extension
     filename = os.path.basename(instrumentation_advices)[:-3]
-
-    spec = importlib.util.spec_from_file_location(filename,
-                                                  instrumentation_advices)
-    
+    spec = importlib.util.spec_from_file_location(
+                                             filename, instrumentation_advices)
     instrumentation_advice_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(instrumentation_advice_module)
-    
-    #Rewrite argumetns, such that another entrypoint is not hindered
-    sys.argv=sys.argv[3:]
+
+    # Rewrite argumetns, such that another entrypoint is not hindered
+    sys.argv = sys.argv[3:]  # Actually unclean and is not a god practice
     instrumentation_advice_module.run_main()
-    
-   
+
+
 if __name__ == '__main__':
     main()

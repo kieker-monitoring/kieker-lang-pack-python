@@ -57,6 +57,8 @@ class OperationExecutionRecord:
             serializer.put(self.hostname)
             serializer.put(self.eoi)
             serializer.put(self.ess)
+
+
 class TraceMetadata:
     __NO_PARENT_TRACEID__ = -1
     __NO_PARENT_ORDER_INDEX__ = -1
@@ -85,6 +87,8 @@ class TraceMetadata:
         serializer.put(self.parent_trace_id)
         serializer.put(self.parent_order_id)
         serializer.put('\n')
+
+
 class BeforeOperationEvent:
     def __init__(self, timestamp, trace_id, order_index, 
                  operation_signature, class_signature):
@@ -93,24 +97,7 @@ class BeforeOperationEvent:
         self.order_index=order_index
         self.operation_signature=operation_signature
         self.class_signature=class_signature
-        pass
-    def serialize(self,serializer):
-        serializer.put(self.timestamp)
-        serializer.put(self.trace_id)
-        serializer.put(self.order_index)
-        serializer.put(self.operation_signature)
-        serializer.put(self.class_signature)
-        serializer.put('\n')
-class AfterOperationEvent:
-    def __init__(self, timestamp, trace_id, order_index, 
-                 operation_signature, class_signature):
-        self.timestamp = timestamp
-        self.trace_id = trace_id
-        self.order_index=order_index
-        self.operation_signature=operation_signature
-        self.class_signature=class_signature
-        
-        pass
+
     def serialize(self,serializer):
         serializer.put(self.timestamp)
         serializer.put(self.trace_id)
@@ -119,8 +106,28 @@ class AfterOperationEvent:
         serializer.put(self.class_signature)
         serializer.put('\n')
 
-class AfterOperationFailedEvent:
+
+class AfterOperationEvent:
     def __init__(self, timestamp, trace_id, order_index, 
+                 operation_signature, class_signature):
+        self.timestamp = timestamp
+        self.trace_id = trace_id
+        self.order_index=order_index
+        self.operation_signature=operation_signature
+        self.class_signature=class_signature
+
+    def serialize(self,serializer):
+        serializer.put(self.timestamp)
+        serializer.put(self.trace_id)
+        serializer.put(self.order_index)
+        serializer.put(self.operation_signature)
+        serializer.put(self.class_signature)
+        serializer.put('\n')
+
+
+class AfterOperationFailedEvent:
+
+    def __init__(self, timestamp, trace_id, order_index,
                  operation_signature, class_signature, exception):
         self.timestamp = timestamp
         self.trace_id = trace_id
@@ -128,7 +135,8 @@ class AfterOperationFailedEvent:
         self.operation_signature=operation_signature
         self.class_signature=class_signature
         self.exception=exception
-        pass
+
+
     def serialize(self,serializer):
         serializer.put(self.timestamp)
         serializer.put(self.trace_id)
