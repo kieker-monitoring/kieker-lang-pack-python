@@ -21,29 +21,26 @@ def check_arguments():
 
 def main():
 
-    #check_arguments()
-   # print(os.getcwd())
+    check_arguments()
     # Read arguments
-    program_to_instrument = ('C:/Users/Serafim Simonov/Desktop/'
-                            +'job-2/kieker-lang-pack-python/examples/automatic/Bookstore.py')
-    instrumentation_advices = ('C:/Users/Serafim Simonov/Desktop/'
-                            +'job-2/kieker-lang-pack-python/examples/automatic/aop_config.py')
-    print("advices "+instrumentation_advices)
+    program_to_instrument = os.path.abspath(sys.argv[1])
+    instrumentation_advices = os.path.abspath(sys.argv[2])
+
     # Read advice file and instrumentize modules
+    
+    # Delete extension
     filename = os.path.basename(instrumentation_advices)[:-3]
-    print("Filename - "+filename)
-    print(instrumentation_advices)
+
     spec = importlib.util.spec_from_file_location(filename,
                                                   instrumentation_advices)
-    print(spec)
+    
     instrumentation_advice_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(instrumentation_advice_module)
-
-    # Execute instrumnetized program
-   # file = open(program_to_instrument, "r")
-   # src = file.read()
-    #exec(src, globals(), globals())
-    examples.automatic.Bookstore.main()
-    os.system("python"+program_to_instrument )  
+    
+    #Rewrite argumetns, such that another entrypoint is not hindered
+    sys.argv=sys.argv[3:]
+    instrumentation_advice_module.run_main()
+    
+   
 if __name__ == '__main__':
     main()

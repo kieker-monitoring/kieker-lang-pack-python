@@ -56,7 +56,7 @@ def run_bookstore(bookstore):
 def main():
   
     bookstore = Bookstore()
-    print(type(Bookstore))
+   
     try:
         num_traces = sys.argv[1]
         if not isinstance(num_traces, int):

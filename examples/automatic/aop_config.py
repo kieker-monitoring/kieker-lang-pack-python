@@ -9,6 +9,8 @@ obj = ModuleAspectizer()
 obj.add_module(examples.automatic.Bookstore)
 
 obj.instrumentize()
-examples.automatic.Bookstore.Bookstore().search_book()
+
 #x=test4.simplefunction(2)
 #print(x)
+def run_main():
+    examples.automatic.Bookstore.main()
