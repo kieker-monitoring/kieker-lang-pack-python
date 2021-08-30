@@ -10,24 +10,29 @@ def instrument(func):
         print('before')
         monitoring_controller = MonitoringController()
         timestamp = monitoring_controller.time_source_controller.get_time()
+        func_module = func.__module__
         class_signature = func.__qualname__.split(".", 1)[0]
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
-               timestamp, "before", None, func.__name__, class_signature))
-        
+               timestamp, "before", None, func.__name__,
+               f'{func_module}.{class_signature}'))
+
         try:
-            result=func(*args, **kwargs)
+            result = func(*args, **kwargs)
         except Exception as e:
             print('after failed')
             timestamp = monitoring_controller.time_source_controller.get_time()
-            monitoring_controller.new_monitoring_record(AfterOperationFailedEvent(
-            timestamp, "after failed", None, func.__name__,
-            class_signature, repr(e)))
-            
+            monitoring_controller.new_monitoring_record(
+                AfterOperationFailedEvent(timestamp, "after failed",
+                                          None, func.__name__,
+                                          f'{func_module}.{class_signature}',
+                                          repr(e)))
+
             raise e
-        print ('after')
+        print('after')
         timestamp = monitoring_controller.time_source_controller.get_time()
         monitoring_controller.new_monitoring_record(AfterOperationEvent(
-        timestamp, "after",None,func.__name__, class_signature ))
+            timestamp, "after", None, func.__name__,
+            f'{func_module}.{class_signature}'))
         return result
     return wrapper
 
@@ -37,6 +42,7 @@ def _class_decorator(cls):
         if not name.startswith('__'):
             setattr(cls, name, instrument(value))
     return cls
+
 
 class Instrumental(type):
     """This metaclass is used for the manual instrumentation"""
@@ -51,8 +57,9 @@ class Instrumental(type):
 
 class ModuleAspectizer:
     """This class collects modules and automatically instruments them"""
+
     def __init__(self):
-        self.modules = list()      
+        self.modules = list()
         self.decorator = instrument
 
     def add_module(self, module):
@@ -87,4 +94,3 @@ class ModuleAspectizer:
         """ instrumentizes all modules contained in ModuleAspectizer.modules"""
         self._decorate_module_functions()
         self._decorate_classes()
-
