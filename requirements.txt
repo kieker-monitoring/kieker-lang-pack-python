@@ -1,1 +1,2 @@
 PyByteBuffer==1.0.5
+aspectlib == 1.5.2

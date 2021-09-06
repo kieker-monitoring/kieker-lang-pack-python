@@ -25,27 +25,30 @@ class AbstractMonitoringWriter(ABC):
 from monitoring.Record import Serializer
 from monitoring.fileregistry import WriterRegistry
 
+
 class FileWriter(AbstractMonitoringWriter):
 
     def __init__(self, file_path, string_buffer):
-        # self.writer_registry=writer_registry
         self.file_path = file_path
-        # self.max_entries=max_entries
         self.file_path = self.file_path
         self.string_buffer = string_buffer
         self.serializer = Serializer(self.string_buffer)
         self.writer_registry = WriterRegistry()
 
     def writeMonitoringRecord(self, record):
-        record_class_name=record.__class__.__name__
+        record_class_name = record.__class__.__name__
         self.writer_registry.register(record_class_name)
+        self._serialize(record, self.writer_registry.get_id(record_class_name))
+
+    def _serialize(self, record, idee):
+        header = f'{idee};'
+        self.string_buffer.append(header)
         record.serialize(self.serializer)
         write_string = ''.join(map(str, self.string_buffer))
         self.string_buffer.clear()
-        file=open(self.file_path, 'a')
-        #file.write('\n')
+        file = open(self.file_path, 'a')
         file.write(write_string)
-        
+
         file.close()
 
     def onStarting(self):
@@ -57,7 +60,9 @@ class FileWriter(AbstractMonitoringWriter):
     def to_string(self):
         return "string"
 
-class TextMapFileHandler:
+class MappingFileWriter:
+    def __init__(self):
+        pass
     pass
 
 import socket

@@ -3,9 +3,10 @@
 class WriterRegistry:
     
     def __init__(self):
-        self.storage={}
-        self.next_id=id+1
-        self.id=0
+        self.storage = {}
+        self.id = 0
+        self.next_id = self.id+1
+        
 
     def get_id(self, value):
         idee=self.storage[value]
@@ -17,4 +18,5 @@ class WriterRegistry:
     def register(self,value):
         if value not in self.storage:
             idee=self.next_id
-            self.storage.update({value,idee})
+            self.next_id+=1
+            self.storage.update({value: idee})
