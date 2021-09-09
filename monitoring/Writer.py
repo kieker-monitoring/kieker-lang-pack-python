@@ -60,8 +60,8 @@ class FileWriter(AbstractMonitoringWriter):
         return "string"
 
 class MappingFileWriter:
-    def __init__(self,file_path):
-        self.file_path = file_path
+    def __init__(self):
+        self.file_path = './record-map.log'
     
     def add(self, Id, class_name):
         file = open(self.file_path, 'a')
