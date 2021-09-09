@@ -30,7 +30,6 @@ class FileWriter(AbstractMonitoringWriter):
 
     def __init__(self, file_path, string_buffer):
         self.file_path = file_path
-        self.file_path = self.file_path
         self.string_buffer = string_buffer
         self.serializer = Serializer(self.string_buffer)
         self.writer_registry = WriterRegistry()
@@ -61,9 +60,14 @@ class FileWriter(AbstractMonitoringWriter):
         return "string"
 
 class MappingFileWriter:
-    def __init__(self):
-        pass
-    pass
+    def __init__(self,file_path):
+        self.file_path = file_path
+    
+    def add(self, Id, class_name):
+        file = open(self.file_path, 'a')
+        write_string = f'$ {Id} = {class_name} \n'
+        file.write(write_string)
+        file.close()
 
 import socket
 import logging
