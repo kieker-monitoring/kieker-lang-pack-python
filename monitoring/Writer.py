@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
-
+from monitoring.Record import Serializer
+from monitoring.fileregistry import WriterRegistry
 
 class AbstractMonitoringWriter(ABC):
 
@@ -22,8 +23,7 @@ class AbstractMonitoringWriter(ABC):
         pass
 
 
-from monitoring.Record import Serializer
-from monitoring.fileregistry import WriterRegistry
+
 
 
 class FileWriter(AbstractMonitoringWriter):
@@ -32,8 +32,13 @@ class FileWriter(AbstractMonitoringWriter):
         self.file_path = file_path
         self.string_buffer = string_buffer
         self.serializer = Serializer(self.string_buffer)
-        self.writer_registry = WriterRegistry()
+        self.writer_registry = WriterRegistry(self)
+        self.map_file_wirter = MappingFileWriter()
+        
+    def on_new_registry_entry(self, value, idee):
+        self.map_file_wirter.add(value, idee)  
 
+    
     def writeMonitoringRecord(self, record):
         record_class_name = record.__class__.__name__
         self.writer_registry.register(record_class_name)
@@ -59,6 +64,7 @@ class FileWriter(AbstractMonitoringWriter):
     def to_string(self):
         return "string"
 
+
 class MappingFileWriter:
     def __init__(self):
         self.file_path = './record-map.log'
@@ -69,6 +75,9 @@ class MappingFileWriter:
         file.write(write_string)
         file.close()
 
+
+
+        
 import socket
 import logging
 

@@ -7,11 +7,11 @@ from monitoring.Record import (BeforeOperationEvent,
 from monitoring.Controller import MonitoringController
 import types
 
-
+monitoring_controller = MonitoringController()
 @aspectlib.Aspect(bind=True)
 def wrapper(cutpoint, *args, **kwargs):
         print('before')
-        monitoring_controller = MonitoringController()
+       
         timestamp = monitoring_controller.time_source_controller.get_time()
         func_module = cutpoint.__module__
         class_signature = cutpoint.__qualname__.split(".", 1)[0]
