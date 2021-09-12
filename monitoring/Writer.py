@@ -92,6 +92,7 @@ class TCPWriter:
         self.connetction_timeout = connection_timeout
         self.serializer = Serializer(self.buffer)
         self.onStarting()
+        self.writer_registry = WriterRegistry(self)
 
     def onStarting(self):
         while True:

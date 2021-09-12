@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from struct import pack
 
 
 class Serializer:
@@ -11,16 +12,54 @@ class Serializer:
             self.string_byte.append(str(value)+"; ")
         else:
             self.string_byte.append(value)
-class DummyRecord:
 
-    def __init__(self, foo_parameter, bar_parameter):
-        # self.serializer=serializer
-        self.foo_parameter = foo_parameter
-        self.bar_parameter = bar_parameter
 
-    def serialize(self, serializer):
-        serializer.put(self.foo_parameter)
-        serializer.put(self.bar_parameter)
+class BinarySerializer:
+
+    def __init__(self, buffer, string_registry):
+        self.buffer = buffer
+        self.format_string = '!'
+        self.string_registry = string_registry
+
+    def put_boolean(self, boolean):
+        self.buffer.append(boolean)
+        self.format_string += ' ?'
+
+    def put_byte(self, value):
+        self.buffer.append(value)
+        self.format_string += ' i'
+
+    def put_int(self, value):
+        self.buffer.append(value)
+        self.format_string += ' i'
+
+    def put_long(self, value):
+        self.buffer.append(value)
+        self.format_string += ' l'
+
+    def put_double(self, value):
+        self.buffer.append(value)
+        self.format_string += ' d'
+
+    def put_string(self, value):
+        string_id = self.string_registry.get_id(value)
+        self.buffer.append(string_id)
+        self.format_string += ' i'
+
+    def put_char(self, value):
+        self.buffer.append(value)
+        self.format_string += ' c'
+
+    def put_short(self, value):
+        self.buffer.append(value)
+        self.format_string += ' h'
+
+    def put_float(self, value):
+        self.buffer.append(value)
+        self.format_string += ' f'
+
+    def pack(self):
+        return pack(self.format_string, *self.buffer)
 
 
 class OperationExecutionRecord:
