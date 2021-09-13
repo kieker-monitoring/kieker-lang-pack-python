@@ -12,8 +12,36 @@ class Serializer:
             self.string_byte.append(str(value)+"; ")
         else:
             self.string_byte.append(value)
+   
+    def put_boolean(self, boolean):
+         self.string_byte.append(str(boolean)+"; ")
 
+    def put_byte(self, value):
+         self.string_byte.append(str(value)+"; ")
 
+    def put_int(self, value):
+        self.string_byte.append(str(value)+"; ")
+
+    def put_long(self, value):
+        self.string_byte.append(str(value)+"; ")
+
+    def put_double(self, value):
+        self.string_byte.append(str(value)+"; ")
+
+    def put_string(self, value):
+        self.string_byte.append(str(value)+"; ")
+
+    def put_char(self, value):
+         self.string_byte.append(str(value)+"; ")
+    
+    def put_short(self, value):
+       self.string_byte.append(str(value)+"; ")
+
+    def put_float(self, value):
+       self.string_byte.append(str(value)+"; ")
+
+    def pack(self):
+        pass
 class BinarySerializer:
 
     def __init__(self, buffer, string_registry):
@@ -23,44 +51,50 @@ class BinarySerializer:
 
     def put_boolean(self, boolean):
         self.buffer.append(boolean)
-        self.format_string += ' ?'
+        self.format_string += '?'
 
     def put_byte(self, value):
         self.buffer.append(value)
-        self.format_string += ' i'
+        self.format_string += 'i'
 
     def put_int(self, value):
         self.buffer.append(value)
-        self.format_string += ' i'
+        self.format_string += 'i'
 
     def put_long(self, value):
         self.buffer.append(value)
-        self.format_string += ' l'
+        self.format_string += 'q'
 
     def put_double(self, value):
         self.buffer.append(value)
-        self.format_string += ' d'
+        self.format_string += 'd'
 
     def put_string(self, value):
+        if value is '\n':
+           return
         string_id = self.string_registry.get_id(value)
         self.buffer.append(string_id)
-        self.format_string += ' i'
+        self.format_string += 'i'
 
     def put_char(self, value):
         self.buffer.append(value)
-        self.format_string += ' c'
+        self.format_string += 'c'
 
     def put_short(self, value):
         self.buffer.append(value)
-        self.format_string += ' h'
+        self.format_string += 'h'
 
     def put_float(self, value):
         self.buffer.append(value)
-        self.format_string += ' f'
+        self.format_string += 'f'
 
     def pack(self):
-        return pack(self.format_string, *self.buffer)
-
+        print(self.format_string)
+        print(*self.buffer)
+        result = pack(self.format_string, *self.buffer)
+        self.format_string = '!'
+        self.buffer.clear()
+        return result
 
 class OperationExecutionRecord:
 
@@ -119,13 +153,13 @@ class TraceMetadata:
         self.parent_order_id=parent_order_id
         pass
     def serialize(self,serializer):
-        serializer.put(self.trace_id)
-        serializer.put(self.thread_id)
-        serializer.put(self.session_id)
-        serializer.put(self.hostname)
-        serializer.put(self.parent_trace_id)
-        serializer.put(self.parent_order_id)
-        serializer.put('\n')
+        serializer.put_int(self.trace_id)
+        serializer.put_int(self.thread_id)
+        serializer.put_int(self.session_id)
+        serializer.put_string(self.hostname)
+        serializer.put_int(self.parent_trace_id)
+        serializer.put_int(self.parent_order_id)
+        serializer.put_string('\n')
 
 
 class BeforeOperationEvent:
@@ -138,12 +172,13 @@ class BeforeOperationEvent:
         self.class_signature=class_signature
 
     def serialize(self,serializer):
-        serializer.put(self.timestamp)
-        serializer.put(self.trace_id)
-        serializer.put(self.order_index)
-        serializer.put(self.operation_signature)
-        serializer.put(self.class_signature)
-        serializer.put('\n')
+        print(type(self.timestamp))
+        serializer.put_long(self.timestamp)
+        serializer.put_int(self.trace_id)
+        serializer.put_int(self.order_index)
+        serializer.put_string(self.operation_signature)
+        serializer.put_string(self.class_signature)
+        serializer.put_string('\n')
 
 
 class AfterOperationEvent:
@@ -156,12 +191,12 @@ class AfterOperationEvent:
         self.class_signature=class_signature
 
     def serialize(self,serializer):
-        serializer.put(self.timestamp)
-        serializer.put(self.trace_id)
-        serializer.put(self.order_index)
-        serializer.put(self.operation_signature)
-        serializer.put(self.class_signature)
-        serializer.put('\n')
+        serializer.put_long(self.timestamp)
+        serializer.put_int(self.trace_id)
+        serializer.put_int(self.order_index)
+        serializer.put_string(self.operation_signature)
+        serializer.put_string(self.class_signature)
+        serializer.put_string('\n')
 
 
 class AfterOperationFailedEvent:
@@ -177,10 +212,10 @@ class AfterOperationFailedEvent:
 
 
     def serialize(self,serializer):
-        serializer.put(self.timestamp)
-        serializer.put(self.trace_id)
-        serializer.put(self.order_index)
-        serializer.put(self.operation_signature)
-        serializer.put(self.class_signature)
-        serializer.put(self.exception)
-        serializer.put('\n')
+        serializer.put_long(self.timestamp)
+        serializer.put_int(self.trace_id)
+        serializer.put_int(self.order_index)
+        serializer.put_string(self.operation_signature)
+        serializer.put_string(self.class_signature)
+        serializer.put_string(self.exception)
+        serializer.put_string('\n')

@@ -33,7 +33,10 @@ class AbstractController(ABC):
 class MonitoringController:
 
     def __init__(self, writer_controller=None, time_source_controller=None):
-        self.writer_controller = WriterController("./monitoring.log")
+        if writer_controller is None:
+            self.writer_controller = WriterController("./monitoring.log")
+        else:
+            self.writer_controller = WriterController()
         self.time_source_controller = TimeSourceController(TimeStamp())
 
     def new_monitoring_record(self, record):
@@ -64,7 +67,7 @@ from monitoring.Writer import FileWriter, TCPWriter
 
 class WriterController:
 
-    def __init__(self, path):
+    def __init__(self, path=None):
         if path is not None:
             self.monitoring_writer = FileWriter(path, [])
         else:

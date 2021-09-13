@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
-from monitoring.Record import Serializer
+from monitoring.Record import Serializer, BinarySerializer
 from monitoring.fileregistry import WriterRegistry
 
 class AbstractMonitoringWriter(ABC):
@@ -90,10 +90,14 @@ class TCPWriter:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.buffer = buffer
         self.connetction_timeout = connection_timeout
-        self.serializer = Serializer(self.buffer)
+        
         self.onStarting()
         self.writer_registry = WriterRegistry(self)
+        self.serializer = BinarySerializer(self.buffer, self.writer_registry)
 
+    def on_new_registry_entry(self, value, idee):
+        pass 
+        
     def onStarting(self):
         while True:
             result = self._try_connect_()
@@ -103,6 +107,8 @@ class TCPWriter:
     def _try_connect_(self):
         try:
             self.socket.connect((self.host, self.port))
+            self.socket.sendall(str.encode("Hello World!"))
+            self.socket.shutdown(socket.SHUT_RD)
             return True
         except socket.timeout as e:
             logging.error(e)
@@ -113,9 +119,14 @@ class TCPWriter:
 
     def writeMonitoringRecord(self, record):
         record.serialize(self.serializer)
+        binarized_record = self.serializer.pack()
         write_string = str.encode(''.join(map(str, self.buffer)),
                                   'utf-8')
+       
+        print(type(binarized_record))
+        print(binarized_record)
         self.socket.sendall(write_string)
+        self.socket.shutdown(socket.SHUT_RD)
 
     def on_terminating(self):
         pass

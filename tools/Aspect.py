@@ -1,10 +1,11 @@
 import inspect
 from monitoring.Record import (BeforeOperationEvent,
                                AfterOperationFailedEvent, AfterOperationEvent)
-from monitoring.Controller import MonitoringController
+from monitoring.Controller import MonitoringController, WriterController,
+from monitorin.Writer import TCPWriter
 import types
 
-monitoring_controller = MonitoringController()
+monitoring_controller = MonitoringController(WriterController())
 def instrument(func):
     def wrapper(*args, **kwargs):
         print('before')
