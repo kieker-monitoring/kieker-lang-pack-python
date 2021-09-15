@@ -10,7 +10,7 @@ class Test:
     def myfunc(self):
         print(self.x+"world!")
         
-     
+print('hello')    
 #obj=Test()
 #test=obj.myfunc
 #test()
