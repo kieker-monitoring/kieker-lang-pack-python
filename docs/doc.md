@@ -1,23 +1,42 @@
 # Documentation
 This quick overview shows hot to instrument python programs with Kieker.
-At the current stage there are three ways how to do it.
 
-### Invasive Manual Approach
-If you want a full controll, you can create records manually.
-First of all create a  MonitoringController instance, which must be global.
-After that, create a record andpass it to monitoring_controller via "new_monitoring_record
+At the current stage we offer three alternatives of how to achieve it. We can categorize theses approaches by 
+how  much  you must alter your own source code.
+
+### Invasive Approach
+This is the most basic and  invasive approach. Currently, it also offers the most controll over the instrumentazation.
+Let's assume that you want to log following function every time it is called.
+
+```python
+example.py
+
+def some_function():
+      print('Hello World!')
+
+```
+First of all, create a  `MonitoringController` object and assign it to a global variable. At the current stage of the development
+the MonitoringController class is imported from `monitoring.Controller` module. In this example we use `FileWriter` to write the logs to a file.
+This writer is instatiated internally by default, so you don't have to specify it expicitly.
 
 ```python
 example.py
 
 from monitoring.Controller import MonitoringController
-monit_cont = MonitoringController()
+
+ctrl = MonitoringController()
 def some_function():
-      record = BeforeExecutionRecord(timestamp, 1, 2, ''some_function,
-               example.some_function'
-                                     )
-      pass
+      print('Hello World!')
+
 ```
+Now we have everything we need to log the function execution.
+At the current stage of development there are three record types with following entries.
+
+`BeforeExecutionRecord`: timestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class
+`AfterExecutionRecord`:  imestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class
+`AfterExecutionFailedRecord`: imestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class, error name
+
+
 
 ### Semi Invasive Approach
 If you don't want to manipulate your code to much,
