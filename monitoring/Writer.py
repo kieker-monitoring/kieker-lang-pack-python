@@ -23,9 +23,6 @@ class AbstractMonitoringWriter(ABC):
         pass
 
 
-
-
-
 class FileWriter(AbstractMonitoringWriter):
 
     def __init__(self, file_path, string_buffer):
@@ -34,13 +31,12 @@ class FileWriter(AbstractMonitoringWriter):
         self.serializer = Serializer(self.string_buffer)
         self.writer_registry = WriterRegistry(self)
         self.map_file_wirter = MappingFileWriter()
-        
-    def on_new_registry_entry(self, value, idee):
-        self.map_file_wirter.add(value, idee)  
 
-    
+    def on_new_registry_entry(self, value, idee):
+        self.map_file_wirter.add(value, idee)
+
     def writeMonitoringRecord(self, record):
-        record_class_name = record.__class__.__name__
+        record_class_name = record.__class__.__qualname__
         self.writer_registry.register(record_class_name)
         self._serialize(record, self.writer_registry.get_id(record_class_name))
 
@@ -71,13 +67,13 @@ class MappingFileWriter:
     
     def add(self, Id, class_name):
         file = open(self.file_path, 'a')
-        write_string = f'$ {Id} = {class_name} \n'
+        write_string = f'$ {class_name} = {Id} \n'
         file.write(write_string)
         file.close()
 
 
 
-        
+
 import socket
 import logging
 
@@ -90,14 +86,13 @@ class TCPWriter:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.buffer = buffer
         self.connetction_timeout = connection_timeout
-        
         self.onStarting()
         self.writer_registry = WriterRegistry(self)
         self.serializer = BinarySerializer(self.buffer, self.writer_registry)
 
     def on_new_registry_entry(self, value, idee):
-        pass 
-        
+        pass
+
     def onStarting(self):
         while True:
             result = self._try_connect_()
@@ -108,7 +103,6 @@ class TCPWriter:
         try:
             self.socket.connect((self.host, self.port))
             self.socket.sendall(str.encode("Hello World!"))
-            self.socket.shutdown(socket.SHUT_RD)
             return True
         except socket.timeout as e:
             logging.error(e)
@@ -120,13 +114,10 @@ class TCPWriter:
     def writeMonitoringRecord(self, record):
         record.serialize(self.serializer)
         binarized_record = self.serializer.pack()
-        write_string = str.encode(''.join(map(str, self.buffer)),
-                                  'utf-8')
-       
         print(type(binarized_record))
         print(binarized_record)
-        self.socket.sendall(write_string)
-        self.socket.shutdown(socket.SHUT_RD)
+        self.socket.sendall(binarized_record)
+
 
     def on_terminating(self):
         pass
