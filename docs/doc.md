@@ -16,7 +16,7 @@ def some_function():
 
 ```
 First of all, create a  `MonitoringController` object and assign it to a global variable. At the current stage of the development
-the MonitoringController class is imported from `monitoring.Controller` module. In this example we use `FileWriter` to write the logs to a file.
+the MonitoringController can be imported from `monitoring.Controller` module. In this example we use `FileWriter` to write the logs to a file.
 This writer is instatiated internally by default, so you don't have to specify it expicitly.
 
 ```python
@@ -32,10 +32,56 @@ def some_function():
 Now we have everything we need to log the function execution.
 At the current stage of development there are three record types with following entries.
 
-`BeforeExecutionRecord`: timestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class
-`AfterExecutionRecord`:  imestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class
-`AfterExecutionFailedRecord`: imestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class, error name
+- `BeforeExecutionEvent`: timestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class
+- `AfterExecutionEvent`:  imestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class
+- `AfterExecutionFailedEvent`: imestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class, error name
 
+Create a record object and pass it to monitoring controler via `new_monitoring_record()`. In our example we use BeforeExecutionRecord and AfterExecutionRecord.
+
+```python
+example.py
+
+from monitoring.Controller import MonitoringController
+
+ctrl = MonitoringController()
+def some_function():
+      timestamp = monitoring_controller.time_source_controller.get_time()
+      before_record = BeforeExecutioneRecord(timestamp,-1,-1, 'some_function','example.some_function')
+      ctr.new_monitoring_record(before_record)
+      print('Hello World!')
+      after_record = AfterExecutioneRecord(timestamp,-1,-1, 'some_function','example.some_function')
+      ctr.new_monitoring_record(after_record)
+
+
+```
+Note, at that point, we have not implemeted traceId and traceId order API yet, so we passedd some dummy value like -1. Generelly, bot of these entries must be integers.
+For finding out the timestamp we use `time_source_controller`, which is part of `monitoring controller`. But you can use your own method. A timestam is an Integer representing current date in miliseconds.
+
+AfterExecutionFailedEvent record is used in similar manne. Put the original function code in try block and create AfterExecutionFailedEvent in except part, passing error name as the last constructor parameter.
+The complete example
+
+```python
+example.py
+
+from monitoring.Controller import MonitoringController
+
+ctrl = MonitoringController()
+def some_function():
+      timestamp = monitoring_controller.time_source_controller.get_time()
+      before_record = BeforeExecutioneRecord(timestamp,-1,-1, 'some_function','example.some_function')
+      ctr.new_monitoring_record(before_record)
+      try:         
+            print('Hello World!')
+      except Exception as e:
+            timestamp = monitoring_controller.time_source_controller.get_time()
+            failed_record=AfterFailedEvent(timestamp,-1,-1, 'some_function','example.some_function',repr(e))
+            ctr.new_monitoring_record(failed_record)
+            raise e
+      timestamp = monitoring_controller.time_source_controller.get_time()
+      after_record = AfterExecutioneRecord(timestamp,-1,-1, 'some_function','example.some_function')
+      ctr.new_monitoring_record(after_record)
+
+```
 
 
 ### Semi Invasive Approach
