@@ -85,19 +85,37 @@ def some_function():
 
 
 ### Semi Invasive Approach
-If you don't want to manipulate your code to much,
-you can simply use a decorator @instrument from tools.Apsect module, we have prepared.
+The above method gives us full controll over program instrumentation, but it also requieres a lot of manual work. But this approach alters your own code logic, which might not be a problem for small projects, but for larger code basis it become a tedious job to keep an overview. To minimize the grade of sourcecode manipulation you can use an `Instrument` decorator. By anotation a function or method with `@Instrument` you can spare a lot of typing. Consider following example
+
 ```python
 example.py
 
-from tools.Aspect import Instrumental, instrument
+from tools.Aspect import instrument
 @instrument
 def some_function():
-      pass
+      print('Hello World!')
+```
+
+Alternatively, if you want to instrument all class methods at once, you do not have to anotate each function. Instead, set  __metaclass__ variable of a class to 'Instrumental'
+
+
+```python
+example.py
+
+from tools.Aspect import Instrumental
 class Foo:
       __metaclass__ = Instrumental
-      pass
+      
+      def __init(self):
+            pass
+      
+      def func(self):
+            # Do something
+            pass
 ```
+
+As result, each time a class method or functions are called, kiekr will log  automatically. 
+
 ### Non invasive approach
 This approach assumes, that there is a certain entrypoint, that starts your programm.
 We prepared a script instrument-kieker.py. It accepts a path to a .py file where you can specify 
