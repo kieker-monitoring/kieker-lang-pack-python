@@ -85,7 +85,7 @@ def some_function():
 
 
 ### Semi Invasive Approach
-The above method gives us full controll over program instrumentation, but it also requieres a lot of manual work. But this approach alters your own code logic, which might not be a problem for small projects, but for larger code basis it become a tedious job to keep an overview. To minimize the grade of sourcecode manipulation you can use an `Instrument` decorator. By anotation a function or method with `@Instrument` you can spare a lot of typing. Consider following example
+The above method gives us full controll over program instrumentation, but it also requieres a lot of manual work. But this approach alters your own code logic, which might not be a problem for small projects, but for larger code basis it become a tedious job to keep an overview. To minimize the grade of source code manipulation you can use an `Instrument` decorator. By anotation a function or method with `@Instrument` you can spare a lot of typing. Consider following example
 
 ```python
 example.py
@@ -118,14 +118,32 @@ As result, each time a class method or functions are called, kiekr will log  aut
 
 ### Non invasive approach
 This approach assumes, that there is a certain entrypoint, that starts your programm.
-We prepared a script instrument-kieker.py. It accepts a path to a .py file where you can specify 
-modules of yur program, which should be instrumentized.
-Create an instance of ModuleAspectizer. This class, has a method add_module that accepts a module object.
-Add all modules, that must be inspected with kieker. 
-Define a method named run_main(), which should simply run entrypoint of your program.
+You can use this method if you do not want to touch and change the orginal code in any way.
 
-If you don't want to use our non-invasive approach, you can use a third-party lib aspectlib.
-In principle it works in the same manner. 
-Specify own wrapper function, which creates all necessary records when target function is called
-Use aspectlib.weave(target, wrapper) to instrument the code.
-Run your entry point.
+Let's assume that you have a project with some python modules a and b. So your project structure would look something like this:
+```
+/project_root
+   |a.py   
+   |b.py
+```
+Let's also assume that the entry point in form of a main function  lies in `a.py`.
+Now create new .py file. Name is not important. Let's call it instrumnet.py in our example.
+In this module import all original modules of your project. Than use our tool.Aspcet module to instrument them.
+
+```python
+instrument.py
+
+import a
+import b
+from tools.Aspect import ModuleAspectizer
+
+instr = ModuleAspectizer()
+obj.add_module(a)
+obj.add_module(b)
+
+obj.instrumentize()
+a.main()
+
+```
+Now you can run instrument.py as starter script and the whole program will instrumented and executed.
+
