@@ -32,9 +32,9 @@ def some_function():
 Now we have everything we need to log the function execution.
 At the current stage of development there are three record types with following entries.
 
-- `BeforeExecutionEvent`: timestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class
-- `AfterExecutionEvent`:  imestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class
-- `AfterExecutionFailedEvent`: imestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class, error name
+- `BeforeOperationEvent`: timestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class
+- `AfterOperationEvent`:  imestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class
+- `AfterOPerationFailedEvent`: imestamp in ms, traceId, traceOrder, function_name, fully qualified name of caller class, error name
 
 Create a record object and pass it to monitoring controler via `new_monitoring_record()`. In our example we use BeforeExecutionRecord and AfterExecutionRecord.
 
@@ -42,14 +42,15 @@ Create a record object and pass it to monitoring controler via `new_monitoring_r
 example.py
 
 from monitoring.Controller import MonitoringController
+from monitoring.Record import (BeforeOperationEvent, AfterOperationEvent)
 
 ctrl = MonitoringController()
 def some_function():
       timestamp = monitoring_controller.time_source_controller.get_time()
-      before_record = BeforeExecutioneRecord(timestamp,-1,-1, 'some_function','example.some_function')
+      before_record = BeforeOperationevent(timestamp,-1,-1, 'some_function','example.some_function')
       ctr.new_monitoring_record(before_record)
       print('Hello World!')
-      after_record = AfterExecutioneRecord(timestamp,-1,-1, 'some_function','example.some_function')
+      after_record = AfterOperationEvent(timestamp,-1,-1, 'some_function','example.some_function')
       ctr.new_monitoring_record(after_record)
 
 
@@ -64,21 +65,23 @@ The complete example
 example.py
 
 from monitoring.Controller import MonitoringController
+from monitoring.Record import (BeforeOperationEvent,
+                               AfterOperationFailedEvent, AfterOperationEvent)
 
 ctrl = MonitoringController()
 def some_function():
       timestamp = monitoring_controller.time_source_controller.get_time()
-      before_record = BeforeExecutioneRecord(timestamp,-1,-1, 'some_function','example.some_function')
+      before_record = BeforeOperationEvent(timestamp,-1,-1, 'some_function','example.some_function')
       ctr.new_monitoring_record(before_record)
       try:         
             print('Hello World!')
       except Exception as e:
             timestamp = monitoring_controller.time_source_controller.get_time()
-            failed_record=AfterFailedEvent(timestamp,-1,-1, 'some_function','example.some_function',repr(e))
+            failed_record=AfterOperationFailedEvent(timestamp,-1,-1, 'some_function','example.some_function',repr(e))
             ctr.new_monitoring_record(failed_record)
             raise e
       timestamp = monitoring_controller.time_source_controller.get_time()
-      after_record = AfterExecutioneRecord(timestamp,-1,-1, 'some_function','example.some_function')
+      after_record = AfterOperationRecord(timestamp,-1,-1, 'some_function','example.some_function')
       ctr.new_monitoring_record(after_record)
 
 ```
