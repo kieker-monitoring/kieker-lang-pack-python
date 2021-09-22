@@ -159,7 +159,7 @@ class TraceMetadata:
         serializer.put_string(self.hostname)
         serializer.put_int(self.parent_trace_id)
         serializer.put_int(self.parent_order_id)
-        serializer.put_string('\n')
+        
 
 
 class BeforeOperationEvent:
@@ -178,7 +178,7 @@ class BeforeOperationEvent:
         serializer.put_int(self.order_index)
         serializer.put_string(self.operation_signature)
         serializer.put_string(self.class_signature)
-        serializer.put_string('\n')
+        
 
 
 class AfterOperationEvent:
@@ -196,7 +196,7 @@ class AfterOperationEvent:
         serializer.put_int(self.order_index)
         serializer.put_string(self.operation_signature)
         serializer.put_string(self.class_signature)
-        serializer.put_string('\n')
+        
 
 
 class AfterOperationFailedEvent:
@@ -218,4 +218,4 @@ class AfterOperationFailedEvent:
         serializer.put_string(self.operation_signature)
         serializer.put_string(self.class_signature)
         serializer.put_string(self.exception)
-        serializer.put_string('\n')
+        

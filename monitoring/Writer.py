@@ -36,7 +36,7 @@ class FileWriter(AbstractMonitoringWriter):
         self.map_file_wirter.add(value, idee)
 
     def writeMonitoringRecord(self, record):
-        record_class_name = record.__class__.__qualname__
+        record_class_name = record.__class__.__module__+record.__class__.__qualname__
         self.writer_registry.register(record_class_name)
         self._serialize(record, self.writer_registry.get_id(record_class_name))
 
@@ -44,7 +44,7 @@ class FileWriter(AbstractMonitoringWriter):
         header = f'{idee};'
         self.string_buffer.append(header)
         record.serialize(self.serializer)
-        write_string = ''.join(map(str, self.string_buffer))
+        write_string = ''.join(map(str, self.string_buffer))+'\n'
         self.string_buffer.clear()
         file = open(self.file_path, 'a')
         file.write(write_string)
@@ -67,7 +67,7 @@ class MappingFileWriter:
 
     def add(self, Id, class_name):
         file = open(self.file_path, 'a')
-        write_string = f'$ {class_name} = {Id} \n'
+        write_string = f'$ {Id} = {class_name} \n'
         file.write(write_string)
         file.close()
 
