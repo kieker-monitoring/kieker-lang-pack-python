@@ -46,12 +46,12 @@ from monitoring.Record import (BeforeOperationEvent, AfterOperationEvent)
 
 ctrl = MonitoringController()
 def some_function():
-      timestamp = monitoring_controller.time_source_controller.get_time()
+      timestamp = ctrl.time_source_controller.get_time()
       before_record = BeforeOperationevent(timestamp,-1,-1, 'some_function','example.some_function')
-      ctr.new_monitoring_record(before_record)
+      ctrl.new_monitoring_record(before_record)
       print('Hello World!')
       after_record = AfterOperationEvent(timestamp,-1,-1, 'some_function','example.some_function')
-      ctr.new_monitoring_record(after_record)
+      ctrl.new_monitoring_record(after_record)
 
 
 ```
@@ -70,19 +70,19 @@ from monitoring.Record import (BeforeOperationEvent,
 
 ctrl = MonitoringController()
 def some_function():
-      timestamp = monitoring_controller.time_source_controller.get_time()
+      timestamp = ctrl.time_source_controller.get_time()
       before_record = BeforeOperationEvent(timestamp,-1,-1, 'some_function','example.some_function')
-      ctr.new_monitoring_record(before_record)
+      ctrl.new_monitoring_record(before_record)
       try:         
             print('Hello World!')
       except Exception as e:
             timestamp = monitoring_controller.time_source_controller.get_time()
             failed_record=AfterOperationFailedEvent(timestamp,-1,-1, 'some_function','example.some_function',repr(e))
-            ctr.new_monitoring_record(failed_record)
+            ctrl.new_monitoring_record(failed_record)
             raise e
       timestamp = monitoring_controller.time_source_controller.get_time()
       after_record = AfterOperationRecord(timestamp,-1,-1, 'some_function','example.some_function')
-      ctr.new_monitoring_record(after_record)
+      ctrl.new_monitoring_record(after_record)
 
 ```
 
