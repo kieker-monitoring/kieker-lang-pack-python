@@ -1,4 +1,4 @@
-# Documentation
+# How To Use Kieker For Python
 This quick overview shows hot to instrument python programs with Kieker.
 
 At the current stage we offer three alternatives of how to achieve it. We can categorize theses approaches by 
@@ -86,7 +86,7 @@ def some_function():
 
 ```
 
-
+If everything runs as expected, two filew will generated in the directory where you run your program. `Monitoring.log` contains all the records, `Record-map.log` contains inforrmation about which id is assigned to a string in the records.
 ### Semi Invasive Approach
 The above method gives us full controll over program instrumentation, but it also requieres a lot of manual work. But this approach alters your own code logic, which might not be a problem for small projects, but for larger code basis it become a tedious job to keep an overview. To minimize the grade of source code manipulation you can use an `Instrument` decorator. By anotation a function or method with `@Instrument` you can spare a lot of typing. Consider following example
 
@@ -117,7 +117,7 @@ class Foo:
             pass
 ```
 
-As result, each time a class method or functions are called, kiekr will log  automatically. 
+As result, each time a class method or functions are called, kieker will log  automatically. Like in the above example you should get two log files mentioned above.
 
 ### Non invasive approach
 This approach assumes, that there is a certain entrypoint, that starts your programm.
@@ -150,3 +150,4 @@ a.main()
 ```
 Now you can run instrument.py as starter script and the whole program will instrumented and executed.
 
+### Summary
