@@ -12,5 +12,5 @@ obj.instrumentize()
 
 #x=test4.simplefunction(2)
 #print(x)
-def run_main():
-    examples.automatic.Bookstore.main()
+#def run_main():
+examples.automatic.Bookstore.main()

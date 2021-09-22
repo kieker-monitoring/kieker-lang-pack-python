@@ -43,7 +43,8 @@ class Bookstore:
 
 
 def run_bookstore(bookstore):
-    bookstore.search_book()
+    while True:
+        bookstore.search_book()
 def hello():
     return 'World'
 

@@ -12,9 +12,9 @@ def main():
             raise TypeError
     except IndexError:
         num_traces = 1
-
-    bookstore.search_book()
-    print("Finished!")
+    while True:
+        bookstore.search_book()
+        print("Finished!")
 
 
 if __name__ == '__main__':

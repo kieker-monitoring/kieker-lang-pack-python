@@ -64,7 +64,7 @@ class FileWriter(AbstractMonitoringWriter):
 class MappingFileWriter:
     def __init__(self):
         self.file_path = './record-map.log'
-    
+
     def add(self, Id, class_name):
         file = open(self.file_path, 'a')
         write_string = f'$ {class_name} = {Id} \n'
@@ -76,6 +76,7 @@ class MappingFileWriter:
 
 import socket
 import logging
+from struct import pack
 
 
 class TCPWriter:
@@ -85,13 +86,18 @@ class TCPWriter:
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.buffer = buffer
+        self.registry_buffer = []
         self.connetction_timeout = connection_timeout
         self.onStarting()
         self.writer_registry = WriterRegistry(self)
         self.serializer = BinarySerializer(self.buffer, self.writer_registry)
 
     def on_new_registry_entry(self, value, idee):
-        pass
+        # int - id, int-length, bytesequences
+        format_string = '!iis'
+        v_encode = value.encode('utf-8')
+        result = pack(format_string, idee, len(v_encode), *v_encode)
+        self.socket.sendall(result)
 
     def onStarting(self):
         while True:
@@ -114,10 +120,7 @@ class TCPWriter:
     def writeMonitoringRecord(self, record):
         record.serialize(self.serializer)
         binarized_record = self.serializer.pack()
-        print(type(binarized_record))
-        print(binarized_record)
         self.socket.sendall(binarized_record)
-
 
     def on_terminating(self):
         pass

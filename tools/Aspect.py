@@ -1,7 +1,7 @@
 import inspect
 from monitoring.Record import (BeforeOperationEvent,
                                AfterOperationFailedEvent, AfterOperationEvent)
-from monitoring.Controller import MonitoringController, WriterController,
+from monitoring.Controller import MonitoringController, WriterController
 from monitorin.Writer import TCPWriter
 import types
 
