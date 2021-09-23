@@ -89,8 +89,8 @@ class BinarySerializer:
         self.format_string += 'f'
 
     def pack(self):
-        print(self.format_string)
-        print(*self.buffer)
+       # print(self.format_string)
+        #print(*self.buffer)
         result = pack(self.format_string, *self.buffer)
         self.format_string = '!'
         self.buffer.clear()
@@ -172,7 +172,7 @@ class BeforeOperationEvent:
         self.class_signature=class_signature
 
     def serialize(self,serializer):
-        print(type(self.timestamp))
+        #print(type(self.timestamp))
         serializer.put_long(self.timestamp)
         serializer.put_int(self.trace_id)
         serializer.put_int(self.order_index)

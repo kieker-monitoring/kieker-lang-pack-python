@@ -94,9 +94,11 @@ class TCPWriter:
 
     def on_new_registry_entry(self, value, idee):
         # int - id, int-length, bytesequences
-        format_string = '!iis'
-        v_encode = value.encode('utf-8')
-        result = pack(format_string, idee, len(v_encode), *v_encode)
+        v_encode = str(value).encode('utf-8')
+        print(f'len: {len(v_encode)}')
+        format_string = f'!iii{len(v_encode)}s'
+        result = pack(format_string, -1, idee, len(v_encode), v_encode)
+        print(f'map: {result}')
         self.socket.sendall(result)
 
     def onStarting(self):
@@ -108,7 +110,7 @@ class TCPWriter:
     def _try_connect_(self):
         try:
             self.socket.connect((self.host, self.port))
-            self.socket.sendall(str.encode("Hello World!"))
+           # self.socket.sendall(str.encode("Hello World!"))
             return True
         except socket.timeout as e:
             logging.error(e)
@@ -120,6 +122,7 @@ class TCPWriter:
     def writeMonitoringRecord(self, record):
         record.serialize(self.serializer)
         binarized_record = self.serializer.pack()
+        print(f'record: {binarized_record}')
         self.socket.sendall(binarized_record)
 
     def on_terminating(self):
