@@ -99,8 +99,10 @@ class TCPWriter:
         format_string = f'!iii{len(v_encode)}s'
         result = pack(format_string, -1, idee, len(v_encode), v_encode)
         print(f'map: {result}')
-        self.socket.sendall(result)
-
+        try:
+            self.socket.sendall(result)
+        except Exception as e:
+            print(repr(e))
     def onStarting(self):
         while True:
             result = self._try_connect_()
@@ -120,11 +122,19 @@ class TCPWriter:
             return False
 
     def writeMonitoringRecord(self, record):
+        record_class_name = (record.__class__.__module__
+                             +record.__class__.__qualname__)
+        self.writer_registry.register(record_class_name)
+        self.serializer.put_string(record_class_name)
+        self.serializer.put_long(record.timestamp)
         record.serialize(self.serializer)
         binarized_record = self.serializer.pack()
         print(f'record: {binarized_record}')
-        self.socket.sendall(binarized_record)
-
+        try:
+            self.socket.sendall(binarized_record)
+        except Exception as e:
+            print(repr(e))
+            pass
     def on_terminating(self):
         pass
 
