@@ -124,8 +124,9 @@ class TCPWriter:
             return False
 
     def writeMonitoringRecord(self, record):
-        record_class_name = (record.__class__.__module__
-                             +record.__class__.__qualname__)
+        java_prefix = 'kieker.common.record.flow.trace.operation.'
+        record_class_name = record.__class__.__name__
+        record_class_name = java_prefix+record_class_name
         self.writer_registry.register(record_class_name)
         self.serializer.put_string(record_class_name)
         self.serializer.put_long(record.timestamp)
