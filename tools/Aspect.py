@@ -2,10 +2,23 @@ import inspect
 from monitoring.Record import (BeforeOperationEvent,
                                AfterOperationFailedEvent, AfterOperationEvent)
 from monitoring.Controller import MonitoringController, WriterController
-from monitorin.Writer import TCPWriter
-import types
+from monitoring.Writer import TCPWriter
 
+import types
+from monitoring.tcp import TCPClient
+tcp = TCPClient()
 monitoring_controller = MonitoringController(WriterController())
+def test(func):
+    def wrapper(*args, **kwargs):
+        print('before')
+        tcp.send('hi'.encode('utf-8'))
+        try:
+            result = func(*args, **kwargs)
+            tcp.send('bye'.encode('utf-8')) 
+        except:
+            pass
+        return result
+    return wrapper
 def instrument(func):
     def wrapper(*args, **kwargs):
         print('before')
@@ -13,7 +26,7 @@ def instrument(func):
         func_module = func.__module__
         class_signature = func.__qualname__.split(".", 1)[0]
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
-               timestamp, "before", None, func.__name__,
+               timestamp, -1, -2, func.__name__,
                f'{func_module}.{class_signature}'))
 
         try:
@@ -22,8 +35,8 @@ def instrument(func):
             print('after failed')
             timestamp = monitoring_controller.time_source_controller.get_time()
             monitoring_controller.new_monitoring_record(
-                AfterOperationFailedEvent(timestamp, "after failed",
-                                          None, func.__name__,
+                AfterOperationFailedEvent(timestamp, -2,
+                                          -1, func.__name__,
                                           f'{func_module}.{class_signature}',
                                           repr(e)))
 
@@ -31,7 +44,7 @@ def instrument(func):
         print('after')
         timestamp = monitoring_controller.time_source_controller.get_time()
         monitoring_controller.new_monitoring_record(AfterOperationEvent(
-            timestamp, "after", None, func.__name__,
+            timestamp, -2, -1, func.__name__,
             f'{func_module}.{class_signature}'))
         return result
     return wrapper
@@ -51,7 +64,7 @@ class Instrumental(type):
             if name == "__init__":
                 continue
             if type(value) is types.FunctionType or type(value) is types.MethodType:
-                attr[name] = instrument(value)
+                attr[name] = test(value)
         return type.__new__(cls, name, bases, attr)
 
 

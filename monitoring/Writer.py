@@ -78,7 +78,8 @@ import socket
 import logging
 from struct import pack
 
-
+from monitoring.tcp import TCPClient
+tcp = TCPClient()
 class TCPWriter:
 
     def __init__(self, host, port, buffer, connection_timeout):
@@ -88,7 +89,8 @@ class TCPWriter:
         self.buffer = buffer
         self.registry_buffer = []
         self.connetction_timeout = connection_timeout
-        self.onStarting()
+       # self.onStarting()
+        #self.tcp = TCPClient()
         self.writer_registry = WriterRegistry(self)
         self.serializer = BinarySerializer(self.buffer, self.writer_registry)
 
@@ -100,7 +102,7 @@ class TCPWriter:
         result = pack(format_string, -1, idee, len(v_encode), v_encode)
         print(f'map: {result}')
         try:
-            self.socket.sendall(result)
+            tcp.send(result)
         except Exception as e:
             print(repr(e))
     def onStarting(self):
@@ -112,7 +114,7 @@ class TCPWriter:
     def _try_connect_(self):
         try:
             self.socket.connect((self.host, self.port))
-           # self.socket.sendall(str.encode("Hello World!"))
+            self.socket.sendall(str.encode("Hello World!"))
             return True
         except socket.timeout as e:
             logging.error(e)
@@ -131,7 +133,7 @@ class TCPWriter:
         binarized_record = self.serializer.pack()
         print(f'record: {binarized_record}')
         try:
-            self.socket.sendall(binarized_record)
+            tcp.send(binarized_record)
         except Exception as e:
             print(repr(e))
             pass
