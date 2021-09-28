@@ -174,7 +174,7 @@ class BeforeOperationEvent:
     def serialize(self,serializer):
         #print(type(self.timestamp))
         serializer.put_long(self.timestamp)
-        serializer.put_int(self.trace_id)
+        serializer.put_long(self.trace_id)
         serializer.put_int(self.order_index)
         serializer.put_string(self.operation_signature)
         serializer.put_string(self.class_signature)
@@ -192,7 +192,7 @@ class AfterOperationEvent:
 
     def serialize(self,serializer):
         serializer.put_long(self.timestamp)
-        serializer.put_int(self.trace_id)
+        serializer.put_long(self.trace_id)
         serializer.put_int(self.order_index)
         serializer.put_string(self.operation_signature)
         serializer.put_string(self.class_signature)
@@ -213,7 +213,7 @@ class AfterOperationFailedEvent:
 
     def serialize(self,serializer):
         serializer.put_long(self.timestamp)
-        serializer.put_int(self.trace_id)
+        serializer.put_long(self.trace_id)
         serializer.put_int(self.order_index)
         serializer.put_string(self.operation_signature)
         serializer.put_string(self.class_signature)
