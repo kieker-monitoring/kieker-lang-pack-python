@@ -54,3 +54,5 @@ class TraceRegistry:
         thread_local.trace = meta_record
         return meta_record
     
+    def unregister_trace(self):
+        thread_local.trace = None

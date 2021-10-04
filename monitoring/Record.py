@@ -151,6 +151,7 @@ class TraceMetadata:
                            else hostname)
         self.parent_trace_id=parent_trace_id
         self.parent_order_id=parent_order_id
+        self.next_order_id = 0
         pass
     def serialize(self,serializer):
         serializer.put_int(self.trace_id)
@@ -159,7 +160,10 @@ class TraceMetadata:
         serializer.put_string(self.hostname)
         serializer.put_int(self.parent_trace_id)
         serializer.put_int(self.parent_order_id)
-        
+    
+    def get_next_order_id(self):
+        self.next_order_id+=1
+        return self.next_order_id
 
 
 class BeforeOperationEvent:

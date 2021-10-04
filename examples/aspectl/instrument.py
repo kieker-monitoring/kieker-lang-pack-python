@@ -5,18 +5,29 @@ import examples.aspectl.run as rn
 from monitoring.Record import (BeforeOperationEvent,
                                AfterOperationFailedEvent, AfterOperationEvent)
 from monitoring.Controller import MonitoringController, WriterController
-import types
 
+from monitoring.traceregistry import TraceRegistry
 monitoring_controller = MonitoringController(WriterController())
+trace_reg = TraceRegistry()
 @aspectlib.Aspect(bind=True)
 def wrapper(cutpoint, *args, **kwargs):
         print('before')
-       
+        trace = trace_reg.get_trace()
+        
+        if(trace is None):
+            trace = trace_reg.register_trace()
+            monitoring_controller.new_monitoring_record(trace)
+        
+        trace_id = trace.trace_id
+            
         timestamp = monitoring_controller.time_source_controller.get_time()
         func_module = cutpoint.__module__
         class_signature = cutpoint.__qualname__.split(".", 1)[0]
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
-               timestamp, -1, -2, cutpoint.__name__,
+               timestamp,
+               trace_id,
+               trace.get_next_order_id(),
+               cutpoint.__name__,
                f'{func_module}.{class_signature}'))
 
         try:
@@ -25,8 +36,10 @@ def wrapper(cutpoint, *args, **kwargs):
             print('after failed')
             timestamp = monitoring_controller.time_source_controller.get_time()
             monitoring_controller.new_monitoring_record(
-                AfterOperationFailedEvent(timestamp, -1,
-                                          -2, cutpoint.__name__,
+                AfterOperationFailedEvent(timestamp,
+                                          trace_id,
+                                          trace.get_next_order_id(), 
+                                          cutpoint.__name__,
                                           f'{func_module}.{class_signature}',
                                           repr(e)))
 
@@ -34,7 +47,10 @@ def wrapper(cutpoint, *args, **kwargs):
         print('after')
         timestamp = monitoring_controller.time_source_controller.get_time()
         monitoring_controller.new_monitoring_record(AfterOperationEvent(
-            timestamp, -1, -2, cutpoint.__name__,
+            timestamp,
+            trace_id,
+            trace.get_next_order_id(),
+            cutpoint.__name__,
             f'{func_module}.{class_signature}'))
         yield aspectlib.Return(result)
 
