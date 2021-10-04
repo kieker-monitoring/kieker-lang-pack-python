@@ -79,7 +79,9 @@ import logging
 from struct import pack
 
 from monitoring.tcp import TCPClient
+from monitoring.util import TimeStamp
 tcp = TCPClient()
+time = TimeStamp()
 class TCPWriter:
 
     def __init__(self, host, port, buffer, connection_timeout):
@@ -129,7 +131,7 @@ class TCPWriter:
         record_class_name = java_prefix+record_class_name
         self.writer_registry.register(record_class_name)
         self.serializer.put_string(record_class_name)
-        self.serializer.put_long(record.timestamp)
+        self.serializer.put_long(time.get_time())
         record.serialize(self.serializer)
         binarized_record = self.serializer.pack()
         print(f'record: {binarized_record}')

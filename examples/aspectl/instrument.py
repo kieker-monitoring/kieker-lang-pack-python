@@ -13,7 +13,7 @@ trace_reg = TraceRegistry()
 def wrapper(cutpoint, *args, **kwargs):
         print('before')
         trace = trace_reg.get_trace()
-        
+        print(trace)
         if(trace is None):
             trace = trace_reg.register_trace()
             monitoring_controller.new_monitoring_record(trace)
@@ -37,8 +37,8 @@ def wrapper(cutpoint, *args, **kwargs):
             timestamp = monitoring_controller.time_source_controller.get_time()
             monitoring_controller.new_monitoring_record(
                 AfterOperationFailedEvent(timestamp,
-                                          trace_id,
-                                          trace.get_next_order_id(), 
+                                          -1
+                                          -2, 
                                           cutpoint.__name__,
                                           f'{func_module}.{class_signature}',
                                           repr(e)))

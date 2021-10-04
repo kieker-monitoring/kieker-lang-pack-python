@@ -6,7 +6,7 @@ from monitoring.Record import TraceMetadata
 
 thread_local = threading.local()
 lock = threading.Lock()
-
+thread_local.trace = None
 class _PointTrace:
     
     def __init__(self, trace_id, order_id):
@@ -18,9 +18,10 @@ class TraceRegistry:
     def __init__(self):
         self.next_order_id = 0
         self.next_trace_id = 0
-        self.unique_id = random.randrange(sys.maxint)
+        #self.unique_id = random.randrange(sys.maxint)
         self.tracemetadata=None
         self.parent_trace = {}
+        
     
     def get_trace(self):
         return thread_local.trace
@@ -39,7 +40,7 @@ class TraceRegistry:
     def register_trace(self):
         #TODO Enclosingtaces and stuff
         thread= threading.current_thread()
-        trace_point = self.get_and_remove_parent_trace_id(thread)
+        trace_point = None
         trace_id = self.get_new_id()
         parent_trace_id = 0
         parent_order_id = 0
@@ -50,7 +51,12 @@ class TraceRegistry:
             parent_trace_id = trace_id
             parent_order_id = -1
             
-        meta_record = TraceMetadata(trace_id, thread.ident, -1, None, parent_trace_id, parent_order_id )
+        meta_record = TraceMetadata(trace_id,
+                                    thread.ident,
+                                    None, 
+                                    None, 
+                                    parent_trace_id, 
+                                    parent_order_id )
         thread_local.trace = meta_record
         return meta_record
     
