@@ -79,7 +79,7 @@ import logging
 from struct import pack
 
 from monitoring.tcp import TCPClient
-from monitoring.util import TimeStamp
+from monitoring.util import TimeStamp, get_prefix
 tcp = TCPClient()
 time = TimeStamp()
 class TCPWriter:
@@ -126,8 +126,10 @@ class TCPWriter:
             return False
 
     def writeMonitoringRecord(self, record):
-        java_prefix = 'kieker.common.record.flow.trace.operation.'
         record_class_name = record.__class__.__name__
+        print(record_class_name)
+        java_prefix = get_prefix(record_class_name)
+        print(java_prefix )
         record_class_name = java_prefix+record_class_name
         self.writer_registry.register(record_class_name)
         self.serializer.put_string(record_class_name)
