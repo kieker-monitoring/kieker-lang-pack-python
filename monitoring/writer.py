@@ -41,14 +41,16 @@ class FileWriter(AbstractMonitoringWriter):
         self._serialize(record, self.writer_registry.get_id(record_class_name))
 
     def _serialize(self, record, idee):
+        # fetch record line
         header = f'{idee};'
         self.string_buffer.append(header)
         record.serialize(self.serializer)
         write_string = ''.join(map(str, self.string_buffer))+'\n'
+        # clear buffer
         self.string_buffer.clear()
+        # write to the file
         file = open(self.file_path, 'a')
         file.write(write_string)
-
         file.close()
 
     def onStarting(self):
@@ -72,12 +74,9 @@ class MappingFileWriter:
         file.close()
 
 
-
-
 import socket
 import logging
 from struct import pack
-
 from monitoring.tcp import TCPClient
 from monitoring.util import TimeStamp, get_prefix
 tcp = TCPClient()
@@ -91,57 +90,39 @@ class TCPWriter:
         self.buffer = buffer
         self.registry_buffer = []
         self.connetction_timeout = connection_timeout
-       # self.onStarting()
-        #self.tcp = TCPClient()
         self.writer_registry = WriterRegistry(self)
         self.serializer = BinarySerializer(self.buffer, self.writer_registry)
 
     def on_new_registry_entry(self, value, idee):
         # int - id, int-length, bytesequences
+        # encode value in utf-8 and pack it with the id
         v_encode = str(value).encode('utf-8')
-        print(f'len: {len(v_encode)}')
         format_string = f'!iii{len(v_encode)}s'
-        result = pack(format_string, -1, idee, len(v_encode), v_encode)
-        print(f'map: {result}')
+        result = pack(format_string, -1, idee, len(v_encode), v_encode)        
         try:
             tcp.send(result)
         except Exception as e:
-            print(repr(e))
-    def onStarting(self):
-        while True:
-            result = self._try_connect_()
-            if result:
-                break
-
-    def _try_connect_(self):
-        try:
-            self.socket.connect((self.host, self.port))
-            self.socket.sendall(str.encode("Hello World!"))
-            return True
-        except socket.timeout as e:
-            logging.error(e)
-            return False
-        except socket.error as e:
-            logging.error(e)
-            return False
+            print(repr(e)) # TODO: better exception handling
 
     def writeMonitoringRecord(self, record):
+        # fetch record name
         record_class_name = record.__class__.__name__
-        print(record_class_name)
         java_prefix = get_prefix(record_class_name)
-        print(java_prefix )
-        record_class_name = java_prefix+record_class_name
+        record_class_name = java_prefix + record_class_name
+        # register class name and append it to the sent record
         self.writer_registry.register(record_class_name)
         self.serializer.put_string(record_class_name)
         self.serializer.put_long(time.get_time())
+        # send record
         record.serialize(self.serializer)
         binarized_record = self.serializer.pack()
-        print(f'record: {binarized_record}')
+        # try to send
         try:
             tcp.send(binarized_record)
         except Exception as e:
+            # TODO: Better exception handling for tcp
             print(repr(e))
-            pass
+            
     def on_terminating(self):
         pass
 

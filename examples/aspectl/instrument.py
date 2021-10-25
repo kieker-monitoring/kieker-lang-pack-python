@@ -7,8 +7,10 @@ from monitoring.Record import (BeforeOperationEvent,
 from monitoring.Controller import MonitoringController, WriterController
 
 from monitoring.traceregistry import TraceRegistry
+
 monitoring_controller = MonitoringController(WriterController())
 trace_reg = TraceRegistry()
+
 @aspectlib.Aspect(bind=True)
 def wrapper(cutpoint, *args, **kwargs):
         print('before')

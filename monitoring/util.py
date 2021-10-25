@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import time
-import calendar
 
 def get_prefix(class_name):
     events = ["BeforeOperationEvent", "AfterOperationEvent", "AfterOperationFailedEvent"]
