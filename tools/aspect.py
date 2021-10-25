@@ -1,8 +1,8 @@
 import inspect
-from monitoring.Record import (BeforeOperationEvent,
+from monitoring.record import (BeforeOperationEvent,
                                AfterOperationFailedEvent, AfterOperationEvent)
-from monitoring.Controller import MonitoringController, WriterController
-from monitoring.Writer import TCPWriter
+from monitoring.controller import MonitoringController, WriterController
+from monitoring.writer import TCPWriter
 
 import types
 from monitoring.tcp import TCPClient
@@ -29,8 +29,7 @@ def decorate_members(mod):
 
 def instrument(func):
     def wrapper(*args, **kwargs):
-        # print (args)
-        print('before')
+        # before routine
         timestamp = monitoring_controller.time_source_controller.get_time()
         func_module = func.__module__
         class_signature = func.__qualname__.split(".", 1)[0]
@@ -41,7 +40,7 @@ def instrument(func):
         try:
             result = func(*args, **kwargs)
         except Exception as e:
-            print('after failed')
+            # failed routine
             timestamp = monitoring_controller.time_source_controller.get_time()
             monitoring_controller.new_monitoring_record(
                 AfterOperationFailedEvent(timestamp, -2,
@@ -50,7 +49,7 @@ def instrument(func):
                                           repr(e)))
 
             raise e
-        print('after')
+        # after routine
         timestamp = monitoring_controller.time_source_controller.get_time()
         monitoring_controller.new_monitoring_record(AfterOperationEvent(
             timestamp, -2, -1, func.__name__,

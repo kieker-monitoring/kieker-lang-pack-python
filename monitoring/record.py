@@ -89,8 +89,8 @@ class BinarySerializer:
         self.format_string += 'f'
 
     def pack(self):
-        print(self.format_string)
-        print(*self.buffer)
+      #  print(self.format_string)
+       # print(*self.buffer)
         result = pack(self.format_string, *self.buffer)
         self.format_string = '!'
         self.buffer.clear()

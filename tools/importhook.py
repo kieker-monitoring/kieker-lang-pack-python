@@ -1,7 +1,7 @@
 
 import importlib
 import sys
-from tools.Aspect import decorate_members
+from tools.aspect import decorate_members
 class PostImportFinder:
     def __init__(self, param, exclusions):
         self._skip=set()

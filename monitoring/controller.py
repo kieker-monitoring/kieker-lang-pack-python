@@ -62,7 +62,7 @@ class TimeSourceController(AbstractController):
         return self.time_source.get_time()
 
 
-from monitoring.Writer import FileWriter, TCPWriter
+from monitoring.writer import FileWriter, TCPWriter
 
 
 class WriterController:

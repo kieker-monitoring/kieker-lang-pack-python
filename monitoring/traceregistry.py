@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import threading
-import random
-import sys
+
 from socket import *
-from monitoring.Record import TraceMetadata
+from monitoring.record import TraceMetadata
 
 thread_local = threading.local()
 lock = threading.Lock()

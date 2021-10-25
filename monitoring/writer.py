@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
-from monitoring.Record import Serializer, BinarySerializer
+from monitoring.record import Serializer, BinarySerializer
 from monitoring.fileregistry import WriterRegistry
 
 class AbstractMonitoringWriter(ABC):
