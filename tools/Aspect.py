@@ -6,21 +6,30 @@ from monitoring.Writer import TCPWriter
 
 import types
 from monitoring.tcp import TCPClient
-tcp = TCPClient()
+#tcp = TCPClient()
 monitoring_controller = MonitoringController(WriterController())
-def test(func):
-    def wrapper(*args, **kwargs):
-        print('before')
-        tcp.send('hi'.encode('utf-8'))
-        try:
-            result = func(*args, **kwargs)
-            tcp.send('bye'.encode('utf-8')) 
-        except:
-            pass
-        return result
-    return wrapper
+def decorate_members(mod):
+    # Decorate classes
+    #print(f'importing {mod}')
+    #for name, member in getmembers(mod, isclass):
+    #    print(f'apply decorator for: {name},{member} ')
+    #    if(member.__module__==mod.__name__):
+    #        print(member.__module__)
+    #        print(mod.__name__)
+    #        setattr(mod, name, _class_decorator(member))
+        #    print('class')
+    if mod.__spec__.name =='mainwindow':
+        print('skip')
+        return
+    
+    for name, member in inspect.getmembers(mod, inspect.isfunction):
+        if(member.__module__==mod.__spec__.name):
+            mod.__dict__[name] = instrument(member)
+
+
 def instrument(func):
     def wrapper(*args, **kwargs):
+        # print (args)
         print('before')
         timestamp = monitoring_controller.time_source_controller.get_time()
         func_module = func.__module__
@@ -99,11 +108,14 @@ class ModuleAspectizer:
         try:
             for module in self.modules:
                 for name, value in inspect.getmembers(module, inspect.isclass):
-                    setattr(module, name, _class_decorator(value))
+                    if(inspect.getmodule(value)==module):
+                        if (value ==self):
+                            continue
+                        setattr(module, name, _class_decorator(value))
         except (ValueError, TypeError):
             print("No modules to decorate")
 
     def instrumentize(self):
         """ instrumentizes all modules contained in ModuleAspectizer.modules"""
-        self._decorate_module_functions()
+        #self._decorate_module_functions()
         self._decorate_classes()

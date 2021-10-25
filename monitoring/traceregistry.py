@@ -2,6 +2,7 @@
 import threading
 import random
 import sys
+from socket import *
 from monitoring.Record import TraceMetadata
 
 thread_local = threading.local()
