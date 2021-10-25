@@ -11,12 +11,16 @@ monitoring_controller = MonitoringController(WriterController())
 def decorate_members(mod):
     # Decorate classes
     #print(f'importing {mod}')
-    #for name, member in getmembers(mod, isclass):
-    #    print(f'apply decorator for: {name},{member} ')
-    #    if(member.__module__==mod.__name__):
-    #        print(member.__module__)
-    #        print(mod.__name__)
-    #        setattr(mod, name, _class_decorator(member))
+    for name, member in inspect.getmembers(mod, inspect.isclass):
+        
+        if(member.__module__==mod.__spec__.name):# skip referenced modules
+           # print(f'apply decorator for: {name},{member} ')
+            for v, k in inspect.getmembers(member, inspect.ismethod):
+                if  inspect.isclass(k.__self__):
+                    pass
+                    #setattr(member, v , instrument_class_method(k))
+                else:    
+                    setattr(member, v, instrument_method(k))
         #    print('class')
     if mod.__spec__.name =='mainwindow':
         print('skip')
@@ -57,6 +61,73 @@ def instrument(func):
         return result
     return wrapper
 
+def instrument_class_method(func):
+    def wrapper(*args, **kwargs):
+        # before routine
+        timestamp = monitoring_controller.time_source_controller.get_time()
+        func_module = func.__module__
+        class_signature = func.__qualname__.split(".", 1)[0]
+        monitoring_controller.new_monitoring_record(BeforeOperationEvent(
+               timestamp, -1, -2, func.__name__,
+               f'{func_module}.{class_signature}'))
+
+        try:
+         
+            new_args= list(args)
+            if len(new_args)>1:
+                new_args = tuple(new_args[1:])
+                result = func(*new_args, **kwargs)
+            elif len(new_args)==1:
+                result = func(*args, **kwargs)
+            else:
+                result = func(*args, **kwargs)
+        except Exception as e:
+            # failed routine
+            timestamp = monitoring_controller.time_source_controller.get_time()
+            monitoring_controller.new_monitoring_record(
+                AfterOperationFailedEvent(timestamp, -2,
+                                          -1, func.__name__,
+                                          f'{func_module}.{class_signature}',
+                                          repr(e)))
+
+            raise e
+        # after routine
+        timestamp = monitoring_controller.time_source_controller.get_time()
+        monitoring_controller.new_monitoring_record(AfterOperationEvent(
+            timestamp, -2, -1, func.__name__,
+            f'{func_module}.{class_signature}'))
+        return result
+    return wrapper
+
+def instrument_method(func):
+    def wrapper(self, *args, **kwargs):
+        # before routine
+        timestamp = monitoring_controller.time_source_controller.get_time()
+        func_module = func.__module__
+        class_signature = func.__qualname__.split(".", 1)[0]
+        monitoring_controller.new_monitoring_record(BeforeOperationEvent(
+               timestamp, -1, -2, func.__name__,
+               f'{func_module}.{class_signature}'))
+
+        try:
+            result = func(self, *args, **kwargs)
+        except Exception as e:
+            # failed routine
+            timestamp = monitoring_controller.time_source_controller.get_time()
+            monitoring_controller.new_monitoring_record(
+                AfterOperationFailedEvent(timestamp, -2,
+                                          -1, func.__name__,
+                                          f'{func_module}.{class_signature}',
+                                          repr(e)))
+
+            raise e
+        # after routine
+        timestamp = monitoring_controller.time_source_controller.get_time()
+        monitoring_controller.new_monitoring_record(AfterOperationEvent(
+            timestamp, -2, -1, func.__name__,
+            f'{func_module}.{class_signature}'))
+        return result
+    return wrapper
 
 def _class_decorator(cls):
     for name, value in inspect.getmembers(cls, lambda x: inspect.isfunction(x) or inspect.ismethod(x)):
