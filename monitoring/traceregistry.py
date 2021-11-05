@@ -4,9 +4,12 @@ import threading
 from socket import *
 from monitoring.record import TraceMetadata
 
-thread_local = threading.local()
+
 lock = threading.Lock()
-thread_local.trace = None
+thread_local = threading.local()
+
+
+
 class _PointTrace:
     
     def __init__(self, trace_id, order_id):
@@ -15,21 +18,29 @@ class _PointTrace:
 
 
 class TraceRegistry:
+
     def __init__(self):
+        print('traceregistry called!')
         self.next_order_id = 0
         self.next_trace_id = 0
         #self.unique_id = random.randrange(sys.maxint)
         self.tracemetadata=None
         self.parent_trace = {}
-        
+ 
     
     def get_trace(self):
+        if not hasattr(thread_local, 'trace'):
+            thread_local.trace = None
         return thread_local.trace
     
     def get_new_id(self):
-        lock.acquire()
-        result = self.next_trace_id=+1
-        lock.release()
+        with lock:
+            print(f'previous: {self.next_trace_id}')
+            tmp = self.next_trace_id
+            self.next_trace_id = tmp + 1
+            assert tmp < self.next_trace_id
+            print(f' after: {self.next_trace_id}')
+            result = self.next_trace_id
         return 0|result
         
     def get_and_remove_parent_trace_id(self, thread):

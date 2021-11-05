@@ -6,8 +6,23 @@ from monitoring.writer import TCPWriter
 
 import types
 from monitoring.tcp import TCPClient
-#tcp = TCPClient()
+from monitoring.traceregistry import TraceRegistry
+
 monitoring_controller = MonitoringController(WriterController())
+trace_reg = TraceRegistry()
+
+def isclassmethod(method):
+    bound_to = getattr(method, '__self__', None)
+    if not isinstance(bound_to, type):
+        # must be bound to a class
+        return False
+    name = method.__name__
+    for cls in bound_to.__mro__:
+        descriptor = vars(cls).get(name)
+        if descriptor is not None:
+            return isinstance(descriptor, classmethod)
+    return False
+
 def decorate_members(mod):
     # Decorate classes
     #print(f'importing {mod}')
@@ -16,11 +31,13 @@ def decorate_members(mod):
         if(member.__module__==mod.__spec__.name):# skip referenced modules
            # print(f'apply decorator for: {name},{member} ')
             for v, k in inspect.getmembers(member, inspect.ismethod):
-                if  inspect.isclass(k.__self__):
+                if  isclassmethod(k):
+                    print("@classmethod here")
                     pass
-                    #setattr(member, v , instrument_class_method(k))
-                else:    
-                    setattr(member, v, instrument_method(k))
+                   # k.__wrapped__=instrument_method(k.__wrapped__)
+                else:
+                    print('normal method')
+                    setattr(member, v, instrument(k))
         #    print('class')
     if mod.__spec__.name =='mainwindow':
         print('skip')
@@ -34,11 +51,65 @@ def decorate_members(mod):
 def instrument(func):
     def wrapper(*args, **kwargs):
         # before routine
+        trace = trace_reg.get_trace()
+        if(trace is None):
+            trace = trace_reg.register_trace()
+            monitoring_controller.new_monitoring_record(trace)
+        
+        trace_id = trace.trace_id
+        
         timestamp = monitoring_controller.time_source_controller.get_time()
         func_module = func.__module__
         class_signature = func.__qualname__.split(".", 1)[0]
+        qualname = (func.__module__ if class_signature == func.__name__ else 
+                    f'{func_module}.{class_signature}')
+        #class_signature = func.__class__.__name__
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
-               timestamp, -1, -2, func.__name__,
+               timestamp, trace_id, trace.get_next_order_id(), func.__name__,
+               qualname))
+
+        try:
+            result = func(*args, **kwargs)
+        except Exception as e:
+            # failed routine
+            timestamp = monitoring_controller.time_source_controller.get_time()
+            monitoring_controller.new_monitoring_record(
+                AfterOperationFailedEvent(timestamp, trace_id, 
+                                          trace.get_next_order_id(),
+                                          func.__name__,
+                                          qualname,
+                                          repr(e)))
+
+            raise e
+        # after routine
+        timestamp = monitoring_controller.time_source_controller.get_time()
+        monitoring_controller.new_monitoring_record(AfterOperationEvent(
+            timestamp, 
+            trace_id, 
+            trace.get_next_order_id(), 
+            func.__name__,
+            qualname))
+        return result
+    return wrapper
+
+def instrument_class_method(func):
+    def wrapper(*args, **kwargs):
+        
+        trace = trace_reg.get_trace()
+        print(trace)
+        if(trace is None):
+            trace = trace_reg.register_trace()
+            monitoring_controller.new_monitoring_record(trace)
+        
+        trace_id = trace.trace_id
+        
+        # before routine
+        timestamp = monitoring_controller.time_source_controller.get_time()
+        func_module = func.__module__
+        class_signature = func.__qualname__.split(".", 1)[0]
+        #class_signature = func.__class__.__name__
+        monitoring_controller.new_monitoring_record(BeforeOperationEvent(
+               timestamp, trace_id, trace.get_next_order_id(), func.__name__,
                f'{func_module}.{class_signature}'))
 
         try:
@@ -47,8 +118,8 @@ def instrument(func):
             # failed routine
             timestamp = monitoring_controller.time_source_controller.get_time()
             monitoring_controller.new_monitoring_record(
-                AfterOperationFailedEvent(timestamp, -2,
-                                          -1, func.__name__,
+                AfterOperationFailedEvent(timestamp, trace_id,
+                                          trace.get_next_order_id(), func.__name__,
                                           f'{func_module}.{class_signature}',
                                           repr(e)))
 
@@ -56,57 +127,30 @@ def instrument(func):
         # after routine
         timestamp = monitoring_controller.time_source_controller.get_time()
         monitoring_controller.new_monitoring_record(AfterOperationEvent(
-            timestamp, -2, -1, func.__name__,
+            timestamp, trace_id, trace.get_next_order_id(), func.__name__,
             f'{func_module}.{class_signature}'))
         return result
     return wrapper
 
-def instrument_class_method(func):
-    def wrapper(*args, **kwargs):
-        # before routine
-        timestamp = monitoring_controller.time_source_controller.get_time()
-        func_module = func.__module__
-        class_signature = func.__qualname__.split(".", 1)[0]
-        monitoring_controller.new_monitoring_record(BeforeOperationEvent(
-               timestamp, -1, -2, func.__name__,
-               f'{func_module}.{class_signature}'))
 
-        try:
-         
-            new_args= list(args)
-            if len(new_args)>1:
-                new_args = tuple(new_args[1:])
-                result = func(*new_args, **kwargs)
-            elif len(new_args)==1:
-                result = func(*args, **kwargs)
-            else:
-                result = func(*args, **kwargs)
-        except Exception as e:
-            # failed routine
-            timestamp = monitoring_controller.time_source_controller.get_time()
-            monitoring_controller.new_monitoring_record(
-                AfterOperationFailedEvent(timestamp, -2,
-                                          -1, func.__name__,
-                                          f'{func_module}.{class_signature}',
-                                          repr(e)))
 
-            raise e
-        # after routine
-        timestamp = monitoring_controller.time_source_controller.get_time()
-        monitoring_controller.new_monitoring_record(AfterOperationEvent(
-            timestamp, -2, -1, func.__name__,
-            f'{func_module}.{class_signature}'))
-        return result
-    return wrapper
 
 def instrument_method(func):
     def wrapper(self, *args, **kwargs):
+        
+        trace = trace_reg.get_trace()
+
+        if(trace is None):
+            trace = trace_reg.register_trace()
+            monitoring_controller.new_monitoring_record(trace)
+        
+        trace_id = trace.trace_id
         # before routine
         timestamp = monitoring_controller.time_source_controller.get_time()
         func_module = func.__module__
-        class_signature = func.__qualname__.split(".", 1)[0]
+        class_signature = func.__qualname__.rsplit(".", 1)[0]
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
-               timestamp, -1, -2, func.__name__,
+               timestamp, trace_id, trace.get_next_order_id(), func.__name__,
                f'{func_module}.{class_signature}'))
 
         try:
@@ -115,8 +159,8 @@ def instrument_method(func):
             # failed routine
             timestamp = monitoring_controller.time_source_controller.get_time()
             monitoring_controller.new_monitoring_record(
-                AfterOperationFailedEvent(timestamp, -2,
-                                          -1, func.__name__,
+                AfterOperationFailedEvent(timestamp, trace_id,
+                                          trace.get_next_order_id(), func.__name__,
                                           f'{func_module}.{class_signature}',
                                           repr(e)))
 
@@ -124,7 +168,7 @@ def instrument_method(func):
         # after routine
         timestamp = monitoring_controller.time_source_controller.get_time()
         monitoring_controller.new_monitoring_record(AfterOperationEvent(
-            timestamp, -2, -1, func.__name__,
+            timestamp, trace_id, trace.get_next_order_id(), func.__name__,
             f'{func_module}.{class_signature}'))
         return result
     return wrapper
@@ -143,7 +187,7 @@ class Instrumental(type):
             if name == "__init__":
                 continue
             if type(value) is types.FunctionType or type(value) is types.MethodType:
-                attr[name] = test(value)
+                attr[name] = instrument(value)
         return type.__new__(cls, name, bases, attr)
 
 
