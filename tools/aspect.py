@@ -24,6 +24,8 @@ def isclassmethod(method):
     return False
 
 def decorate_members(mod):
+    class_redecorator = redecorate(instrument_class_method)
+    static_redecorator =  redecorate (instrument)
     # Decorate classes
     #print(f'importing {mod}')
     for name, member in inspect.getmembers(mod, inspect.isclass):
@@ -31,13 +33,15 @@ def decorate_members(mod):
         if(member.__module__==mod.__spec__.name):# skip referenced modules
            # print(f'apply decorator for: {name},{member} ')
             for v, k in inspect.getmembers(member, inspect.ismethod):
-                if  isclassmethod(k):
-                    print("@classmethod here")
-                    pass
-                   # k.__wrapped__=instrument_method(k.__wrapped__)
-                else:
-                    print('normal method')
-                    setattr(member, v, instrument(k))
+                try:
+                    if  isinstance(member.__dict__[v], classmethod):
+                        setattr(member,v,class_redecorator(k))
+                    elif isinstance(member.__dict__[v], staticmethod):
+                        setattr(member,v, static_redecorator(k))
+                    else:
+                        setattr(member, v, instrument(k))
+                except KeyError:
+                    print(f'Tried to decorate {v} but method is not found among thefields')
         #    print('class')
     if mod.__spec__.name =='mainwindow':
         print('skip')
@@ -92,6 +96,26 @@ def instrument(func):
         return result
     return wrapper
 
+
+def redecorate(redecorator):
+    ''' Originally posted here: 
+    https://stackoverflow.com/a/9540553/12558231
+    '''
+    def wrapper(f):
+        info = (f, None)
+        if (isinstance(f, classmethod)):
+            info = (f.__func__, classmethod)
+        elif (isinstance(f, staticmethod)):
+            info = (f.__func__, staticmethod)
+        elif (isinstance(f, property)):
+            info = (f.fget, property)
+
+        if (info[1] is not None):
+            return info[1](redecorator(info[0]))
+        return redecorator(info[0])
+    return wrapper
+
+
 def instrument_class_method(func):
     def wrapper(*args, **kwargs):
         
@@ -113,7 +137,12 @@ def instrument_class_method(func):
                f'{func_module}.{class_signature}'))
 
         try:
+            args_as_list = list(args)
+            args_as_list.pop(0)
+            args = tuple(args_as_list)
+           # print(args)
             result = func(*args, **kwargs)
+           
         except Exception as e:
             # failed routine
             timestamp = monitoring_controller.time_source_controller.get_time()
