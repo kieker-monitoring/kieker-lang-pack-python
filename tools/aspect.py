@@ -24,36 +24,34 @@ def isclassmethod(method):
     return False
 
 def decorate_members(mod):
-    class_redecorator = redecorate(instrument_class_method)
-    static_redecorator =  redecorate (instrument)
+    class_redecorator = redecorate(instrument)
+    #static_redecorator =  redecorate (instrument)
     # Decorate classes
-    #print(f'importing {mod}')
     for name, member in inspect.getmembers(mod, inspect.isclass):
         
         if(member.__module__==mod.__spec__.name):# skip referenced modules
-           # print(f'apply decorator for: {name},{member} ')
             for v, k in inspect.getmembers(member, inspect.ismethod):
                 try:
                     if  isinstance(member.__dict__[v], classmethod):
-                        setattr(member,v,class_redecorator(k))
+                        setattr(member,v,class_redecorator(k, True))
                     elif isinstance(member.__dict__[v], staticmethod):
-                        setattr(member,v, static_redecorator(k))
+                        setattr(member,v, class_redecorator(k, False))
                     else:
-                        setattr(member, v, instrument(k))
+                        setattr(member, v, instrument(k, False))
                 except KeyError:
                     print(f'Tried to decorate {v} but method is not found among thefields')
-        #    print('class')
-    if mod.__spec__.name =='mainwindow':
-        print('skip')
-        return
+
+   # if mod.__spec__.name =='mainwindow':
+   #     print('skip')
+   #     return
     
     for name, member in inspect.getmembers(mod, inspect.isfunction):
         if(member.__module__==mod.__spec__.name):
-            mod.__dict__[name] = instrument(member)
+            mod.__dict__[name] = instrument(member, False)
 
 
-def instrument(func):
-    def wrapper(*args, **kwargs):
+def instrument(func, is_class_method):
+    def in_wrapper(*args, **kwargs):
         # before routine
         trace = trace_reg.get_trace()
         if(trace is None):
@@ -73,6 +71,10 @@ def instrument(func):
                qualname))
 
         try:
+            if is_class_method:
+                args_as_list = list(args)
+                args_as_list.pop(0)
+                args = tuple(args_as_list)
             result = func(*args, **kwargs)
         except Exception as e:
             # failed routine
@@ -94,14 +96,14 @@ def instrument(func):
             func.__name__,
             qualname))
         return result
-    return wrapper
+    return in_wrapper
 
 
 def redecorate(redecorator):
     ''' Originally posted here: 
     https://stackoverflow.com/a/9540553/12558231
     '''
-    def wrapper(f):
+    def wrapper(f, flag):
         info = (f, None)
         if (isinstance(f, classmethod)):
             info = (f.__func__, classmethod)
@@ -111,13 +113,13 @@ def redecorate(redecorator):
             info = (f.fget, property)
 
         if (info[1] is not None):
-            return info[1](redecorator(info[0]))
-        return redecorator(info[0])
+            return info[1](redecorator(info[0], flag))
+        return redecorator(info[0], flag)
     return wrapper
 
 
 def instrument_class_method(func):
-    def wrapper(*args, **kwargs):
+    def re_wrapper(*args, **kwargs):
         
         trace = trace_reg.get_trace()
         print(trace)
@@ -159,7 +161,7 @@ def instrument_class_method(func):
             timestamp, trace_id, trace.get_next_order_id(), func.__name__,
             f'{func_module}.{class_signature}'))
         return result
-    return wrapper
+    return re_wrapper
 
 
 
