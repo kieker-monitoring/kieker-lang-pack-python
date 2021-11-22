@@ -12,12 +12,12 @@ class Serializer:
             self.string_byte.append(str(value)+"; ")
         else:
             self.string_byte.append(value)
-   
+
     def put_boolean(self, boolean):
-         self.string_byte.append(str(boolean)+"; ")
+        self.string_byte.append(str(boolean)+"; ")
 
     def put_byte(self, value):
-         self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value)+"; ")
 
     def put_int(self, value):
         self.string_byte.append(str(value)+"; ")
@@ -32,16 +32,18 @@ class Serializer:
         self.string_byte.append(str(value)+"; ")
 
     def put_char(self, value):
-         self.string_byte.append(str(value)+"; ")
-    
+        self.string_byte.append(str(value)+"; ")
+
     def put_short(self, value):
-       self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value)+"; ")
 
     def put_float(self, value):
-       self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value)+"; ")
 
     def pack(self):
         pass
+
+
 class BinarySerializer:
 
     def __init__(self, buffer, string_registry):
@@ -71,7 +73,7 @@ class BinarySerializer:
 
     def put_string(self, value):
         if value is '\n':
-           return
+            return
         string_id = self.string_registry.get_id(value)
         self.buffer.append(string_id)
         self.format_string += 'i'
@@ -89,12 +91,11 @@ class BinarySerializer:
         self.format_string += 'f'
 
     def pack(self):
-      #  print(self.format_string)
-       # print(*self.buffer)
         result = pack(self.format_string, *self.buffer)
         self.format_string = '!'
         self.buffer.clear()
         return result
+
 
 class OperationExecutionRecord:
 
@@ -121,8 +122,8 @@ class OperationExecutionRecord:
         self.hostname = self.__NO_HOSTNAME__ if hostname is None else hostname
         self.eoi = eoi
         self.ess = ess
-        
-        def serialize(self,serializer):
+
+        def serialize(self, serializer):
             serializer.put(self.operation_signature)
             serializer.put(self.session_id)
             serializer.put(self.tin)
@@ -137,70 +138,70 @@ class TraceMetadata:
     __NO_PARENT_ORDER_INDEX__ = -1
     __NO_SESSION_ID__ = "<no-sesion-id>"
     __NO_HOSTNAME__ = "<default-host>"
-    def __init__(self,trace_id, thread_id,
+
+    def __init__(self, trace_id, thread_id,
                  session_id, hostname,
                  parent_trace_id,
                  parent_order_id):
-        self.trace_id=trace_id
-        self.thread_id=thread_id
+        self.trace_id = trace_id
+        self.thread_id = thread_id
         self.session_id = (self.__NO_SESSION_ID__
                            if session_id is None
                            else session_id)
         self.hostname = (self.__NO_HOSTNAME__
-                           if hostname is None
-                           else hostname)
-        self.parent_trace_id=parent_trace_id
-        self.parent_order_id=parent_order_id
+                         if hostname is None
+                         else hostname)
+        self.parent_trace_id = parent_trace_id
+        self.parent_order_id = parent_order_id
         self.next_order_id = 0
         pass
-    def serialize(self,serializer):
+
+    def serialize(self, serializer):
         serializer.put_long(self.trace_id)
         serializer.put_long(self.thread_id)
         serializer.put_string(self.session_id)
         serializer.put_string(self.hostname)
         serializer.put_long(self.parent_trace_id)
         serializer.put_int(self.parent_order_id)
-    
+
     def get_next_order_id(self):
-        self.next_order_id+=1
+        self.next_order_id += 1
         return self.next_order_id
 
 
 class BeforeOperationEvent:
-    def __init__(self, timestamp, trace_id, order_index, 
+    def __init__(self, timestamp, trace_id, order_index,
                  operation_signature, class_signature):
         self.timestamp = timestamp
         self.trace_id = trace_id
-        self.order_index=order_index
-        self.operation_signature=operation_signature
-        self.class_signature=class_signature
+        self.order_index = order_index
+        self.operation_signature = operation_signature
+        self.class_signature = class_signature
 
-    def serialize(self,serializer):
-        #print(type(self.timestamp))
+    def serialize(self, serializer):
         serializer.put_long(self.timestamp)
         serializer.put_long(self.trace_id)
         serializer.put_int(self.order_index)
         serializer.put_string(self.operation_signature)
         serializer.put_string(self.class_signature)
-        
 
 
 class AfterOperationEvent:
-    def __init__(self, timestamp, trace_id, order_index, 
+
+    def __init__(self, timestamp, trace_id, order_index,
                  operation_signature, class_signature):
         self.timestamp = timestamp
         self.trace_id = trace_id
-        self.order_index=order_index
-        self.operation_signature=operation_signature
-        self.class_signature=class_signature
+        self.order_index = order_index
+        self.operation_signature = operation_signature
+        self.class_signature = class_signature
 
-    def serialize(self,serializer):
+    def serialize(self, serializer):
         serializer.put_long(self.timestamp)
         serializer.put_long(self.trace_id)
         serializer.put_int(self.order_index)
         serializer.put_string(self.operation_signature)
         serializer.put_string(self.class_signature)
-        
 
 
 class AfterOperationFailedEvent:
@@ -209,17 +210,15 @@ class AfterOperationFailedEvent:
                  operation_signature, class_signature, exception):
         self.timestamp = timestamp
         self.trace_id = trace_id
-        self.order_index=order_index
-        self.operation_signature=operation_signature
-        self.class_signature=class_signature
-        self.exception=exception
+        self.order_index = order_index
+        self.operation_signature = operation_signature
+        self.class_signature = class_signature
+        self.exception = exception
 
-
-    def serialize(self,serializer):
+    def serialize(self, serializer):
         serializer.put_long(self.timestamp)
         serializer.put_long(self.trace_id)
         serializer.put_int(self.order_index)
         serializer.put_string(self.operation_signature)
         serializer.put_string(self.class_signature)
         serializer.put_string(self.exception)
-        

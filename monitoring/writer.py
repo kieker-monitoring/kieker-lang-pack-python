@@ -75,10 +75,14 @@ class MappingFileWriter:
 
 
 import socket
-import logging
 from struct import pack
 from monitoring.tcp import TCPClient
 from monitoring.util import TimeStamp, get_prefix
+
+# IF WE INSTANTIATE A SOCKET INSIDE OF A CLASS
+# THE DATA IS NOT SENT FOR SOME REASEON.
+# THIS IS A TERRIBLE SOLUTION BUT
+# WE KEEP IT FOR NOW: FIX AS SOON AS POSSIBLE.
 tcp = TCPClient()
 time = TimeStamp()
 class TCPWriter:
@@ -98,11 +102,11 @@ class TCPWriter:
         # encode value in utf-8 and pack it with the id
         v_encode = str(value).encode('utf-8')
         format_string = f'!iii{len(v_encode)}s'
-        result = pack(format_string, -1, idee, len(v_encode), v_encode)        
+        result = pack(format_string, -1, idee, len(v_encode), v_encode)
         try:
             tcp.send(result)
         except Exception as e:
-            print(repr(e)) # TODO: better exception handling
+            print(repr(e))  # TODO: better exception handling
 
     def writeMonitoringRecord(self, record):
         # fetch record name
@@ -122,9 +126,11 @@ class TCPWriter:
         except Exception as e:
             # TODO: Better exception handling for tcp
             print(repr(e))
-            
+
     def on_terminating(self):
+        # TODO ?
         pass
 
     def to_string(self):
+        # TODO ?
         pass
