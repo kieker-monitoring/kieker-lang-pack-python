@@ -25,6 +25,5 @@ class WriterRegistry:
             idee=self.next_id+1
             self.next_id+=1
             self.storage.update({value: idee})
-           # print(self.storage)
             self.listener.on_new_registry_entry(value, idee)
 
