@@ -23,6 +23,9 @@ def isclassmethod(method): # We do not use it anymore, but might be useful again
 
 
 def decorate_members(mod):
+    '''
+    Decorates methods and global functions of the given module
+    '''
     class_redecorator = redecorate(instrument)
     # Decorate classes
     for name, member in inspect.getmembers(mod, inspect.isclass):
@@ -43,7 +46,17 @@ def decorate_members(mod):
             mod.__dict__[name] = instrument(member, False)
 
 
-def instrument(func, is_class_method):
+def instrument(func, is_class_method = False):
+    '''
+    Decorator that instruments global functions and methods.
+    ---------------
+    is_class_method: bool
+        Set to true if the method is annotated with @classmethod
+        Default is False
+        
+        If used manually, simply put '@instrument' under the @classmethod
+        annotation. 
+    '''
     def in_wrapper(*args, **kwargs):
         # before routine
         trace = trace_reg.get_trace()
@@ -124,12 +137,13 @@ class Instrumental(type):
         for name, value in attr.items():
             if name == "__init__":
                 continue
-            if type(value) is types.FunctionType or type(value) is types.MethodType:
-                attr[name] = instrument(value)
+            if (isinstance(value, types.FunctionType) or
+                isinstance(value, types.MethodType)):
+                attr[name] = instrument(value, False)
         return type.__new__(cls, name, bases, attr)
 
 
-class ModuleAspectizer:  # OBSOLETE AND USELESS. 
+class ModuleAspectizer:  # OBSOLETE AND USELESS.
     """This class collects modules and automatically instruments them"""
 
     def __init__(self):
