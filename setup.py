@@ -5,19 +5,19 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="test-kieker",
+    name="kieker-monitoring-for-python",
     version="0.0.1",
-    author="ME",
-    author_email="author@example.com",
-    description="A small example package",
+    author="Serafim Simonov",
+    author_email="stu126367@mail.uni-kiel.de",
+    description="Implementation of kieker-monitoring for pyhton",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache License",
         "Operating System :: OS Independent",
     ],
     #package_dir={"": "monitoring", "tools": "tools"},
     packages=setuptools.find_packages(include=["monitoring", "monitoring.", "tools", "tools."]),
-    python_requires=">=3.6",
+    python_requires=">=3.3",
 )
