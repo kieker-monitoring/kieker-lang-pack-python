@@ -2,8 +2,8 @@
 
 PATH_KIEKER='/home/serafim/Desktop/kieker-lang-pack-python'
 PATH_SPYDER='/home/serafim/Desktop/spyder'
-PATH_COLLECTOR='/home/serafim/Desktop/collector-1.15-SNAPSHOT/bin/collector.sh'
-
+PATH_COLLECTOR='/home/serafim/Desktop/collector-1.15-SNAPSHOT/bin/collector'
+PATH_CONFIG='/home/serafim/Desktop/collector-1.15-SNAPSHOT/bin/config.txt'
 
 cd $PATH_KIEKER
 python3 -m build
@@ -20,11 +20,11 @@ then
     
 elif [[ $1 == -kieker ]]
 then
-     gnome-terminal -- bash -c "${PATH_COLLECTOR} -c config.txt"
+     gnome-terminal -- bash -c "${PATH_COLLECTOR} -c ${PATH_XONFIG}"
      echo"wait 45 seconds to let collector initialize properly"
      sleep 45s
      cd $PATH_SPYDER
-     python3 bootstrap
+     python3 bootstrap.py
 
 else
 	echo "Wrong command. Supported commands: [-nc],[-kieker]"

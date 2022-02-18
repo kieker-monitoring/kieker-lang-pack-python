@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import threading
 
-from socket import *
+#from socket import *
 from monitoring.record import TraceMetadata
 
 

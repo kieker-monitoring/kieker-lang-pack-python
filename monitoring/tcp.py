@@ -3,10 +3,18 @@ import socket
 class TCPClient:
     
     def __init__(self):
-        self.port=65432
-        self.host ='127.0.0.1'
+        self.port = None
+        self.host = None
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((self.host, self.port))
+        
+    
+    def set_port_and_host(self, port, host):
+        self.port = port
+        self.host = host
     
     def send(self, data):
         self.socket.sendall(data)
+    
+    def connect(self):
+        self.socket.connect_ex((self.host, self.port))
+        
