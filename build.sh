@@ -20,7 +20,7 @@ then
     
 elif [[ $1 == -kieker ]]
 then
-     gnome-terminal -- bash -c "${PATH_COLLECTOR} -c ${PATH_XONFIG}"
+     gnome-terminal -- bash -c "${PATH_COLLECTOR} -c ${PATH_CONFIG}"
      echo"wait 45 seconds to let collector initialize properly"
      sleep 45s
      cd $PATH_SPYDER

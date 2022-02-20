@@ -3,6 +3,7 @@
 import logging
 from abc import ABC, abstractmethod
 from monitoring.util import TimeStamp
+from configparser import ConfigParser
 
 class AbstractController(ABC):
     def __init__(self, domain, tcp_enabled, reader_thread, port,
@@ -32,12 +33,15 @@ class AbstractController(ABC):
 
 class MonitoringController:
 
-    def __init__(self, writer_controller=None, time_source_controller=None):
-        if writer_controller is None:
-            self.writer_controller = WriterController("./monitoring.log")
-        else:
-            self.writer_controller = WriterController()
-        self.time_source_controller = TimeSourceController(TimeStamp())
+    def __init__(self, config):
+        self.writer_controller = WriterController(config)
+        self.time_source_controller = TimesourceController(TimeStamp())
+    #def __init__(self, writer_controller=None, time_source_controller=None):
+    #    if writer_controller is None:
+    #        self.writer_controller = WriterController("./monitoring.log")
+    #    else:
+    #        self.writer_controller = WriterController()
+    #    self.time_source_controller = TimeSourceController(TimeStamp())
 
     def new_monitoring_record(self, record):
         return self.writer_controller.new_monitoring_record(record)
@@ -62,17 +66,25 @@ class TimeSourceController(AbstractController):
         return self.time_source.get_time()
 
 
-from monitoring.writer import FileWriter
-from monitoring.tcpwriter import TCPWriter
+from monitoring.writer import FileWriter, TCPWriter
+#from monitoring.tcpwriter import TCPWriter
 
 
 class WriterController:
 
-    def __init__(self, path=None):
-        if path is not None:
-            self.monitoring_writer = FileWriter(path, [])
+    def __init__(self, config, path=None):
+        config_parser = ConfigParser()
+        config_parser.read_file(config)
+        
+        if config_parser.get('General', 'isTCP'):
+            self.monitoring_writer = TCPWriter('127.0.0.1', 65432, [], 1000, config)
         else:
-            self.monitoring_writer = TCPWriter('127.0.0.1', 65432, [], 1000)
+            self.monitoring_writer = FileWriter(config_parser.get('FileWriter', 'file_path'), [])
+        
+        # if path is not None:
+       #     self.monitoring_writer = FileWriter(path, [])
+       # else:
+       #     self.monitoring_writer = TCPWriter('127.0.0.1', 65432, [], 1000)
 
     def initialize(self):
         pass
