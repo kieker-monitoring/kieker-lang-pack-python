@@ -20,7 +20,6 @@ class _PointTrace:
 class TraceRegistry:
 
     def __init__(self):
-        print('traceregistry called!')
         self.next_order_id = 0
         self.next_trace_id = 0
         self.tracemetadata=None
@@ -33,9 +32,9 @@ class TraceRegistry:
 
     def get_new_id(self):
         with lock:
-            # ONCE AGAIN; WEIRD WAY OF THE INCREMENtING
+            #  THIS IS A WEIRD WAY  TO INCREMENT
             # BUT FOR SOME REASON THE INCREMENTATION HAPPENS ONLY ONCE
-            # IF WE DO IT NORMAL WAY. WHY
+            # IF WE DO IT NORMAL WAY. 
             tmp = self.next_trace_id
             self.next_trace_id = tmp + 1
             result = self.next_trace_id

@@ -5,15 +5,18 @@ from abc import ABC, abstractmethod
 from monitoring.util import TimeStamp
 from configparser import ConfigParser
 
+# I think that calss can/should be removed. But in the future we might 
+# have more complex MonitoringController 
 class AbstractController(ABC):
     def __init__(self, domain, tcp_enabled, reader_thread, port,
                  terminated):
         self.domain = domain
         self.tcp_enabled = tcp_enabled
-        self.reader_function = reader_thread
+        self.reader_thread = reader_thread
         self.port = port
         self.terminated = terminated
         self.logger = logging.getLogger('ControllerLogger')
+        self.threading = None
 
     @abstractmethod
     def initialize(self):
@@ -31,8 +34,8 @@ class AbstractController(ABC):
         pass
 
 
-class SingleMonitoringController(object):
-
+class SingleMonitoringController:
+    ''' This class controlls the monitoring process. Only one instance of this class can exist at one time. '''
     __instance = None
    
     def __new__(cls, config=None):
@@ -43,34 +46,27 @@ class SingleMonitoringController(object):
             SingleMonitoringController.__instance.time_source_controller = TimeSourceController(TimeStamp())
         return SingleMonitoringController.__instance
         
-        
-    
-    
-#    def __init__(self, config):
- #       self.writer_controller = WriterController(config)
-  #      self.time_source_controller = TimesourceController(TimeStamp())
-    #def __init__(self, writer_controller=None, time_source_controller=None):
-    #    if writer_controller is None:
-    #        self.writer_controller = WriterController("./monitoring.log")
-    #    else:
-    #        self.writer_controller = WriterController()
-    #    self.time_source_controller = TimeSourceController(TimeStamp())
 
     def new_monitoring_record(self, record):
-        return self.writer_controller.new_monitoring_record(record)
-
-
+        ''' Delegates a record to a writer_controller'''
+        # SingleMonitoringControler.__instance.writer_controller.new_monitoring_record is the same
+        return self.writer_controller.new_monitoring_record(record) 
+    
+        
+    
+# This class can/should be removed since it does not provide something
+# which cannot be achieved without it
 class TimeSourceController(AbstractController):
 
     def __init__(self, time_source):
-        # super().__init__()
+       
         self.time_source = time_source
     
     def initialize(self):
         pass
 
     def cleanup(self):
-        self.debug("shuttig down")
+        pass
 
     def toString(self):
         pass
@@ -80,31 +76,31 @@ class TimeSourceController(AbstractController):
 
 
 from monitoring.writer import FileWriter, TCPWriter
-#from monitoring.tcpwriter import TCPWriter
-
 
 class WriterController:
-
+    ''' This class is responsible for how the record data is written.
+        Depending on the provided configuration, the files are either written
+        directly into a local file or is send via TCP to the remote
+        data collector'''
     def __init__(self, config, path=None):
         if config is not None:
             config_parser = ConfigParser()
             config_parser.read(config)
+            if not config_parser.items:
+                raise ValueError('The configuration file is empty or could not be found.')
             if config_parser.getboolean('General', 'isTCP'):
-                self.monitoring_writer = TCPWriter('127.0.0.1', 65432, [], 1000, config)
+                self.monitoring_writer = TCPWriter(config)
             else:
                 self.monitoring_writer = FileWriter(config_parser.get('FileWriter', 'file_path'), [])
         else:
-            self.monitoring_writer = TCPWriter('127.0.0.1', 65432, [], 1000)
-        # if path is not None:
-       #     self.monitoring_writer = FileWriter(path, [])
-       # else:
-       #     self.monitoring_writer = TCPWriter('127.0.0.1', 65432, [], 1000)
-
+            raise ValueError('Path for configuration file was not provided.')
+        
     def initialize(self):
         pass
 
     def cleanup(self):
-        return 'foo'
+        pass
 
     def new_monitoring_record(self, record):
+        ''' Writes monitoring record.'''
         self.monitoring_writer.writeMonitoringRecord(record)

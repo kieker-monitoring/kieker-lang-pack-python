@@ -22,7 +22,7 @@ elif [[ $1 == -kieker ]]
 then
      gnome-terminal -- bash -c "${PATH_COLLECTOR} -c ${PATH_CONFIG}"
      echo"wait 45 seconds to let collector initialize properly"
-     sleep 45s
+     sleep 15s
      cd $PATH_SPYDER
      python3 bootstrap.py
 

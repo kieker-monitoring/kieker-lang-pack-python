@@ -1,32 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from abc import ABC, abstractmethod
-from monitoring.record import Serializer, BinarySerializer
+from monitoring.serialization import Serializer, BinarySerializer
 from monitoring.fileregistry import WriterRegistry
 from configparser import ConfigParser
 
-class AbstractMonitoringWriter(ABC):
-
-    @abstractmethod
-    def onStarting():
-        pass
-
-    @abstractmethod
-    def writeMonitoringRecord(self, monitoringRecord):
-        pass
-
-    @abstractmethod
-    def on_terminating(self):
-        pass
-
-    @abstractmethod
-    def to_string():
-        pass
 
 
-class FileWriter(AbstractMonitoringWriter):
-
+class FileWriter:
+    ''' This writer, is used to write the records directly into local files '''
     def __init__(self, file_path, string_buffer):
+        
         self.file_path = file_path
         self.string_buffer = string_buffer
         self.serializer = Serializer(self.string_buffer)
@@ -58,10 +41,10 @@ class FileWriter(AbstractMonitoringWriter):
         pass
 
     def on_terminating(self):
-        return "finished"
+        pass
 
     def to_string(self):
-        return "string"
+        pass
 
 
 class MappingFileWriter:
@@ -75,42 +58,34 @@ class MappingFileWriter:
         file.close()
 
 
-#import socket
 from struct import pack
 from monitoring.tcp import TCPClient
 from monitoring.util import TimeStamp, get_prefix
 
-# IF WE INSTANTIATE A SOCKET INSIDE OF A CLASS
-# THE DATA IS NOT SENT FOR SOME REASEON.
-# THIS IS A TERRIBLE SOLUTION BUT
-# WE KEEP IT FOR NOW: FIX AS SOON AS POSSIBLE.
-#tcp = TCPClient()
+
 time = TimeStamp()
 class TCPWriter:
+    '''THis class is used to send the record data to a remote data collector. '''
     TCP = TCPClient()
-    def __init__(self, host, port, buffer, connection_timeout, config):
+    def __init__(self,  config):
         config_parser = ConfigParser()
         config_parser.read(config)
         self.host = config_parser.get('Tcp','host')
         self.port = config_parser.getint('Tcp', 'port')
-      #  self.host = host
-      #  self.port = port
         self.TCP.set_port_and_host(self.port, self.host)
         self.TCP.connect()
-        self.buffer = buffer
-      #  self.registry_buffer = []
         self.connetction_timeout = config_parser.getint('Tcp','connection_timeout')
         self.writer_registry = WriterRegistry(self)
-        self.serializer = BinarySerializer(self.buffer, self.writer_registry)
+        self.serializer = BinarySerializer([], self.writer_registry)
 
     def on_new_registry_entry(self, value, idee):#
         # int - id, int-length, bytesequences
         # encode value in utf-8 and pack it with the id
-        v_encode = value.encode('utf-8') # value should be always a string
+        v_encode = str(value).encode('utf-8') # value should be always a string
         format_string = f'!iii{len(v_encode)}s'
         result = pack(format_string, -1, idee, len(v_encode), v_encode)
         try:
-            self.TCP.send(result) # Change "socket" to "tcp" after debug
+            self.TCP.send(result) 
         except Exception as e:
             print(repr(e))  # TODO: better exception handling
 
@@ -128,15 +103,13 @@ class TCPWriter:
         binarized_record = self.serializer.pack()
         # try to send
         try:
-            self.TCP.send(binarized_record) # Change "socket" to "tcp" after debug
+            self.TCP.send(binarized_record) 
         except Exception as e:
             # TODO: Better exception handling for tcp
             print(repr(e))
 
     def on_terminating(self):
-        # TODO ?
+        # TODO
         pass
 
-#    def to_string(self):
-        # TODO ?
-#        pass
+#   

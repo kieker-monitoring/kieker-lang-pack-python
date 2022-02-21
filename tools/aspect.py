@@ -5,7 +5,7 @@ from monitoring.controller import SingleMonitoringController, WriterController
 import types
 from monitoring.traceregistry import TraceRegistry
 
-monitoring_controller = SingleMonitoringController()
+monitoring_controller = SingleMonitoringController() #Singleton
 trace_reg = TraceRegistry()
 
 
