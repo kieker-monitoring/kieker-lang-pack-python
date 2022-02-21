@@ -1,11 +1,11 @@
 import inspect
 from monitoring.record import (BeforeOperationEvent,
                                AfterOperationFailedEvent, AfterOperationEvent)
-from monitoring.controller import MonitoringController, WriterController
+from monitoring.controller import SingleMonitoringController, WriterController
 import types
 from monitoring.traceregistry import TraceRegistry
 
-monitoring_controller = MonitoringController(WriterController())
+monitoring_controller = SingleMonitoringController()
 trace_reg = TraceRegistry()
 
 
@@ -143,44 +143,3 @@ class Instrumental(type):
         return type.__new__(cls, name, bases, attr)
 
 
-class ModuleAspectizer:  # OBSOLETE AND USELESS.
-    """This class collects modules and automatically instruments them"""
-
-    def __init__(self):
-        self.modules = list()
-        self.decorator = instrument
-
-    def add_module(self, module):
-        self.modules.append(module)
-
-    def _decorate_module_functions(self):
-        if self.decorator is None:
-            raise TypeError('No decorator specified!')
-        try:
-            for module in self.modules:
-                for name, member in inspect.getmembers(module):
-                    if (inspect.getmodule(member) == module and
-                    inspect.isfunction(member)):
-                        if(member == self._decorate_module_functions or
-                           member == self.decorator):
-                            continue
-                        module.__dict__[name] = self.decorator(member)
-        except (ValueError, TypeError):
-            print("No modules to decorate")
-
-    def _decorate_classes(self):
-        if self.decorator is None:
-            raise TypeError
-        try:
-            for module in self.modules:
-                for name, value in inspect.getmembers(module, inspect.isclass):
-                    if(inspect.getmodule(value) == module):
-                        if (value == self):
-                            continue
-                        setattr(module, name, _class_decorator(value))
-        except (ValueError, TypeError):
-            print("No modules to decorate")
-
-    def instrumentize(self):
-        """ instrumentizes all modules contained in ModuleAspectizer.modules"""
-        self._decorate_classes()

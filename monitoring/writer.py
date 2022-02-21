@@ -90,16 +90,16 @@ class TCPWriter:
     TCP = TCPClient()
     def __init__(self, host, port, buffer, connection_timeout, config):
         config_parser = ConfigParser()
-        config_parser.read_file(config)
+        config_parser.read(config)
         self.host = config_parser.get('Tcp','host')
-        self.port = config_parser.get('Tcp', 'port')
+        self.port = config_parser.getint('Tcp', 'port')
       #  self.host = host
       #  self.port = port
         self.TCP.set_port_and_host(self.port, self.host)
         self.TCP.connect()
-      #  self.buffer = buffer
+        self.buffer = buffer
       #  self.registry_buffer = []
-        self.connetction_timeout = config_parser.get('Tcp','connection_timeout')
+        self.connetction_timeout = config_parser.getint('Tcp','connection_timeout')
         self.writer_registry = WriterRegistry(self)
         self.serializer = BinarySerializer(self.buffer, self.writer_registry)
 
