@@ -9,7 +9,7 @@ class Serializer:
         self.string_byte = string_byte
 
     def put(self, value):
-        if value != '\n':
+        if value is not'\n':
             self.string_byte.append(str(value)+"; ")
         else:
             self.string_byte.append(value)
@@ -74,7 +74,7 @@ class BinarySerializer:
         self.format_string += 'd'
 
     def put_string(self, value):
-        if value == '\n':
+        if value is '\n':
             return
         string_id = self.string_registry.get_id(value)
         self.buffer.append(string_id)
