@@ -39,7 +39,8 @@ def decorate_members(mod):
                     else:
                         setattr(member, v, instrument(k, False))
                 except KeyError:
-                    print(f'Tried to decorate {v} but method is not found among thefields')
+                    pass
+                    ## print(f'Tried to decorate {v} but method is not found among thefields')
 
     for name, member in inspect.getmembers(mod, inspect.isfunction):
         if(member.__module__ == mod.__spec__.name):
@@ -62,8 +63,10 @@ def instrument(func, is_class_method = False):
         trace = trace_reg.get_trace()
         if(trace is None):
             trace = trace_reg.register_trace()
+           
             monitoring_controller.new_monitoring_record(trace)
-
+            
+          
         trace_id = trace.trace_id
         timestamp = monitoring_controller.time_source_controller.get_time()
         func_module = func.__module__
@@ -71,9 +74,12 @@ def instrument(func, is_class_method = False):
         qualname = (func.__module__ if class_signature == func.__name__ else
                     f'{func_module}.{class_signature}')
         # class_signature = func.__class__.__name__
+        
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
                timestamp, trace_id, trace.get_next_order_id(), func.__name__,
                qualname))
+        
+    #    print(f'{func.__name__}, {qualname}')
 
         try:
             if is_class_method:
@@ -83,23 +89,28 @@ def instrument(func, is_class_method = False):
             result = func(*args, **kwargs)
         except Exception as e:
             # failed routine
+            
             timestamp = monitoring_controller.time_source_controller.get_time()
+           
             monitoring_controller.new_monitoring_record(
                 AfterOperationFailedEvent(timestamp, trace_id,
                                           trace.get_next_order_id(),
                                           func.__name__,
                                           qualname,
                                           repr(e)))
+          
 
             raise e
         # after routine
         timestamp = monitoring_controller.time_source_controller.get_time()
+        
         monitoring_controller.new_monitoring_record(AfterOperationEvent(
             timestamp,
             trace_id,
             trace.get_next_order_id(),
             func.__name__,
             qualname))
+       
         return result
     return in_wrapper
 

@@ -2,7 +2,6 @@
 
 from struct import pack
 
-
 class Serializer:
 
     def __init__(self, string_byte):
@@ -93,7 +92,10 @@ class BinarySerializer:
         self.format_string += 'f'
 
     def pack(self):
+       
+     #   print(self.buffer)
         result = pack(self.format_string, *self.buffer)
         self.format_string = '!'
         self.buffer.clear()
+
         return result

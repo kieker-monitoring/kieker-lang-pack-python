@@ -13,7 +13,7 @@ pip install dist/kieker-monitoring-for-python-0.0.1.tar.gz
 if [[ $1 == -nc ]]
 then 
 
-     gnome-terminal -- bash -c "nc -l 65432"
+     gnome-terminal -- bash -c "nc -l 65432 | hexdump -C > ~/Desktop/out.txt" #nc -l 65432 | hexdump -C
 
      cd $PATH_SPYDER
      python3 bootstrap.py 
@@ -21,7 +21,7 @@ then
 elif [[ $1 == -kieker ]]
 then
      gnome-terminal -- bash -c "${PATH_COLLECTOR} -c ${PATH_CONFIG}"
-     echo"wait 45 seconds to let collector initialize properly"
+     echo "wait 45 seconds to let collector initialize properly"
      sleep 15s
      cd $PATH_SPYDER
      python3 bootstrap.py

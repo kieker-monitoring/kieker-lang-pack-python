@@ -61,7 +61,9 @@ class MappingFileWriter:
 from struct import pack
 from monitoring.tcp import TCPClient
 from monitoring.util import TimeStamp, get_prefix
+import threading
 
+lock=threading.Lock()
 
 time = TimeStamp()
 class TCPWriter:
@@ -82,6 +84,7 @@ class TCPWriter:
         # int - id, int-length, bytesequences
         # encode value in utf-8 and pack it with the id
         v_encode = str(value).encode('utf-8') # value should be always a string
+        #print(f'value: {value} id: {idee}')
         format_string = f'!iii{len(v_encode)}s'
         result = pack(format_string, -1, idee, len(v_encode), v_encode)
         try:
@@ -91,6 +94,7 @@ class TCPWriter:
 
     def writeMonitoringRecord(self, record):
         # fetch record name
+        lock.acquire()
         record_class_name = record.__class__.__name__
         java_prefix = get_prefix(record_class_name)
         record_class_name = java_prefix + record_class_name
@@ -101,9 +105,11 @@ class TCPWriter:
         # send record
         record.serialize(self.serializer)
         binarized_record = self.serializer.pack()
+        lock.release()
         # try to send
         try:
-            self.TCP.send(binarized_record) 
+            self.TCP.send(binarized_record)
+            #print(binarized_record.)
         except Exception as e:
             # TODO: Better exception handling for tcp
             print(repr(e))
