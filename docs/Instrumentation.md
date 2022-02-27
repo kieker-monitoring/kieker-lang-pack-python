@@ -107,18 +107,39 @@ As a result, each time a class method or functions are called, Kieker will log a
 ## Import Hooks
 Import Hook is a technique in python, that allows us to modify import behavior of the python modules.
 This feature allows us to instrument the program with barely any source code modification. 
-Unlike any other approach described [ here ], we do not even have to specify the locations of the code that we like to instrument. 
 
-There are two ways of how we can achieve it, depending on what python version we want to use. However, we describe for now the deprecated approach.
-Although this approach is officially deprecated, it is still supported by python. Newer  approach might be not backwards compatible.
+Currently we provide an API to instrument a program with only a few lines of code.
+This approach assumes, that there is some entry point of a program. And that the project is structerd in a certain way ().
+
+```python
+
+some_main.py
+from tools.importhook import PostImportFinder
+from monitoring.controller import SingleMonitoringController
+
+some_var = SingleMonitoringController(path) # always instatiate a controller
+my_list = list() # can be empty. Contains a list of module names, that must be skipped and not instrumented
+sys.meta_path.insert(0,PostImportFinder('root_name', my_list)) # first parameter is a root name of the modules e.g root_name.something.fancy
+```
+`sys.meta_path.insert(0,PostImportFinder('root_name', my_list))` instruments the whole program. 
+
+If for some reason our API does not match your need you can implement an import hook yourself.
+There are two ways of how we can achieve it, depending on what python version we want to use. 
+We provide a description of this technique for the older python versions (3.5).
+This approach will also work with the newer versions.
+
 
 We must implement the following two classes:
 
 
 ```python
 
+import importlib
+import sys
+from tools.aspect import decorate_members
+
 class PostImportFinder:
-    def __init__(self):
+    def __init__(self, exclusions):
         self._skip=set()
     
     def find_module(self, fullname, path = None):
@@ -135,15 +156,18 @@ class PostImportLoader:
     def load_module(self, fullname):
         importlib.import_module(fullname)
         module = sys.modules[fullname]
-        if 'package_root' in fullname and 'manager' not in fullname:
-                decorate_members(module)
+        
+        # HERE PUT YOUR LOGIC THAT DESCRIVES WHICH MODULES MUST BE INSTRUMENTED
+        # USUALLY YOU WOULD FILTER module dict accordingly.
+        # After that call something like:
+        # decorate_members(module)
+        # That will apply the decorators programatically to the module functions
         self._finder._skip.remove(fullname)
         return module
 ```
-The most important part is the if-statement in `load module()` method. We check if 'package_root' is part of the fully qualified name of the module. 
-Note that `'package_root'` can be any other value depending on what you would like to instrument. For example, we used 'spyder' while testing  the instrumentation 
-with spyder-ide , since fully-qualified names of all modules start with 'spyder.' . We can also exclude some modules from instrumentation, by ensuring, their name is not a part
-of fully-qulified name of the module to be loaded.
 
-After we ensured that we atrget the correct module, we simply call a function named 'decorate_members', that accepts module object as an argument. 
+
+At the end you use your own import hook un the same way it was explained above.
+
+
 
