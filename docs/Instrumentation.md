@@ -167,7 +167,7 @@ class PostImportLoader:
 ```
 
 
-At the end you use your own import hook un the same way it was explained above.
+At the end you use your own import hook in the same way it was explained above.
 
 
 
