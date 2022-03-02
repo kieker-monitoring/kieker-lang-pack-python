@@ -1,11 +1,11 @@
 import inspect
 from monitoring.record import (BeforeOperationEvent,
                                AfterOperationFailedEvent, AfterOperationEvent)
-from monitoring.controller import MonitoringController, WriterController
+from monitoring.controller import SingleMonitoringController, WriterController
 import types
 from monitoring.traceregistry import TraceRegistry
 
-monitoring_controller = MonitoringController(WriterController())
+monitoring_controller = SingleMonitoringController() #Singleton
 trace_reg = TraceRegistry()
 
 
@@ -39,7 +39,8 @@ def decorate_members(mod):
                     else:
                         setattr(member, v, instrument(k, False))
                 except KeyError:
-                    print(f'Tried to decorate {v} but method is not found among thefields')
+                    pass
+                    ## print(f'Tried to decorate {v} but method is not found among thefields')
 
     for name, member in inspect.getmembers(mod, inspect.isfunction):
         if(member.__module__ == mod.__spec__.name):
@@ -62,8 +63,10 @@ def instrument(func, is_class_method = False):
         trace = trace_reg.get_trace()
         if(trace is None):
             trace = trace_reg.register_trace()
+           
             monitoring_controller.new_monitoring_record(trace)
-
+            
+          
         trace_id = trace.trace_id
         timestamp = monitoring_controller.time_source_controller.get_time()
         func_module = func.__module__
@@ -71,9 +74,12 @@ def instrument(func, is_class_method = False):
         qualname = (func.__module__ if class_signature == func.__name__ else
                     f'{func_module}.{class_signature}')
         # class_signature = func.__class__.__name__
+        
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
                timestamp, trace_id, trace.get_next_order_id(), func.__name__,
                qualname))
+        
+    #    print(f'{func.__name__}, {qualname}')
 
         try:
             if is_class_method:
@@ -83,23 +89,28 @@ def instrument(func, is_class_method = False):
             result = func(*args, **kwargs)
         except Exception as e:
             # failed routine
+            
             timestamp = monitoring_controller.time_source_controller.get_time()
+           
             monitoring_controller.new_monitoring_record(
                 AfterOperationFailedEvent(timestamp, trace_id,
                                           trace.get_next_order_id(),
                                           func.__name__,
                                           qualname,
                                           repr(e)))
+          
 
             raise e
         # after routine
         timestamp = monitoring_controller.time_source_controller.get_time()
+        
         monitoring_controller.new_monitoring_record(AfterOperationEvent(
             timestamp,
             trace_id,
             trace.get_next_order_id(),
             func.__name__,
             qualname))
+       
         return result
     return in_wrapper
 
@@ -143,44 +154,3 @@ class Instrumental(type):
         return type.__new__(cls, name, bases, attr)
 
 
-class ModuleAspectizer:  # OBSOLETE AND USELESS.
-    """This class collects modules and automatically instruments them"""
-
-    def __init__(self):
-        self.modules = list()
-        self.decorator = instrument
-
-    def add_module(self, module):
-        self.modules.append(module)
-
-    def _decorate_module_functions(self):
-        if self.decorator is None:
-            raise TypeError('No decorator specified!')
-        try:
-            for module in self.modules:
-                for name, member in inspect.getmembers(module):
-                    if (inspect.getmodule(member) == module and
-                    inspect.isfunction(member)):
-                        if(member == self._decorate_module_functions or
-                           member == self.decorator):
-                            continue
-                        module.__dict__[name] = self.decorator(member)
-        except (ValueError, TypeError):
-            print("No modules to decorate")
-
-    def _decorate_classes(self):
-        if self.decorator is None:
-            raise TypeError
-        try:
-            for module in self.modules:
-                for name, value in inspect.getmembers(module, inspect.isclass):
-                    if(inspect.getmodule(value) == module):
-                        if (value == self):
-                            continue
-                        setattr(module, name, _class_decorator(value))
-        except (ValueError, TypeError):
-            print("No modules to decorate")
-
-    def instrumentize(self):
-        """ instrumentizes all modules contained in ModuleAspectizer.modules"""
-        self._decorate_classes()
