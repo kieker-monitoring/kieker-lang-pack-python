@@ -6,7 +6,7 @@
 5. Install `netcat`. (In Ubuntu run `sudo apt update; sudo apt install netcat`.)
 ##Setup
 1. Install [Anaconda](https://www.anaconda.com/products/individual#linux). Consult Anaconda documentation if some instalation steps are unclear.
-2. Create new Anaconda environment `conda create --name some_good_name python=3.6`. Minimal Python version 3.6.
+2. Create new Anaconda environment `conda create --name some_good_name python=3.6`. Minimal Python version is 3.6.
 3. Activate the environment you have just created `conda activate some_good_name`.
 4. run `python3 -m pip install --upgrade build`.
 5. `cd` to the spyder5 directory. 
