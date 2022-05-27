@@ -5,9 +5,66 @@ from monitoring.controller import SingleMonitoringController, WriterController
 import types
 from monitoring.traceregistry import TraceRegistry
 import functools
+import decorator
 
 monitoring_controller = SingleMonitoringController() #Singleton
 trace_reg = TraceRegistry()
+
+
+@decorator.decorator
+def instrument1(func,*args, **kwargs):
+    # before routine
+    trace = trace_reg.get_trace()
+    if(trace is None):
+        trace = trace_reg.register_trace()
+       
+        monitoring_controller.new_monitoring_record(trace)
+        
+      
+    trace_id = trace.trace_id
+    timestamp = monitoring_controller.time_source_controller.get_time()
+    func_module = func.__module__
+    class_signature = func.__qualname__.split(".", 1)[0]
+    qualname = (func.__module__ if class_signature == func.__name__ else
+                f'{func_module}.{class_signature}')
+    # class_signature = func.__class__.__name__
+    
+    monitoring_controller.new_monitoring_record(BeforeOperationEvent(
+           timestamp, trace_id, trace.get_next_order_id(), func.__name__,
+           qualname))
+    
+#    print(f'{func.__name__}, {qualname}')
+
+    try:
+        
+            result = func(*args, **kwargs)
+            
+    except Exception as e:
+        # failed routine
+        
+        timestamp = monitoring_controller.time_source_controller.get_time()
+       
+        monitoring_controller.new_monitoring_record(
+            AfterOperationFailedEvent(timestamp, trace_id,
+                                      trace.get_next_order_id(),
+                                      func.__name__,
+                                      qualname,
+                                      repr(e)))
+      
+
+        raise 
+    # after routine
+    timestamp = monitoring_controller.time_source_controller.get_time()
+    
+    monitoring_controller.new_monitoring_record(AfterOperationEvent(
+        timestamp,
+        trace_id,
+        trace.get_next_order_id(),
+        func.__name__,
+        qualname))
+   
+    return result
+
 
 
 def isclassmethod(method): # We do not use it anymore, but might be useful again
@@ -38,18 +95,18 @@ def decorate_members(mod):
                             continue
                     if isinstance(member.__dict__[k], classmethod):
                         funcobj=member.__dict__[k].__func__
-                        setattr(member, k, classmethod(instrument(funcobj)))
+                        setattr(member, k, classmethod(instrument1(funcobj)))
                     elif isinstance(member.__dict__[k], staticmethod):
                         funcobj=member.__dict__[k].__func__
-                        setattr(member, k, staticmethod(instrument(funcobj)))
+                        setattr(member, k, staticmethod(instrument1(funcobj)))
                         pass
                     elif isinstance(member.__dict__[k], property):
                         funcobj=member.__dict__[k].__func__
-                        setattr(member, k, property(instrument(funcobj)))      
+                        setattr(member, k, property(instrument1(funcobj)))      
                         pass
                     else:
                       #  funcobj = inspect.unwrap(v)
-                        setattr(member, k, instrument(v))
+                        setattr(member, k, instrument1(v))
                         pass
                 except KeyError:
                     # inspect.getmembers() lists also methods from inherited
@@ -62,6 +119,9 @@ def decorate_members(mod):
     for name, member in inspect.getmembers(mod, inspect.isfunction):
         if(member.__module__ == mod.__spec__.name):
             mod.__dict__[name] = instrument_function(member, False)
+
+
+
 
 
 def instrument(func, is_class_method = False):
