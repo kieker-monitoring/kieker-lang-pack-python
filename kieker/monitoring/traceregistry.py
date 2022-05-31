@@ -2,7 +2,7 @@
 import threading
 
 #from socket import *
-from monitoring.record import TraceMetadata
+from monitoring.record.trace.tracemetadata import TraceMetadata
 
 
 lock = threading.Lock()
