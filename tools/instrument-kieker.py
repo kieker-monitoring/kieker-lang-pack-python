@@ -5,6 +5,7 @@ import os
 import sys
 import examples.automatic.Bookstore
 
+
 def get_filename_from_path(filepath):
     return os.path.basename(filepath)[:-3]
 
