@@ -1,6 +1,7 @@
 import inspect
 import types
 import decorator
+import sys
 
 from monitoring.record.trace.operation.operationevent import (BeforeOperationEvent,
                                                               AfterOperationEvent, 
@@ -87,6 +88,7 @@ def decorate_members(mod):
                         setattr(member, k, staticmethod(instrument(funcobj)))
                         pass
                     elif isinstance(member.__dict__[k], property):
+                       #functions = property
                         funcobj=member.__dict__[k].__func__
                         setattr(member, k, property(instrument(funcobj)))      
                         pass
@@ -94,6 +96,7 @@ def decorate_members(mod):
                       #  funcobj = inspect.unwrap(v)
                         setattr(member, k, instrument(v))
                         pass
+                    #setattr(ember, k , functions (funcobj)
                 except KeyError:
                     # inspect.getmembers() lists also methods from inherited
                     # classes. __dict__ contains information about methods that
@@ -105,9 +108,44 @@ def decorate_members(mod):
     for name, member in inspect.getmembers(mod, inspect.isfunction):
         if(member.__module__ == mod.__spec__.name):
             mod.__dict__[name] = instrument(member)
+    
+    
 
+@decorator.decorator
+def decorate_find_spec(find_spec, module_name=None,exclusion=None, *args, **kwargs):
+   # print(args[1])
+    result = find_spec(*args, **kwargs)
+    if result is None:
+       # print("fdss")
+        return None
+    #print(result)
+    try:
+      #  assert not result is None 
+        if "exec_module" in dir(result.loader):
+     #       print("d")
+            exec_module = getattr(result.loader, "exec_module")
+            if isinstance(exec_module, classmethod):
+                funcobj = exec_module.__func__
+                setattr(result.loader, "exec_module",classmethod(decorate_create_or_load_module(funcobj, module_name, exclusion)))
+            elif isinstance(exec_module, types.MethodType):
+	            funcobj = exec_module.__func__
+	            #rint(print(type(getattr(finder, "find_spec"))))
+	            setattr(result.loader, "exec_module", types.MethodType(decorate_create_or_load_module(funcobj, module_name, exclusion), result.loader))
+            else:
+                setattr(result.loader, "exec_module", decorate_create_or_load_module(exec_module, module_name, exclusion))
+    except AssertionError:
+        return result
+    return result
 
-
+@decorator.decorator
+def decorate_create_or_load_module(exec_module, module_name=None, exclusion=None, *args, **kwargs):
+   
+    exec_module(*args, **kwargs)
+    if exclusion in args[1].__spec__.name or args[1].__spec__.name in exclusion:
+        return
+    elif module_name in args[1].__spec__.name:
+        decorate_members(sys.modules[args[1].__spec__.name])
+    
 
 ###############################################################################
 # DEPRECATED AND NOT USED FUNCTIONS, BUT STILL MIGHT BE USEFUL                #

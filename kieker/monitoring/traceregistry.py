@@ -7,6 +7,8 @@ from monitoring.record.trace.tracemetadata import TraceMetadata
 
 lock = threading.Lock()
 thread_local = threading.local()
+thread_local.trace = None
+thread_local.trace_stack = list()
 
 
 

@@ -16,7 +16,8 @@ class BeforeOperationEvent:
         serializer.put_int(self.order_index)
         serializer.put_string(self.operation_signature)
         serializer.put_string(self.class_signature)
-
+    
+    
 
 class AfterOperationEvent:
 
