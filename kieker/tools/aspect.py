@@ -12,12 +12,12 @@ from monitoring.traceregistry import TraceRegistry
 
 
 
-monitoring_controller = SingleMonitoringController() #Singleton
+monitoring_controller = SingleMonitoringController() # Singleton
 trace_reg = TraceRegistry()
 
 
 @decorator.decorator
-def instrument(func,*args, **kwargs):
+def instrument(func, *args, **kwargs):
     # before routine
     trace = trace_reg.get_trace()
     new_trace = trace is None
@@ -53,7 +53,7 @@ def instrument(func,*args, **kwargs):
                                       func.__name__,
                                       qualname,
                                       repr(e)))
-        raise 
+        raise
     finally:
         if new_trace:
             trace_reg.unregister_trace()
@@ -79,21 +79,21 @@ def decorate_members(mod):
     #class_redecorator = redecorate(instrument)
     # Decorate classes
     for name, member in inspect.getmembers(mod, inspect.isclass):
-        if(member.__module__ == mod.__spec__.name):  # skip members of immported modules
+        if(member.__module__ == mod.__spec__.name):  # skip members of imported modules
             for k, v in inspect.getmembers(member, is_method_or_function):
                 try:
                   
                     if isinstance(member.__dict__[k], classmethod):
-                        funcobj=member.__dict__[k].__func__
+                        funcobj = member.__dict__[k].__func__
                         setattr(member, k, classmethod(instrument(funcobj)))
                     elif isinstance(member.__dict__[k], staticmethod):
-                        funcobj=member.__dict__[k].__func__
+                        funcobj = member.__dict__[k].__func__
                         setattr(member, k, staticmethod(instrument(funcobj)))
                         pass
                     elif isinstance(member.__dict__[k], property):
                        #functions = property
-                        funcobj=member.__dict__[k].__func__
-                        setattr(member, k, property(instrument(funcobj)))      
+                        funcobj = member.__dict__[k].__func__
+                        setattr(member, k, property(instrument(funcobj)))
                         pass
                     elif isinstance(member.__dict__[k], types.FunctionType):
                       #  funcobj = inspect.unwrap(v)
@@ -116,32 +116,31 @@ def decorate_members(mod):
 
 @decorator.decorator
 def decorate_find_spec(find_spec, module_name=None,exclusion=None, *args, **kwargs):
-   # print(args[1])
+   
     result = find_spec(*args, **kwargs)
     if result is None:
-       # print("fdss")
+       
         return None
-    #print(result)
+    
     try:
-      #  assert not result is None 
+  
         if "exec_module" in dir(result.loader):
-     #       print("d")
+   
             exec_module = getattr(result.loader, "exec_module")
             if isinstance(exec_module, classmethod):
                 funcobj = exec_module.__func__
-                setattr(result.loader, "exec_module",classmethod(decorate_create_or_load_module(funcobj, module_name, exclusion)))
+                setattr(result.loader, "exec_module",classmethod(decorate_exec_module(funcobj, module_name, exclusion)))
             elif isinstance(exec_module, types.MethodType):
-	            funcobj = exec_module.__func__
-	            #rint(print(type(getattr(finder, "find_spec"))))
-	            setattr(result.loader, "exec_module", types.MethodType(decorate_create_or_load_module(funcobj, module_name, exclusion), result.loader))
+	            funcobj = exec_module.__func__        
+	            setattr(result.loader, "exec_module", types.MethodType(decorate_exec_module(funcobj, module_name, exclusion), result.loader))
             else:
-                setattr(result.loader, "exec_module", decorate_create_or_load_module(exec_module, module_name, exclusion))
+                setattr(result.loader, "exec_module", decorate_exec_module(exec_module, module_name, exclusion))
     except AssertionError:
         return result
     return result
 
 @decorator.decorator
-def decorate_create_or_load_module(exec_module, module_name=None, exclusion=None, *args, **kwargs):
+def decorate_exec_module(exec_module, module_name=None, exclusion=None, *args, **kwargs):
    
     exec_module(*args, **kwargs)
     if exclusion in args[1].__spec__.name or args[1].__spec__.name in exclusion:

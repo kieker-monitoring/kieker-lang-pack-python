@@ -24,7 +24,7 @@ class TraceRegistry:
     def __init__(self):
         self.next_order_id = 0
         self.next_trace_id = 0
-        self.tracemetadata=None
+        self.tracemetadata = None
         self.parent_trace = {}
 
     def get_trace(self):
@@ -36,7 +36,7 @@ class TraceRegistry:
         with lock:
             #  THIS IS A WEIRD WAY  TO INCREMENT
             # BUT FOR SOME REASON THE INCREMENTATION HAPPENS ONLY ONCE
-            # IF WE DO IT NORMAL WAY. 
+            # IF WE DO IT THE NORMAL WAY. 
             tmp = self.next_trace_id
             self.next_trace_id = tmp + 1
             result = self.next_trace_id
@@ -49,7 +49,7 @@ class TraceRegistry:
         return result
 
     def register_trace(self):
-        # TODO Enclosingtaces and stuff
+       
         enclosing_trace = self.get_trace()
         if not enclosing_trace is None:
             local_trace_stack = thread_local.trace_stack
