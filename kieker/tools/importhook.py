@@ -2,7 +2,7 @@ import importlib
 import sys
 from tools.aspect import decorate_members
 
-
+#sys.meta_path = MyLIst(sys.MetaPath)
 class PostImportFinder:
     def __init__(self, param, exclusions):
         self._skip=set()
@@ -24,6 +24,7 @@ class PostImportLoader:
         
     
     def load_module(self, fullname):
+       # print(fullname)
         importlib.import_module(fullname)
         module = sys.modules[fullname]
         if self.param in fullname :
