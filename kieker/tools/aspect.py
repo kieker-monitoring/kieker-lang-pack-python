@@ -20,9 +20,9 @@ trace_reg = TraceRegistry()
 def instrument(func,*args, **kwargs):
     # before routine
     trace = trace_reg.get_trace()
-    if(trace is None):
-        trace = trace_reg.register_trace()
-       
+    new_trace = trace is None
+    if new_trace:
+        trace = trace_reg.register_trace()      
         monitoring_controller.new_monitoring_record(trace)
         
     # before routine
@@ -54,6 +54,9 @@ def instrument(func,*args, **kwargs):
                                       qualname,
                                       repr(e)))
         raise 
+    finally:
+        if new_trace:
+            trace_reg.unregister_trace()
     # after routine
     timestamp = monitoring_controller.time_source_controller.get_time()
     
