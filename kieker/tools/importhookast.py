@@ -20,45 +20,37 @@ import threading
 
 
 class MyMetaFinder(MetaPathFinder):
-    ''' Original implementation provided here https://stackoverflow.com/a/43573798/12558231 
-         by User Dunes. 
-         https://creativecommons.org/licenses/by-sa/3.0/ 
-         Defintion of "create_module () was modified. '''
          
     def __init__(self, ignore_list={}, debug_on = False):
         self.debug_on = debug_on
         self.ignore_list = ignore_list
         
     def find_spec(self, fullname, path, target=None):
+        
+        name = fullname.split(".")[-1]
+        
         if path is None or path == "":
             path = [os.getcwd()] # Keep it
-        # Can make without if else. Need only name.
-        if "." in fullname:
-            *parents, name = fullname.split(".")
-        else:
-            name = fullname
-            
-        for entry in path: # Rearrange
-            if os.path.isdir(os.path.join(entry, name)):
+    
+        
+        for e in path: # Rearrange
+            if os.path.isdir(os.path.join(e, name)):
                 
-                filename = os.path.join(entry, name, "__init__.py")
-                submodule_locations = [os.path.join(entry, name)] 
-                # spec = spec_from_file_location(fullname, filename, loader=MyLoader(filename),
-                #    submodule_search_locations=submodule_locations)
+                filename = os.path.join(e, name, "__init__.py")
+                submodule_locations = [os.path.join(e, name)] 
+                spec = spec_from_file_location(fullname, filename, loader=MyLoader(filename),
+                    submodule_search_locations=submodule_locations)
             else:
-                filename = os.path.join(entry, name + ".py")
+                filename = os.path.join(e, name + ".py")
                 submodule_locations = None
-                # spec = spec_from_file_location(fullname, filename, loader=MyLoader(filename),
-                #    submodule_search_locations=submodule_locations)
-           # if  os.path.exists(filename):
-               # return spec
-           
-            ### do no need. Delete 
-            #if not os.path.exists(filename):
-            #    continue
+                spec = spec_from_file_location(fullname, filename, loader=MyLoader(filename),
+                    submodule_search_locations=submodule_locations)
             
-          #  return spec_from_file_location(fullname, filename, loader=MyLoader(filename),
-           ##     submodule_search_locations=submodule_locations)
+            if  os.path.exists(filename):
+                return spec
+            else:
+                del spec
+           
         return None
 class MyLoader(Loader):
     def __init__(self, filename, ignore_list, debug=False):
