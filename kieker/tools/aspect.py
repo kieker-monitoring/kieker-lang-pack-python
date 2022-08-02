@@ -16,8 +16,12 @@ monitoring_controller = SingleMonitoringController() # Singleton
 trace_reg = TraceRegistry()
 
 
-@decorator.decorator
-def instrument(func, *args, **kwargs):
+
+#@decorator.decorator
+def instrument(func): 
+ if not isinstance(func, types.FunctionType):
+     return func
+ def _instrument( *args, **kwargs):
     # before routine
     trace = trace_reg.get_trace()
     new_trace = trace is None
@@ -68,8 +72,16 @@ def instrument(func, *args, **kwargs):
         qualname))
    
     return result
-
-
+ _instrument.__name__ = func.__name__
+ _instrument.__doc__ = func.__doc__
+ _instrument.__wrapped__ = func
+ _instrument.__signature__ = inspect.signature(func)
+ _instrument.__qualname__ = func.__qualname__
+ return _instrument
+#def instrument(f):
+#    if not isinstance(f, types.FunctionType):
+#        return f
+#    return decorator.decorate(f, _instrument)
 
 is_method_or_function = lambda x: inspect.isfunction(x) or inspect.ismethod(x)
 def decorate_members(mod):
@@ -113,6 +125,8 @@ def decorate_members(mod):
             mod.__dict__[name] = instrument(member)
     
     
+
+# 
 
 @decorator.decorator
 def decorate_find_spec(find_spec, module_name=None,exclusion=None, *args, **kwargs):

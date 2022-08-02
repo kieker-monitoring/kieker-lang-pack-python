@@ -63,7 +63,7 @@ from monitoring.tcp import TCPClient
 from monitoring.util import TimeStamp, get_prefix
 import threading
 
-lock=threading.Lock()
+
 
 time = TimeStamp()
 class TCPWriter:
@@ -79,6 +79,7 @@ class TCPWriter:
         self.connetction_timeout = config_parser.getint('Tcp','connection_timeout')
         self.writer_registry = WriterRegistry(self)
         self.serializer = BinarySerializer([], self.writer_registry)
+        self.lock=threading.RLock()
 
     def on_new_registry_entry(self, value, idee):#
         # int - id, int-length, bytesequences
@@ -94,7 +95,8 @@ class TCPWriter:
 
     def writeMonitoringRecord(self, record):
         # fetch record name
-        lock.acquire()
+       with self.lock: 
+        #self.lock.acquire()
         record_class_name = record.__class__.__name__
         java_prefix = get_prefix(record_class_name)
         record_class_name = java_prefix + record_class_name
@@ -105,12 +107,12 @@ class TCPWriter:
         # send record
         record.serialize(self.serializer)
         binarized_record = self.serializer.pack()
-        lock.release()
+        #self.lock.release()
         # try to send
-        try:
+       try:
             self.TCP.send(binarized_record)
             #print(binarized_record.)
-        except Exception as e:
+       except Exception as e:
             # TODO: Better exception handling for tcp
             print(repr(e))
 
