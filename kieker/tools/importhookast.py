@@ -21,7 +21,7 @@ import threading
 
 class MyMetaFinder(MetaPathFinder):
          
-    def __init__(self, ignore_list={}, debug_on = False):
+    def __init__(self, ignore_list=[], debug_on=False):
         self.debug_on = debug_on
         self.ignore_list = ignore_list
         
@@ -30,21 +30,26 @@ class MyMetaFinder(MetaPathFinder):
         name = fullname.split(".")[-1]
         
         if path is None or path == "":
-            path = [os.getcwd()] # Keep it
+            path = [os.getcwd()] 
     
         
         for e in path: # Rearrange
-            if os.path.isdir(os.path.join(e, name)):
+            directory = os.path.join(e, name)
+            if os.path.isdir(directory):
                 
-                filename = os.path.join(e, name, "__init__.py")
-                submodule_locations = [os.path.join(e, name)] 
-                spec = spec_from_file_location(fullname, filename, loader=MyLoader(filename),
-                    submodule_search_locations=submodule_locations)
+                filename = os.path.join(directory, "__init__.py")
+                submods = [directory] 
+                spec = spec_from_file_location(fullname,
+                                               filename,
+                                               loader=MyLoader(filename, self.ignore_list, self.debug_on), 
+                                               submodule_search_locations=submods)
             else:
-                filename = os.path.join(e, name + ".py")
-                submodule_locations = None
-                spec = spec_from_file_location(fullname, filename, loader=MyLoader(filename),
-                    submodule_search_locations=submodule_locations)
+                filename = directory + ".py"
+                submods = None
+                spec = spec_from_file_location(fullname,
+                                               filename,
+                                               loader=MyLoader(filename, self.ignore_list, self.debug_on), 
+                                               submodule_search_locations=submods)
             
             if  os.path.exists(filename):
                 return spec
@@ -67,17 +72,22 @@ class MyLoader(Loader):
        with open(self.filename) as f:
            data = f.read()
        node = parse(data)
-       ex=["tensorflow.core.framework.tensor_shape_pb2",
+       ex=[#"tensorflow.core.framework.tensor_shape_pb2",
            "google.protobuf.descriptor",
-           "tensorflow.python.ops.gen_data_flow_ops",
-           "tensorflow.compiler.tf2xla.ops.gen_xla_ops",
-           "tensorflow.python.platform.device_context",
-           "tensorflow.python.util.all_util",
-           "tensorflow.python.data.ops.readers",
-           "tensorflow.python.autograph.utils",
-           "tensorflow.python.data.experimental.ops.interleave_ops"
+          # "tensorflow.python.ops.gen_data_flow_ops",
+        #   "tensorflow.compiler.tf2xla.ops.gen_xla_ops",
+          # "tensorflow.python.platform.device_context",
+         #  "tensorflow.python.util.all_util",
+           #"tensorflow.python.data.ops.readers",
+          # "tensorflow.python.autograph.utils",
+           # "tensorflow.python.data.experimental.ops.interleave_ops"
            
 ]
+     #  ex = ["tensorflow.python.platform.resource_loader",
+      #       "tensorflow.python.eager.backprop",
+       #      "tensorflow.python.ops.gen_array_ops",
+        #     "tensorflow.python.framework.ops",
+         #    "tensorflow.api.ops_eager_execution"]
        if module.__name__ in ex: # replace with ignore_list
            exec(data, vars(module))
            return
@@ -105,10 +115,10 @@ class MyLoader(Loader):
 
 
        try:  
+         if self.debug_on:
+             print(module.__name__)
+         exec(data, vars(module))
        
-        exec(data, vars(module))
-        if self.debug_on:
-            print(module.__name__)
        except:
            # TODO: Meaningfull exeception handling
            pass

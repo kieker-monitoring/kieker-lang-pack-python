@@ -5,7 +5,7 @@ import threading
 from monitoring.record.trace.tracemetadata import TraceMetadata
 
 
-#lock = threading.RLock()
+lock = threading.Lock()
 thread_local = threading.local()
 thread_local.trace = None
 thread_local.trace_stack = None
@@ -26,14 +26,14 @@ class TraceRegistry:
         self.next_trace_id = 0
         self.tracemetadata = None
         self.parent_trace = {}
-        self.lock = threading.RLock()
+
     def get_trace(self):
         if not hasattr(thread_local, 'trace'):
             thread_local.trace = None
         return thread_local.trace
 
     def get_new_id(self):
-        with self.lock:
+        with lock:
             #  THIS IS A WEIRD WAY  TO INCREMENT
             # BUT FOR SOME REASON THE INCREMENTATION HAPPENS ONLY ONCE
             # IF WE DO IT THE NORMAL WAY. 
@@ -43,9 +43,9 @@ class TraceRegistry:
         return 0 | result
 
     def get_and_remove_parent_trace_id(self, thread):
-        with self.lock:
-            result = self.parent_trace.pop(thread, None)
-       
+        lock.acquire()
+        result = self.parent_trace.pop(thread, None)
+        lock.release()
         return result
 
     def register_trace(self):

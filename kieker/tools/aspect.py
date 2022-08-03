@@ -16,11 +16,65 @@ monitoring_controller = SingleMonitoringController() # Singleton
 trace_reg = TraceRegistry()
 
 
+@decorator.decorator
+def instrument_v1(func, *args, **kwargs):
+    # before routine
+    trace = trace_reg.get_trace()
+    new_trace = trace is None
+    if new_trace:
+        trace = trace_reg.register_trace()      
+        monitoring_controller.new_monitoring_record(trace)
+        
+    # before routine
+    trace_id = trace.trace_id
+    timestamp = monitoring_controller.time_source_controller.get_time()
+    func_module = func.__module__
+    class_signature = func.__qualname__.split(".", 1)[0]
+    qualname = (func.__module__ if class_signature == func.__name__ else
+                f'{func_module}.{class_signature}')
+    
+    monitoring_controller.new_monitoring_record(BeforeOperationEvent(
+           timestamp, trace_id, trace.get_next_order_id(), func.__name__,
+           qualname))
+    
+
+    try:
+        
+            result = func(*args, **kwargs)
+            
+    except Exception as e:
+        # failed routine
+        
+        timestamp = monitoring_controller.time_source_controller.get_time()
+       
+        monitoring_controller.new_monitoring_record(
+            AfterOperationFailedEvent(timestamp, trace_id,
+                                      trace.get_next_order_id(),
+                                      func.__name__,
+                                      qualname,
+                                      repr(e)))
+        raise
+    finally:
+        if new_trace:
+            trace_reg.unregister_trace()
+    # after routine
+    timestamp = monitoring_controller.time_source_controller.get_time()
+    
+    monitoring_controller.new_monitoring_record(AfterOperationEvent(
+        timestamp,
+        trace_id,
+        trace.get_next_order_id(),
+        func.__name__,
+        qualname))
+   
+    return result
+
+
 
 #@decorator.decorator
 def instrument(func): 
- if not isinstance(func, types.FunctionType):
-     return func
+# if not isinstance(func, types.FunctionType):
+ #    return func
  def _instrument( *args, **kwargs):
     # before routine
     trace = trace_reg.get_trace()
@@ -97,19 +151,19 @@ def decorate_members(mod):
                   
                     if isinstance(member.__dict__[k], classmethod):
                         funcobj = member.__dict__[k].__func__
-                        setattr(member, k, classmethod(instrument(funcobj)))
+                        setattr(member, k, classmethod(instrument_v1(funcobj)))
                     elif isinstance(member.__dict__[k], staticmethod):
                         funcobj = member.__dict__[k].__func__
-                        setattr(member, k, staticmethod(instrument(funcobj)))
+                        setattr(member, k, staticmethod(instrument_v1(funcobj)))
                         pass
                     elif isinstance(member.__dict__[k], property):
                        #functions = property
                         funcobj = member.__dict__[k].__func__
-                        setattr(member, k, property(instrument(funcobj)))
+                        setattr(member, k, property(instrument_v1(funcobj)))
                         pass
                     elif isinstance(member.__dict__[k], types.FunctionType):
                       #  funcobj = inspect.unwrap(v)
-                        setattr(member, k, instrument(v))
+                        setattr(member, k, instrument_v1(v))
                         pass
                     #setattr(ember, k , functions (funcobj)
                 except KeyError:
@@ -122,7 +176,7 @@ def decorate_members(mod):
 
     for name, member in inspect.getmembers(mod, inspect.isfunction):
         if(member.__module__ == mod.__spec__.name):
-            mod.__dict__[name] = instrument(member)
+            mod.__dict__[name] = instrument_v1(member)
     
     
 
