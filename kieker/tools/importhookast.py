@@ -62,6 +62,7 @@ class MyLoader(Loader):
         self.filename = filename
         self.debug_on = debug
         self.ignore_list = ignore_list
+        
 
     def create_module(self, spec):
         return None 
@@ -88,7 +89,7 @@ class MyLoader(Loader):
        #      "tensorflow.python.ops.gen_array_ops",
         #     "tensorflow.python.framework.ops",
          #    "tensorflow.api.ops_eager_execution"]
-       if module.__name__ in ex: # replace with ignore_list
+       if module.__name__ in self.ignore_list: # replace with ignore_list
            exec(data, vars(module))
            return
        # Keep original?
