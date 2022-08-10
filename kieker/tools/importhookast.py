@@ -85,15 +85,14 @@ class InstLoader(Loader):
        # should be rewriten for  better readability              #
        # from future imports must be at the beginning of the file#
        #                                                         #
-       indices = []
-       for i in range(len(node.body)):
-           if isinstance(node.body[i], ImportFrom):
-              if node.body[i].module =="__future__":
-                 indices.append(i)
-       if indices:
-           node.body.insert(max(indices)+1,import_node) 
-       else:
-           node.body.insert(0,import_node)
+       counter = 0
+       for i in node.body:
+           if isinstance(i, ImportFrom):
+              if i.module == "__future__":
+                  counter += 1
+           else:
+               break
+       node.body.insert(counter,import_node)
        #
        ##########################################################   
        
