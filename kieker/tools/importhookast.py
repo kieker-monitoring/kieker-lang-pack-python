@@ -9,26 +9,25 @@ Created on Thu Jul 28 13:24:25 2022
 from importlib.abc import Loader, MetaPathFinder
 from importlib.util import spec_from_file_location
 from ast import ImportFrom,  parse, alias, unparse, fix_missing_locations
-from tools.ModuleTransformer import ModuleTransformer
 import os
+import const as con
 
 
 
 
 class InstrumentOnImportFinder(MetaPathFinder):
          
-    def __init__(self, ignore_list=[], debug_on=False):
+    def __init__(self, ignore_list = [], debug_on = False):
         self.debug_on = debug_on
         self.ignore_list = ignore_list
         
-    def find_spec(self, fullname, path, target=None):
+    def find_spec(self, fullname, path, target = None):
         
         name = fullname.split(".")[-1]
         
         if path is None or path == "":
             path = [os.getcwd()] 
     
-        
         for e in path:
             directory = os.path.join(e, name)
             if os.path.isdir(directory):
@@ -51,7 +50,7 @@ class InstrumentOnImportFinder(MetaPathFinder):
                 return spec
             else:
                 del spec
-           
+                
         return None
     
     
@@ -79,12 +78,7 @@ class InstLoader(Loader):
        # parse and inject import of tools.aspect
        node = parse(data)
        import_node = ImportFrom(module="tools.aspect", names=[alias(name="instrument")], level=0)
-       
-       
-       ###########################################################
-       # should be rewriten for  better readability              #
-       # from future imports must be at the beginning of the file#
-       #                                                         #
+
        counter = 0
        for i in node.body:
            if isinstance(i, ImportFrom):
@@ -93,18 +87,16 @@ class InstLoader(Loader):
            else:
                break
        node.body.insert(counter,import_node)
-       #
-       ##########################################################   
        
        # Add @instrument annotation
-       transformer = ModuleTransformer()
-       node = transformer.visit(node)
+       node = con.transformer.visit(node)
        fix_missing_locations(node)
-       data=unparse(node)
+       data = unparse(node)
        
 
        try:  
          if self.debug_on:
+             # TODO: create log file o.s.
              print(module.__name__)
          exec(data, vars(module))
        

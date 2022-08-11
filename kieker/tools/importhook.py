@@ -1,12 +1,11 @@
 import importlib
 import sys
-import re
 from tools.aspect import decorate_members
 
 #sys.meta_path = MyLIst(sys.MetaPath)
 class PostImportFinder:
     def __init__(self, param, exclusions):
-        self._skip=set()
+        self._skip = set()
         self.param = param
         self. exclusions = exclusions
     
@@ -25,13 +24,9 @@ class PostImportLoader:
         
     
     def load_module(self, fullname):
-       # print(fullname)
         importlib.import_module(fullname)
         module = sys.modules[fullname]
         if self.param.search(fullname) is not None :
-           # for ex in self.exclusions:
-            #    if ex.match(fullname):
-             #       return
             decorate_members(module)
         self._finder._skip.remove(fullname)
         return module
