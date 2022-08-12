@@ -14,7 +14,13 @@ from monitoring.traceregistry import TraceRegistry
 
 monitoring_controller = SingleMonitoringController() # Singleton
 trace_reg = TraceRegistry()
-
+@decorator.decorator
+def instrument_v1_empty(func,*args, **kwargs):
+    try:
+        result = func(*args, **kwargs)
+    except:
+        raise
+    return result
 
 @decorator.decorator
 def instrument_v1(func, *args, **kwargs):
@@ -69,6 +75,20 @@ def instrument_v1(func, *args, **kwargs):
    
     return result
 
+
+def instrument_empty(func):
+    def _instrument(*args, **kwargs):
+        try:
+            result = func(*args, **kwargs)
+        except:
+            raise
+        return result
+    _instrument.__name__ = func.__name__
+    _instrument.__doc__ = func.__doc__
+    _instrument.__wrapped__ = func
+    _instrument.__signature__ = inspect.signature(func)
+    _instrument.__qualname__ = func.__qualname__
+    return _instrument
 
 
 #@decorator.decorator
@@ -138,10 +158,14 @@ def instrument(func):
 #    return decorator.decorate(f, _instrument)
 
 is_method_or_function = lambda x: inspect.isfunction(x) or inspect.ismethod(x)
-def decorate_members(mod):
+def decorate_members(mod, empty = False):
     '''
     Decorates methods and global functions of the given module
     '''
+    if not empty:
+        inst = instrument_v1
+    else:
+        inst = instrument_empty
     #class_redecorator = redecorate(instrument)
     # Decorate classes
     for name, member in inspect.getmembers(mod, inspect.isclass):
@@ -151,19 +175,19 @@ def decorate_members(mod):
                   
                     if isinstance(member.__dict__[k], classmethod):
                         funcobj = member.__dict__[k].__func__
-                        setattr(member, k, classmethod(instrument_v1(funcobj)))
+                        setattr(member, k, classmethod(inst(funcobj)))
                     elif isinstance(member.__dict__[k], staticmethod):
                         funcobj = member.__dict__[k].__func__
-                        setattr(member, k, staticmethod(instrument_v1(funcobj)))
+                        setattr(member, k, staticmethod(inst(funcobj)))
                         pass
                     elif isinstance(member.__dict__[k], property):
                        #functions = property
                         funcobj = member.__dict__[k].__func__
-                        setattr(member, k, property(instrument_v1(funcobj)))
+                        setattr(member, k, property(inst(funcobj)))
                         pass
                     elif isinstance(member.__dict__[k], types.FunctionType):
                       #  funcobj = inspect.unwrap(v)
-                        setattr(member, k, instrument_v1(v))
+                        setattr(member, k, inst(v))
                         pass
                     #setattr(ember, k , functions (funcobj)
                 except KeyError:
@@ -176,7 +200,7 @@ def decorate_members(mod):
 
     for name, member in inspect.getmembers(mod, inspect.isfunction):
         if(member.__module__ == mod.__spec__.name):
-            mod.__dict__[name] = instrument_v1(member)
+            mod.__dict__[name] = inst(member)
     
     
 
