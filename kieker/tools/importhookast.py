@@ -70,13 +70,20 @@ class InstLoader(Loader):
         return None 
 
     def exec_module(self, module):
-      
+       
+       ex=["tools.aspect","monitoring.record",
+           "monitoring.record.trace",
+           "monitoring.record.trace.operation",
+           "monitoring.record.trace.operation.operationevent",
+           "monitoring.traceregistry",
+           "monitoring.record.trace.tracemetadata"
+          ]
        # Read module source code
        with open(self.filename) as f:
            data = f.read()
        # If the module should not be instrumented
        # execute it normally
-       if module.__name__ in self.ignore_list: 
+       if module.__name__ in self.ignore_list or  module.__name__ in ex: 
           exec(data, vars(module))
           return
        
