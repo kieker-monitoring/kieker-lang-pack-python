@@ -22,35 +22,28 @@ class InstrumentOnImportFinder(MetaPathFinder):
         self.ignore_list = ignore_list
         
     def find_spec(self, fullname, path, target = None):
-        
         name = fullname.split(".")[-1]
-        
         if path is None or path == "":
-            path = [os.getcwd()] 
-    
+            path = [os.getcwd()]
         for e in path:
             directory = os.path.join(e, name)
             if os.path.isdir(directory):
-                
                 filename = os.path.join(directory, "__init__.py")
-                submods = [directory] 
                 spec = spec_from_file_location(fullname,
                                                filename,
                                                loader=InstLoader(filename, self.ignore_list, self.debug_on), 
-                                               submodule_search_locations=submods)
+                                               submodule_search_locations=[directory])
             else:
                 filename = directory + ".py"
-                submods = None
                 spec = spec_from_file_location(fullname,
                                                filename,
                                                loader=InstLoader(filename, self.ignore_list, self.debug_on), 
-                                               submodule_search_locations=submods)
+                                               submodule_search_locations=None)
             
             if  os.path.exists(filename):
                 return spec
             else:
-                del spec
-                
+                del spec 
         return None
     
     
@@ -65,7 +58,6 @@ class InstLoader(Loader):
         return None 
 
     def exec_module(self, module):
-      
        # Read module source code
        with open(self.filename) as f:
            data = f.read()
@@ -74,7 +66,6 @@ class InstLoader(Loader):
        if module.__name__ in self.ignore_list: 
           exec(data, vars(module))
           return
-       
        # parse and inject import of tools.aspect
        node = parse(data)
        import_node = ImportFrom(module="tools.aspect", names=[alias(name="instrument")], level=0)
@@ -92,7 +83,6 @@ class InstLoader(Loader):
        node = con.transformer.visit(node)
        fix_missing_locations(node)
        data = unparse(node)
-       
 
        try:  
          if self.debug_on:
