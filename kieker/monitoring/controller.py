@@ -93,7 +93,7 @@ class WriterController:
                 self.monitoring_writer = TCPWriter(config)
             elif mode == 'text':
                 self.monitoring_writer = FileWriter(config_parser.get('FileWriter', 'file_path'), [])
-            else
+            else:
                 self.monitoring_writer = DummyWriter()
         else:
             raise ValueError('Path for configuration file was not provided.')
