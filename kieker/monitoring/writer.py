@@ -5,6 +5,29 @@ from monitoring.fileregistry import WriterRegistry
 from configparser import ConfigParser
 
 
+class DummyWriter:
+    ''' This writer, is used to simulate writing, no records are written '''
+    def __init__(self):
+        pass
+
+    def on_new_registry_entry(self, value, idee):
+        pass
+
+    def writeMonitoringRecord(self, record):
+        pass
+
+    def _serialize(self, record, idee):
+        pass
+
+    def onStarting(self):
+        pass
+
+    def on_terminating(self):
+        pass
+
+    def to_string(self):
+        pass
+
 
 class FileWriter:
     ''' This writer, is used to write the records directly into local files '''
