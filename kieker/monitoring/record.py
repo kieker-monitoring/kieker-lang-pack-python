@@ -69,7 +69,6 @@ class TraceMetadata:
 
     def get_next_order_id(self):
         result = self.next_order_id
-        #self.next_order_id += 1
         return result
 
 

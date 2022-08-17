@@ -3,7 +3,7 @@ import time
 
 def get_prefix(class_name):
     events = ["BeforeOperationEvent", "AfterOperationEvent", "AfterOperationFailedEvent"]
-    metadata = ["TraceMetadata", ]
+    metadata = ["TraceMetadata"]
 
     if class_name  in events:
         return 'kieker.common.record.flow.trace.operation.'
