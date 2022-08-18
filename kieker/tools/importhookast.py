@@ -10,8 +10,8 @@ from importlib.abc import Loader, MetaPathFinder
 from importlib.util import spec_from_file_location
 from ast import ImportFrom,  parse, alias, unparse, fix_missing_locations
 import os
-import const as con
-
+import tools.const as con
+from tools.ModuleTransformer import ModuleTransformer
 
 
 
