@@ -16,10 +16,15 @@ from tools.ModuleTransformer import ModuleTransformer
 
 
 class InstrumentOnImportFinder(MetaPathFinder):
-         
-    def __init__(self, ignore_list = [], debug_on = False):
+
+    
+    This class is a custom implementation of a MetaPathFinder.
+    It is used to find specs for     '''    
+    def __init__(self, ignore_list=[], empty = False, debug_on=False):
+
         self.debug_on = debug_on
         self.ignore_list = ignore_list
+        self.empty = empty
         
     def find_spec(self, fullname, path, target = None):
         name = fullname.split(".")[-1]
@@ -31,13 +36,15 @@ class InstrumentOnImportFinder(MetaPathFinder):
                 filename = os.path.join(directory, "__init__.py")
                 spec = spec_from_file_location(fullname,
                                                filename,
-                                               loader=InstLoader(filename, self.ignore_list, self.debug_on), 
+
+                                               loader=InstLoader(filename, self.empty, self.ignore_list, self.debug_on), 
                                                submodule_search_locations=[directory])
             else:
                 filename = directory + ".py"
                 spec = spec_from_file_location(fullname,
                                                filename,
-                                               loader=InstLoader(filename, self.ignore_list, self.debug_on), 
+
+                                               loader=InstLoader(filename, self.empty, self.ignore_list, self.debug_on), 
                                                submodule_search_locations=None)
             
             if  os.path.exists(filename):
@@ -48,39 +55,64 @@ class InstrumentOnImportFinder(MetaPathFinder):
     
     
 class InstLoader(Loader):
-    def __init__(self, filename, ignore_list, debug=False):
+    def __init__(self, filename, is_empty, ignore_list, debug=False ):
         self.filename = filename
         self.debug_on = debug
         self.ignore_list = ignore_list
+        self.is_empty = is_empty
         
 
     def create_module(self, spec):
         return None 
 
     def exec_module(self, module):
+
+       
+       ex=["tools.aspect","monitoring.record",
+           "monitoring.record.trace",
+           "monitoring.record.trace.operation",
+           "monitoring.record.trace.operation.operationevent",
+           "monitoring.traceregistry",
+           "monitoring.record.trace.tracemetadata"
+          ]
+
        # Read module source code
        with open(self.filename) as f:
            data = f.read()
        # If the module should not be instrumented
        # execute it normally
-       if module.__name__ in self.ignore_list: 
+       if module.__name__ in self.ignore_list or  module.__name__ in ex: 
           exec(data, vars(module))
           return
        # parse and inject import of tools.aspect
        node = parse(data)
-       import_node = ImportFrom(module="tools.aspect", names=[alias(name="instrument")], level=0)
-
-       counter = 0
-       for i in node.body:
-           if isinstance(i, ImportFrom):
-              if i.module == "__future__":
-                  counter += 1
-           else:
-               break
-       node.body.insert(counter,import_node)
+       if not self.is_empty:
+           import_node = ImportFrom(module="tools.aspect", names=[alias(name="instrument")], level=0)
+       else:
+           import_node = ImportFrom(module="tools.aspect", names=[alias(name="instrument_empty")], level=0)
+       
+       ###########################################################
+       # should be rewriten for  better readability              #
+       # from future imports must be at the beginning of the file#
+       #                                                         #
+       indices = []
+       for i in range(len(node.body)):
+           if isinstance(node.body[i], ImportFrom):
+              if node.body[i].module =="__future__":
+                 indices.append(i)
+       if indices:
+           node.body.insert(max(indices)+1,import_node) 
+       else:
+           node.body.insert(0,import_node)
+       #
+       ##########################################################   
        
        # Add @instrument annotation
-       node = con.transformer.visit(node)
+       if not self.is_empty:
+           transformer = ModuleTransformer()
+       else:
+           transformer = ModuleTransformer(True)
+       node = transformer.visit(node)
        fix_missing_locations(node)
        data = unparse(node)
 
