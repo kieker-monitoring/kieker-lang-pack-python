@@ -72,7 +72,7 @@ class TCPWriter:
         config_parser.read(config)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         # !!enable multiconnection on the collector and sender!!
-        self.multConnections = config_parser.getboolean('General','multiple_Connections')
+        self.multConnections = config_parser.getboolean('Main','multiple_Connections')
         self.host = config_parser.get('Tcp','host')
         self.port = config_parser.getint('Tcp', 'port')
         if not self.multConnections:

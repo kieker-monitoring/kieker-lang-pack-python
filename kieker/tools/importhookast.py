@@ -18,8 +18,10 @@ from tools.ModuleTransformer import ModuleTransformer
 class InstrumentOnImportFinder(MetaPathFinder):
 
     
-    This class is a custom implementation of a MetaPathFinder.
-    It is used to find specs for     '''    
+    ''' This class is a custom implementation of a MetaPathFinder.
+    It is used to find specs for     
+    '''    
+    
     def __init__(self, ignore_list=[], empty = False, debug_on=False):
 
         self.debug_on = debug_on
