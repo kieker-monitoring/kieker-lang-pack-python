@@ -93,21 +93,14 @@ class InstLoader(Loader):
        else:
            import_node = ImportFrom(module="tools.aspect", names=[alias(name="instrument_empty")], level=0)
        
-       ###########################################################
-       # should be rewriten for  better readability              #
-       # from future imports must be at the beginning of the file#
-       #                                                         #
-       indices = []
-       for i in range(len(node.body)):
-           if isinstance(node.body[i], ImportFrom):
-              if node.body[i].module =="__future__":
-                 indices.append(i)
-       if indices:
-           node.body.insert(max(indices)+1,import_node) 
-       else:
-           node.body.insert(0,import_node)
-       #
-       ##########################################################   
+       counter = 0
+       index = 0
+       for i in node.body:
+           index += 1
+           if isinstance(i, ImportFrom):
+              if i.module == "__future__":
+                  counter = index
+       node.body.insert(counter,import_node) 
        
        # Add @instrument annotation
        if not self.is_empty:
