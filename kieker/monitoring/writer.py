@@ -5,6 +5,29 @@ from monitoring.fileregistry import WriterRegistry
 from configparser import ConfigParser
 
 
+class DummyWriter:
+    ''' This writer, is used to simulate writing, no records are written '''
+    def __init__(self):
+        pass
+
+    def on_new_registry_entry(self, value, idee):
+        pass
+
+    def writeMonitoringRecord(self, record):
+        pass
+
+    def _serialize(self, record, idee):
+        pass
+
+    def onStarting(self):
+        pass
+
+    def on_terminating(self):
+        pass
+
+    def to_string(self):
+        pass
+
 
 class FileWriter:
     ''' This writer, is used to write the records directly into local files '''
@@ -72,7 +95,7 @@ class TCPWriter:
         config_parser.read(config)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         # !!enable multiconnection on the collector and sender!!
-        self.multConnections = config_parser.getboolean('Main','multiple_Connections')
+        self.multConnections = config_parser.getboolean('General','multiple_Connections')
         self.host = config_parser.get('Tcp','host')
         self.port = config_parser.getint('Tcp', 'port')
         if not self.multConnections:
