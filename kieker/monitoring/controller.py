@@ -75,7 +75,7 @@ class TimeSourceController(AbstractController):
         return self.time_source.get_time()
 
 
-from monitoring.writer import FileWriter, TCPWriter
+from monitoring.writer import FileWriter, TCPWriter, DummyWriter
 
 class WriterController:
     ''' This class is responsible for how the record data is written.
@@ -89,7 +89,7 @@ class WriterController:
             if not config_parser.items:
                 raise ValueError('The configuration file is empty or could not be found.')
 
-            mode = config_parser.get('General', 'mode', 'text')
+            mode = config_parser.get('General', 'mode')
             if mode == 'tcp':
                 self.monitoring_writer = TCPWriter(config)
             elif mode == 'text':
