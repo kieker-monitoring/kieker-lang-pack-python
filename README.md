@@ -34,9 +34,9 @@ def some_function():
 ```python
 example.py
 
-from monitoring.controller import SingleMonitoringController
+import tools.const as con
 
-ctrl = SingleMonitoringController(path)
+
 def some_function():
       print('Hello World!')
 
@@ -53,13 +53,16 @@ Create a record object and pass it to the monitoring controler via `new_monitori
 ```python
 example.py
 
-from monitoring.controller import SingleMonitoringController
-from monitoring.record import (BeforeOperationEvent, AfterOperationEvent)
-from monitoring.traceregistry import TraceRegistry
+from monitoring.record.trace.operation.operationevent import (BeforeOperationEvent,
+                                                              AfterOperationEvent, 
+                                                              AfterOperationFailedEvent, 
+                                                              )
+import tools.const as con
 
-ctrl = SingleMonitoringController()
-trace_reg = TraceRegistry()
+
 def some_function():
+      ctrl = con.monitoring_controller
+      trace_reg = con.trace_reg
       trace = trace_reg.get_trace()
         if(trace is None):
             trace = trace_reg.register_trace()
@@ -82,38 +85,16 @@ The above method gives us full control over program instrumentation, but it also
 
 ```python
 example.py
-from monitoring.controller import SingleMonitoringController
+import tools.const as con
 from tools.aspect import instrument
 
-monitoring_controller = SingleMonitoringController(path) # Always instatiate a controller
+monitoring_controller = con.monitoring_controller # Always instatiate a controller
 
 @instrument
 def some_function():
       print('Hello World!')
 ```
 
-Alternatively, if you want to instrument all class methods at once, you do not have to annotate each function. Instead, set the `__metaclass__` variable of a class to 'Instrumental'
-
-
-```python
-example.py
-
-from tools.Aspect import Instrumental
-from monitoring.controller import SingleMonitoringController
-
-monitoring_controller = SingleMonitoringController(path) # Always instatiate a controller
-class Foo:
-      __metaclass__ = Instrumental
-      
-      def __init(self):
-            pass
-      
-      def func(self):
-            # Do something
-            pass
-```
-
-As a result, each time a class method or functions are called, Kieker will log automatically. Like in the above example you should get two log files.
 
 ## Import Hooks
 Import Hook is a technique in python, that allows us to modify import behavior of the python modules.
