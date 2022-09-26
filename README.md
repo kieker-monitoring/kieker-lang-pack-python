@@ -53,15 +53,17 @@ Create a record object and pass it to the monitoring controler via `new_monitori
 ```python
 example.py
 
+import const as con
 from monitoring.record.trace.operation.operationevent import (BeforeOperationEvent,
                                                               AfterOperationEvent, 
                                                               AfterOperationFailedEvent, 
                                                               )
-import tools.const as con
+                           
+ctrl = SingleMonitoringController('/path/to/config.ini')
+
 
 
 def some_function():
-      ctrl = con.monitoring_controller
       trace_reg = con.trace_reg
       trace = trace_reg.get_trace()
         if(trace is None):
@@ -85,10 +87,10 @@ The above method gives us full control over program instrumentation, but it also
 
 ```python
 example.py
-import tools.const as con
 from tools.aspect import instrument
+from monitoring.controller import SingleMonitoringController
 
-monitoring_controller = con.monitoring_controller # Always instatiate a controller
+monitoring_controller = SingleMonitoringController('/path/to/config.ini') # Always instatiate a controller
 
 @instrument
 def some_function():
@@ -97,70 +99,31 @@ def some_function():
 
 
 ## Import Hooks
-Import Hook is a technique in python, that allows us to modify import behavior of the python modules.
-This feature allows us to instrument the program with barely any source code modification. 
+We also provide two import Hooks. They are used in similar manner. All you have to do is to add either PostImportFinder or InstrumentOnImportFinder to the
+sys.meta_path in the module which is a an entry point for your python program.
+Bellow we show all the necessary API to do that.
 
-Currently we provide an API to instrument a program with only a few lines of code.
-This approach assumes, that there is some entry point of a program. And that the project is structerd in a certain way ().
+### Post Import Hook
 
-```python
-
-some_main.py
+``` python
 from tools.importhook import PostImportFinder
 from monitoring.controller import SingleMonitoringController
 
-some_var = SingleMonitoringController(path) # always instatiate a controller
-my_list = list() # can be empty. Contains a list of module names, that must be skipped and not instrumented
-sys.meta_path.insert(0,PostImportFinder('root_name', my_list)) # first parameter is a root name of the modules e.g root_name.something.fancy
+
+pattern_object = re.compile('YOUR REGEX') # Some regex to describe which modules should be instrumented
+exclude_modules = list() # List with explicit strings of modules which should be excluded from the instrumentations
+some_var = SingleMonitoringController('/path/to/config.ini')
+sys.meta_path.insert(0, PostImportFinder(pattern_object, exclude_modules))
+
 ```
-`sys.meta_path.insert(0,PostImportFinder('root_name', my_list))` instruments the whole program. 
-
-If for some reason our API does not match your need you can implement an import hook yourself.
-There are two ways of how we can achieve it, depending on what python version we want to use. 
-We provide a description of this technique for the older python versions (3.5).
-This approach will also work with the newer versions.
-
-
-We must implement the following two classes:
-
-
+  
+### Pre Import Hook
 ```python
+from tools.aspect import decorate_find_spec
+from tools.importhookast import  InstrumentOnImportFinder
 
-import importlib
-import sys
-from tools.aspect import decorate_members
+ex=list()
+sys.meta_path.insert(0, PostImportFinder(pattern_object, exclude_modules))
+sys.meta_path.insert(0, InstrumentOnImportFinder(ignore_list=ex, empty=False,  debug_on=True))
 
-class PostImportFinder:
-    def __init__(self, exclusions):
-        self._skip=set()
-    
-    def find_module(self, fullname, path = None):
-        if fullname in self._skip:
-            return None
-        self._skip.add(fullname)
-        return PostImportLoader(self)
-
-
-class PostImportLoader:
-    def __init__(self, finder):
-        self._finder = finder
-    
-    def load_module(self, fullname):
-        importlib.import_module(fullname)
-        module = sys.modules[fullname]
-        
-        # HERE PUT YOUR LOGIC THAT DESCRIVES WHICH MODULES MUST BE INSTRUMENTED
-        # USUALLY YOU WOULD FILTER module dict accordingly.
-        # After that call something like:
-        # decorate_members(module)
-        # That will apply the decorators programatically to the module functions
-        self._finder._skip.remove(fullname)
-        return module
 ```
-
-
-At the end you use your own import hook in the same way it was explained above.
-
-
-
- 
