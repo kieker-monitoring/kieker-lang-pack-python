@@ -119,11 +119,11 @@ sys.meta_path.insert(0, PostImportFinder(pattern_object, exclude_modules))
   
 ### Pre Import Hook
 ```python
+import re
 from tools.aspect import decorate_find_spec
 from tools.importhookast import  InstrumentOnImportFinder
 
 ex=list()
-sys.meta_path.insert(0, PostImportFinder(pattern_object, exclude_modules))
 sys.meta_path.insert(0, InstrumentOnImportFinder(ignore_list=ex, empty=False,  debug_on=True))
 
 ```
