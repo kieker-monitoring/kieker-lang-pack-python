@@ -11,7 +11,6 @@ thread_local.trace = None
 thread_local.trace_stack = None
 
 
-
 class _PointTrace:
 
     def __init__(self, trace_id, order_id):
@@ -34,7 +33,7 @@ class TraceRegistry:
 
     def get_new_id(self):
         with lock:
-            #  THIS IS A WEIRD WAY  TO INCREMENT
+            # THIS IS A WEIRD WAY TO INCREMENT
             # BUT FOR SOME REASON THE INCREMENTATION HAPPENS ONLY ONCE
             # IF WE DO IT THE NORMAL WAY. 
             tmp = self.next_trace_id
@@ -49,6 +48,7 @@ class TraceRegistry:
         return result
 
     def register_trace(self):
+        # TODO Enclosing traces and stuff
        
         enclosing_trace = self.get_trace()
         if not enclosing_trace is None:
@@ -57,7 +57,7 @@ class TraceRegistry:
                 local_trace_stack = list()
                 thread_local.trace_stack=local_trace_stack
             local_trace_stack.append(enclosing_trace)
-            
+
         thread = threading.current_thread()
         trace_point = self.get_and_remove_parent_trace_id(thread)
         trace_id = self.get_new_id()

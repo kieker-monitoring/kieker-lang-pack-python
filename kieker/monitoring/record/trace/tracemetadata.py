@@ -3,7 +3,7 @@
 class TraceMetadata:
     __NO_PARENT_TRACEID__ = -1
     __NO_PARENT_ORDER_INDEX__ = -1
-    __NO_SESSION_ID__ = "<no-sesion-id>"
+    __NO_SESSION_ID__ = "<no-session-id>"
     __NO_HOSTNAME__ = "<default-host>"
 
     def __init__(self, trace_id, thread_id,
@@ -32,5 +32,6 @@ class TraceMetadata:
         serializer.put_int(self.parent_order_id)
 
     def get_next_order_id(self):
+        result = self.next_order_id
         self.next_order_id += 1
-        return self.next_order_id
+        return result
