@@ -2,13 +2,14 @@
 
 from struct import pack
 
+
 class Serializer:
 
     def __init__(self, string_byte):
         self.string_byte = string_byte
 
     def put(self, value):
-        if value is not'\n':
+        if value is not '\n':
             self.string_byte.append(str(value)+"; ")
         else:
             self.string_byte.append(value)
@@ -41,8 +42,8 @@ class Serializer:
         self.string_byte.append(str(value)+"; ")
 
     def pack(self):
-        raise NotImplementedError('pack() is not suppored by the file serializer.')
-        
+        raise NotImplementedError(
+            'pack() is not suppored by the file serializer.')
 
 
 class BinarySerializer:

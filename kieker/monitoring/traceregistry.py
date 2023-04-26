@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import threading
 
-#from socket import *
+# from socket import *
 from monitoring.record.trace.tracemetadata import TraceMetadata
 
 
@@ -35,7 +35,7 @@ class TraceRegistry:
         with lock:
             # THIS IS A WEIRD WAY TO INCREMENT
             # BUT FOR SOME REASON THE INCREMENTATION HAPPENS ONLY ONCE
-            # IF WE DO IT THE NORMAL WAY. 
+            # IF WE DO IT THE NORMAL WAY.
             tmp = self.next_trace_id
             self.next_trace_id = tmp + 1
             result = self.next_trace_id
@@ -49,13 +49,13 @@ class TraceRegistry:
 
     def register_trace(self):
         # TODO Enclosing traces and stuff
-       
+
         enclosing_trace = self.get_trace()
         if not enclosing_trace is None:
             local_trace_stack = thread_local.trace_stack
             if local_trace_stack is None:
                 local_trace_stack = list()
-                thread_local.trace_stack=local_trace_stack
+                thread_local.trace_stack = local_trace_stack
             local_trace_stack.append(enclosing_trace)
 
         thread = threading.current_thread()
@@ -65,7 +65,7 @@ class TraceRegistry:
         parent_order_id = None
 
         if not trace_point is None:
-            
+
             parent_trace_id = trace_point.trace_id
             parent_order_id = trace_point.order_id
         elif not enclosing_trace is None:
@@ -85,12 +85,12 @@ class TraceRegistry:
         return meta_record
 
     def unregister_trace(self):
-        local_trace_stack=thread_local.trace_stack
-        if not local_trace_stack is None :
+        local_trace_stack = thread_local.trace_stack
+        if not local_trace_stack is None:
             if local_trace_stack:
-                thread_local.trace =thread_local.trace_stack.pop()
+                thread_local.trace = thread_local.trace_stack.pop()
             else:
-                thread_local.trace_stack=None
+                thread_local.trace_stack = None
                 thread_local.trace = None
         else:
             thread_local.trace = None

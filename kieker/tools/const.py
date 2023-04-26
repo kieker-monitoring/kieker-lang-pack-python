@@ -5,8 +5,13 @@ from tools.ModuleTransformer import ModuleTransformer
 
 ### aspect.py ###
 trace_reg = TraceRegistry()
-is_method_or_function = lambda x: inspect.isfunction(x) or inspect.ismethod(x)
-monitoring_controller = SingleMonitoringController() # Singleton
+
+
+def is_method_or_function(x): return inspect.isfunction(
+    x) or inspect.ismethod(x)
+
+
+monitoring_controller = SingleMonitoringController()  # Singleton
 
 ### importhookast.py ###
 transformer = ModuleTransformer()
