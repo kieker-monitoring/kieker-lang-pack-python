@@ -3,6 +3,7 @@ from ast import NodeTransformer, Name, Load
 
 
 class ModuleTransformer(NodeTransformer):
+
     def __init__(self, empty_decorator=False):
         self.empty_decorator = empty_decorator
 

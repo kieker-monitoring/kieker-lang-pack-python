@@ -57,7 +57,7 @@ class FileWriter:
         header = f'{idee};'
         self.string_buffer.append(header)
         record.serialize(self.serializer)
-        write_string = ''.join(map(str, self.string_buffer))+'\n'
+        write_string = ''.join(map(str, self.string_buffer)) + '\n'
         # clear buffer
         self.string_buffer.clear()
         # write to the file
@@ -76,6 +76,7 @@ class FileWriter:
 
 
 class MappingFileWriter:
+
     def __init__(self):
         self.file_path = './record-map.log'
 
@@ -94,7 +95,7 @@ time = TimeStamp()
 class TCPWriter:
     '''THis class is used to send the record data to a remote data collector. '''
 
-    def __init__(self,  config):
+    def __init__(self, config):
         config_parser = ConfigParser()
         config_parser.read(config)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)

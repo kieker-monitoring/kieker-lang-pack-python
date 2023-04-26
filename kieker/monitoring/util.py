@@ -3,8 +3,10 @@ import time
 
 
 def get_prefix(class_name):
-    events = ["BeforeOperationEvent",
-              "AfterOperationEvent", "AfterOperationFailedEvent"]
+    events = [
+        "BeforeOperationEvent", "AfterOperationEvent",
+        "AfterOperationFailedEvent"
+    ]
     metadata = ["TraceMetadata"]
 
     if class_name in events:

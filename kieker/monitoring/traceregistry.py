@@ -4,7 +4,6 @@ import threading
 # from socket import *
 from monitoring.record.trace.tracemetadata import TraceMetadata
 
-
 lock = threading.Lock()
 thread_local = threading.local()
 thread_local.trace = None
@@ -75,12 +74,8 @@ class TraceRegistry:
             parent_trace_id = trace_id
             parent_order_id = -1
 
-        meta_record = TraceMetadata(trace_id,
-                                    thread.ident,
-                                    None,
-                                    None,
-                                    parent_trace_id,
-                                    parent_order_id)
+        meta_record = TraceMetadata(trace_id, thread.ident, None, None,
+                                    parent_trace_id, parent_order_id)
         thread_local.trace = meta_record
         return meta_record
 

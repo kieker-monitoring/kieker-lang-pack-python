@@ -7,10 +7,10 @@ from tools.aspect import decorate_members
 
 class PostImportFinder:
 
-    def __init__(self,  param, exclusions, empty=False):
+    def __init__(self, param, exclusions, empty=False):
         self._skip = set()
         self.param = param
-        self. exclusions = exclusions
+        self.exclusions = exclusions
         self.empty = empty
 
     def find_module(self, fullname, path=None):
@@ -21,6 +21,7 @@ class PostImportFinder:
 
 
 class PostImportLoader:
+
     def __init__(self, finder, param, exclusions, empty):
         self._finder = finder
         self.param = param
@@ -32,7 +33,7 @@ class PostImportLoader:
         module = sys.modules[fullname]
         if self.param.search(fullname) is not None:
 
-           # for ex in self.exclusions:
+            # for ex in self.exclusions:
             #    if ex.match(fullname):
             #       return
             decorate_members(module, self.empty)

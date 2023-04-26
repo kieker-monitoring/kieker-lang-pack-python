@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from monitoring.controller import SingleMonitoringController
 from monitoring.traceregistry import TraceRegistry
-from monitoring.record.trace.operation.operationevent import (BeforeOperationEvent,
-                                                              AfterOperationEvent,
-                                                              AfterOperationFailedEvent,
-                                                              )
+from monitoring.record.trace.operation.operationevent import (
+    BeforeOperationEvent,
+    AfterOperationEvent,
+    AfterOperationFailedEvent,
+)
 
 monitoring_controller = SingleMonitoringController()  # Singleton
 trace_reg = TraceRegistry()
@@ -26,9 +27,9 @@ def brefore_operation_event(func):
     qualname = (func.__module__ if class_signature == func.__name__ else
                 f'{func_module}.{class_signature}')
 
-    monitoring_controller.new_monitoring_record(BeforeOperationEvent(
-        timestamp, trace_id, trace.get_next_order_id(), func.__name__,
-        qualname))
+    monitoring_controller.new_monitoring_record(
+        BeforeOperationEvent(timestamp, trace_id, trace.get_next_order_id(),
+                             func.__name__, qualname))
 
 
 def after_operation_event(func):
@@ -39,12 +40,9 @@ def after_operation_event(func):
     class_signature = func.__qualname__.split(".", 1)[0]
     qualname = (func.__module__ if class_signature == func.__name__ else
                 f'{func_module}.{class_signature}')
-    monitoring_controller.new_monitoring_record(AfterOperationEvent(
-        timestamp,
-        trace_id,
-        trace.get_next_order_id(),
-        func.__name__,
-        qualname))
+    monitoring_controller.new_monitoring_record(
+        AfterOperationEvent(timestamp, trace_id, trace.get_next_order_id(),
+                            func.__name__, qualname))
 
 
 def after_operation_failed_event(func, exception):
@@ -57,12 +55,11 @@ def after_operation_failed_event(func, exception):
                 f'{func_module}.{class_signature}')
     monitoring_controller.new_monitoring_record(
         AfterOperationFailedEvent(timestamp, trace_id,
-                                  trace.get_next_order_id(),
-                                  func.__name__,
-                                  qualname,
-                                  repr(exception)))
+                                  trace.get_next_order_id(), func.__name__,
+                                  qualname, repr(exception)))
 
 
 def create_deco():
+
     def decorator(func, args, kwargs):
         ...

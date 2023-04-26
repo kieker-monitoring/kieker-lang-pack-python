@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class WriterRegistry:
 
     def __init__(self, listener):

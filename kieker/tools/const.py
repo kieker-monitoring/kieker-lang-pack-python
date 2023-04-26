@@ -7,8 +7,8 @@ from tools.ModuleTransformer import ModuleTransformer
 trace_reg = TraceRegistry()
 
 
-def is_method_or_function(x): return inspect.isfunction(
-    x) or inspect.ismethod(x)
+def is_method_or_function(x):
+    return inspect.isfunction(x) or inspect.ismethod(x)
 
 
 monitoring_controller = SingleMonitoringController()  # Singleton

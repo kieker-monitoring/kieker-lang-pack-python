@@ -11,8 +11,8 @@ from configparser import ConfigParser
 
 
 class AbstractController(ABC):
-    def __init__(self, domain, tcp_enabled, reader_thread, port,
-                 terminated):
+
+    def __init__(self, domain, tcp_enabled, reader_thread, port, terminated):
         self.domain = domain
         self.tcp_enabled = tcp_enabled
         self.reader_thread = reader_thread

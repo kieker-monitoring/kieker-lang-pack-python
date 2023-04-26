@@ -8,14 +8,13 @@ Created on Thu Jul 28 13:24:25 2022
 
 from importlib.abc import Loader, MetaPathFinder
 from importlib.util import spec_from_file_location
-from ast import ImportFrom,  parse, alias, unparse, fix_missing_locations
+from ast import ImportFrom, parse, alias, unparse, fix_missing_locations
 import os
 import tools.const as con
 from tools.ModuleTransformer import ModuleTransformer
 
 
 class InstrumentOnImportFinder(MetaPathFinder):
-
     ''' This class is a custom implementation of a MetaPathFinder.
     It is used to find specs for     
     '''
@@ -34,20 +33,20 @@ class InstrumentOnImportFinder(MetaPathFinder):
             directory = os.path.join(e, name)
             if os.path.isdir(directory):
                 filename = os.path.join(directory, "__init__.py")
-                spec = spec_from_file_location(fullname,
-                                               filename,
-
-                                               loader=InstLoader(
-                                                   filename, self.empty, self.ignore_list, self.debug_on),
-                                               submodule_search_locations=[directory])
+                spec = spec_from_file_location(
+                    fullname,
+                    filename,
+                    loader=InstLoader(filename, self.empty, self.ignore_list,
+                                      self.debug_on),
+                    submodule_search_locations=[directory])
             else:
                 filename = directory + ".py"
-                spec = spec_from_file_location(fullname,
-                                               filename,
-
-                                               loader=InstLoader(
-                                                   filename, self.empty, self.ignore_list, self.debug_on),
-                                               submodule_search_locations=None)
+                spec = spec_from_file_location(
+                    fullname,
+                    filename,
+                    loader=InstLoader(filename, self.empty, self.ignore_list,
+                                      self.debug_on),
+                    submodule_search_locations=None)
 
             if os.path.exists(filename):
                 return spec
@@ -57,6 +56,7 @@ class InstrumentOnImportFinder(MetaPathFinder):
 
 
 class InstLoader(Loader):
+
     def __init__(self, filename, is_empty, ignore_list, debug=False):
         self.filename = filename
         self.debug_on = debug
@@ -68,13 +68,12 @@ class InstLoader(Loader):
 
     def exec_module(self, module):
 
-        ex = ["tools.aspect", "monitoring.record",
-              "monitoring.record.trace",
-              "monitoring.record.trace.operation",
-              "monitoring.record.trace.operation.operationevent",
-              "monitoring.traceregistry",
-              "monitoring.record.trace.tracemetadata"
-              ]
+        ex = [
+            "tools.aspect", "monitoring.record", "monitoring.record.trace",
+            "monitoring.record.trace.operation",
+            "monitoring.record.trace.operation.operationevent",
+            "monitoring.traceregistry", "monitoring.record.trace.tracemetadata"
+        ]
 
         # Read module source code
         with open(self.filename) as f:
@@ -87,11 +86,13 @@ class InstLoader(Loader):
         # parse and inject import of tools.aspect
         node = parse(data)
         if not self.is_empty:
-            import_node = ImportFrom(module="tools.aspect", names=[
-                                     alias(name="instrument")], level=0)
+            import_node = ImportFrom(module="tools.aspect",
+                                     names=[alias(name="instrument")],
+                                     level=0)
         else:
-            import_node = ImportFrom(module="tools.aspect", names=[
-                                     alias(name="instrument_empty")], level=0)
+            import_node = ImportFrom(module="tools.aspect",
+                                     names=[alias(name="instrument_empty")],
+                                     level=0)
 
         counter = 0
         index = 0

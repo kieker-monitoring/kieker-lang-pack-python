@@ -10,36 +10,36 @@ class Serializer:
 
     def put(self, value):
         if value is not '\n':
-            self.string_byte.append(str(value)+"; ")
+            self.string_byte.append(str(value) + "; ")
         else:
             self.string_byte.append(value)
 
     def put_boolean(self, boolean):
-        self.string_byte.append(str(boolean)+"; ")
+        self.string_byte.append(str(boolean) + "; ")
 
     def put_byte(self, value):
-        self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value) + "; ")
 
     def put_int(self, value):
-        self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value) + "; ")
 
     def put_long(self, value):
-        self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value) + "; ")
 
     def put_double(self, value):
-        self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value) + "; ")
 
     def put_string(self, value):
-        self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value) + "; ")
 
     def put_char(self, value):
-        self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value) + "; ")
 
     def put_short(self, value):
-        self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value) + "; ")
 
     def put_float(self, value):
-        self.string_byte.append(str(value)+"; ")
+        self.string_byte.append(str(value) + "; ")
 
     def pack(self):
         raise NotImplementedError(
