@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import socket as s
+import threading
+from monitoring.util import TimeStamp, get_prefix
+from struct import pack
 from monitoring.serialization import Serializer, BinarySerializer
 from monitoring.fileregistry import WriterRegistry
 from configparser import ConfigParser
@@ -7,6 +11,7 @@ from configparser import ConfigParser
 
 class DummyWriter:
     ''' This writer, is used to simulate writing, no records are written '''
+
     def __init__(self):
         pass
 
@@ -31,6 +36,7 @@ class DummyWriter:
 
 class FileWriter:
     ''' This writer, is used to write the records directly into local files '''
+
     def __init__(self, file_path, string_buffer):
         self.file_path = file_path
         self.string_buffer = string_buffer
@@ -51,7 +57,7 @@ class FileWriter:
         header = f'{idee};'
         self.string_buffer.append(header)
         record.serialize(self.serializer)
-        write_string = ''.join(map(str, self.string_buffer))+'\n'
+        write_string = ''.join(map(str, self.string_buffer)) + '\n'
         # clear buffer
         self.string_buffer.clear()
         # write to the file
@@ -70,6 +76,7 @@ class FileWriter:
 
 
 class MappingFileWriter:
+
     def __init__(self):
         self.file_path = './record-map.log'
 
@@ -80,34 +87,35 @@ class MappingFileWriter:
         file.close()
 
 
-from struct import pack
-from monitoring.util import TimeStamp, get_prefix
-import threading
-import socket as s
-
 lock = threading.Lock()
 
 time = TimeStamp()
+
+
 class TCPWriter:
     '''THis class is used to send the record data to a remote data collector. '''
-    def __init__(self,  config):
+
+    def __init__(self, config):
         config_parser = ConfigParser()
         config_parser.read(config)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         # !!enable multiconnection on the collector and sender!!
-        self.multConnections = config_parser.getboolean('General','multiple_Connections')
-        self.host = config_parser.get('Tcp','host')
+        self.multConnections = config_parser.getboolean(
+            'General', 'multiple_Connections')
+        self.host = config_parser.get('Tcp', 'host')
         self.port = config_parser.getint('Tcp', 'port')
         if not self.multConnections:
             self.socket.connect_ex((self.host, self.port))
-        self.connetction_timeout = config_parser.getint('Tcp','connection_timeout')
+        self.connetction_timeout = config_parser.getint(
+            'Tcp', 'connection_timeout')
         self.writer_registry = WriterRegistry(self)
         self.serializer = BinarySerializer([], self.writer_registry)
 
     def on_new_registry_entry(self, value, idee):
         # int - id, int-length, bytesequences
         # encode value in utf-8 and pack it with the id
-        v_encode = str(value).encode('utf-8') # value should be always a string
+        # value should be always a string
+        v_encode = str(value).encode('utf-8')
         format_string = f'!iii{len(v_encode)}s'
         result = pack(format_string, -1, idee, len(v_encode), v_encode)
         try:

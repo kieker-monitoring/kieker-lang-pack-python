@@ -17,11 +17,9 @@ setuptools.setup(
         "License :: OSI Approved :: Apache License",
         "Operating System :: OS Independent",
     ],
-   
-    packages=setuptools.find_packages(
-        where='kieker',
-       # include =['monitoring', 'tools']
-    ),
+    packages=setuptools.find_packages(where='kieker',
+                                      # include =['monitoring', 'tools']
+                                      ),
     package_dir={"": "kieker"}
     #python_requires=">=3.3",
 )
