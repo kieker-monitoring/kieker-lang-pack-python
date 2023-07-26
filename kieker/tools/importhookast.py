@@ -10,6 +10,7 @@ from importlib.abc import Loader, MetaPathFinder
 from importlib.util import spec_from_file_location
 from ast import ImportFrom, parse, alias, unparse, fix_missing_locations
 import os
+import re
 import tools.const as con
 from tools.ModuleTransformer import ModuleTransformer
 
@@ -19,11 +20,29 @@ class InstrumentOnImportFinder(MetaPathFinder):
     It is used to find specs for     
     '''
 
-    def __init__(self, ignore_list=[], empty=False, debug_on=False):
+    def __init__(self, ignore_list = [], instrument_pattern=None, empty: bool = False,
+                 debug_on: bool = False, debug_detail: bool = False):
+        self.__item_list: list = []
+        self.__pattern = instrument_pattern
+        self.debug_on: bool = debug_on
+        self.debug_detail: bool = debug_detail
+        self.ignore_list: list = ignore_list
+        self.empty: bool = empty
 
-        self.debug_on = debug_on
-        self.ignore_list = ignore_list
-        self.empty = empty
+    @property
+    def item_list(self) -> list:
+        return self.__item_list
+
+    def _matches_pattern(self, name) -> bool:
+        # No pattern defined
+        if self.__pattern is None:
+            return True
+        # Pattern defined
+        elif self.__pattern.search(name):
+            return True
+        # No match
+        else:
+            return False
 
     def find_spec(self, fullname, path, target=None):
         name = fullname.split(".")[-1]
@@ -31,6 +50,15 @@ class InstrumentOnImportFinder(MetaPathFinder):
             path = [os.getcwd()]
         for e in path:
             directory = os.path.join(e, name)
+
+            if self._matches_pattern(directory):
+                if self.debug_detail:
+                    print(f'Instrumenting {directory}')
+            else:
+                if self.debug_on:
+                    print(f'{directory} does not match pattern. Skipping.')
+                continue
+
             if os.path.isdir(directory):
                 filename = os.path.join(directory, "__init__.py")
                 spec = spec_from_file_location(
@@ -49,6 +77,7 @@ class InstrumentOnImportFinder(MetaPathFinder):
                     submodule_search_locations=None)
 
             if os.path.exists(filename):
+                self.__item_list.append((fullname, spec))
                 return spec
             else:
                 del spec
@@ -57,9 +86,9 @@ class InstrumentOnImportFinder(MetaPathFinder):
 
 class InstLoader(Loader):
 
-    def __init__(self, filename, is_empty, ignore_list, debug=False):
+    def __init__(self, filename, is_empty, ignore_list, debug: bool = False):
         self.filename = filename
-        self.debug_on = debug
+        self.debug_on: bool = debug
         self.ignore_list = ignore_list
         self.is_empty = is_empty
 
@@ -119,5 +148,5 @@ class InstLoader(Loader):
             exec(data, vars(module))
 
         except:
-            # TODO: Meaningfull exeception handling if any needed
+            # TODO: Meaningful exeception handling if any needed
             pass
