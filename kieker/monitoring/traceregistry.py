@@ -80,9 +80,16 @@ class TraceRegistry:
         return meta_record
 
     def unregister_trace(self):
-        local_trace_stack = thread_local.trace_stack
+        local_trace_stack = None
+        if not hasattr(thread_local, "trace_stack"):
+             thread_local.trace_stack = None
+             local_trace_stack =thread_local.trace_stack
+        else:
+            local_trace_stack =thread_local.trace_stack
+
+       # local_trace_stack = thread_local.trace_stack
         if not local_trace_stack is None:
-            if local_trace_stack:
+            if len(local_trace_stack)>0:
                 thread_local.trace = thread_local.trace_stack.pop()
             else:
                 thread_local.trace_stack = None
