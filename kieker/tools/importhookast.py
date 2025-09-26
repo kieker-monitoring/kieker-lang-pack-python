@@ -8,129 +8,145 @@ Created on Thu Jul 28 13:24:25 2022
 
 from importlib.abc import Loader, MetaPathFinder
 from importlib.util import spec_from_file_location
-from ast import ImportFrom,  parse, alias, unparse, fix_missing_locations
-from tools.ModuleTransformer import ModuleTransformer
+from ast import ImportFrom, parse, alias, unparse, fix_missing_locations
 import os
-
-
+import re
+import tools.const as con
+from tools.ModuleTransformer import ModuleTransformer
 
 
 class InstrumentOnImportFinder(MetaPathFinder):
+    ''' This class is a custom implementation of a MetaPathFinder.
+    It is used to find specs for     
     '''
-    This class is a custom implementation of a MetaPathFinder.
-    It is used to find specs for     '''    
-    def __init__(self, ignore_list=[], empty = False, debug_on=False):
-        self.debug_on = debug_on
-        self.ignore_list = ignore_list
-        self.empty = empty
-        
+
+    def __init__(self, ignore_list = [], instrument_pattern=None, empty: bool = False,
+                 debug_on: bool = False, debug_detail: bool = False):
+        self.__item_list: list = []
+        self.__pattern = instrument_pattern
+        self.debug_on: bool = debug_on
+        self.debug_detail: bool = debug_detail
+        self.ignore_list: list = ignore_list
+        self.empty: bool = empty
+
+    @property
+    def item_list(self) -> list:
+        return self.__item_list
+
+    def _matches_pattern(self, name) -> bool:
+        # No pattern defined
+        if self.__pattern is None:
+            return True
+        # Pattern defined
+        elif self.__pattern.search(name):
+            return True
+        # No match
+        else:
+            return False
+
     def find_spec(self, fullname, path, target=None):
-        
         name = fullname.split(".")[-1]
-        
         if path is None or path == "":
-            path = [os.getcwd()] 
-    
-        
+            path = [os.getcwd()]
         for e in path:
             directory = os.path.join(e, name)
+
+            if self._matches_pattern(directory):
+                if self.debug_detail:
+                    print(f'Instrumenting {directory}')
+            else:
+                if self.debug_on:
+                    print(f'{directory} does not match pattern. Skipping.')
+                continue
+
             if os.path.isdir(directory):
-                
                 filename = os.path.join(directory, "__init__.py")
-                submods = [directory] 
-                spec = spec_from_file_location(fullname,
-                                               filename,
-                                               loader=InstLoader(filename,self.empty, self.ignore_list, self.debug_on), 
-                                               submodule_search_locations=submods)
+                spec = spec_from_file_location(
+                    fullname,
+                    filename,
+                    loader=InstLoader(filename, self.empty, self.ignore_list,
+                                      self.debug_on),
+                    submodule_search_locations=[directory])
             else:
                 filename = directory + ".py"
-                submods = None
-                spec = spec_from_file_location(fullname,
-                                               filename,
-                                               loader=InstLoader(filename, self.empty, self.ignore_list, self.debug_on ), 
-                                               submodule_search_locations=submods)
-            
-            if  os.path.exists(filename):
+                spec = spec_from_file_location(
+                    fullname,
+                    filename,
+                    loader=InstLoader(filename, self.empty, self.ignore_list,
+                                      self.debug_on),
+                    submodule_search_locations=None)
+
+            if os.path.exists(filename):
+                self.__item_list.append((fullname, spec))
                 return spec
             else:
                 del spec
-           
         return None
-    
-    
+
+
 class InstLoader(Loader):
-    def __init__(self, filename, is_empty, ignore_list, debug=False ):
+
+    def __init__(self, filename, is_empty, ignore_list, debug: bool = False):
         self.filename = filename
-        self.debug_on = debug
+        self.debug_on: bool = debug
         self.ignore_list = ignore_list
         self.is_empty = is_empty
-        
 
     def create_module(self, spec):
-        return None 
+        return None
 
     def exec_module(self, module):
-       
-       ex=["tools.aspect","monitoring.record",
-           "monitoring.record.trace",
-           "monitoring.record.trace.operation",
-           "monitoring.record.trace.operation.operationevent",
-           "monitoring.traceregistry",
-           "monitoring.record.trace.tracemetadata"
-          ]
-       # Read module source code
-       with open(self.filename) as f:
-           data = f.read()
-       # If the module should not be instrumented
-       # execute it normally
-       if module.__name__ in self.ignore_list or  module.__name__ in ex: 
-          exec(data, vars(module))
-          return
-       
-       # parse and inject import of tools.aspect
-       node = parse(data)
-       if not self.is_empty:
-           import_node = ImportFrom(module="tools.aspect", names=[alias(name="instrument")], level=0)
-       else:
-           import_node = ImportFrom(module="tools.aspect", names=[alias(name="instrument_empty")], level=0)
-       
-       ###########################################################
-       # should be rewriten for  better readability              #
-       # from future imports must be at the beginning of the file#
-       #                                                         #
-       indices = []
-       for i in range(len(node.body)):
-           if isinstance(node.body[i], ImportFrom):
-              if node.body[i].module =="__future__":
-                 indices.append(i)
-       if indices:
-           node.body.insert(max(indices)+1,import_node) 
-       else:
-           node.body.insert(0,import_node)
-       #
-       ##########################################################   
-       
-       # Add @instrument annotation
-       if not self.is_empty:
-           transformer = ModuleTransformer()
-       else:
-           transformer = ModuleTransformer(True)
-       node = transformer.visit(node)
-       fix_missing_locations(node)
-       data=unparse(node)
-       
 
-       try:  
-         if self.debug_on:
-             print(module.__name__)
-         exec(data, vars(module))
-       
-       except:
-           # TODO: Meaningfull exeception handling if any needed
-           pass
-          
-          
+        ex = [
+            "tools.aspect", "monitoring.record", "monitoring.record.trace",
+            "monitoring.record.trace.operation",
+            "monitoring.record.trace.operation.operationevent",
+            "monitoring.traceregistry", "monitoring.record.trace.tracemetadata"
+        ]
 
-    
-    
-    
+        # Read module source code
+        with open(self.filename) as f:
+            data = f.read()
+        # If the module should not be instrumented
+        # execute it normally
+        if module.__name__ in self.ignore_list or module.__name__ in ex:
+            exec(data, vars(module))
+            return
+        # parse and inject import of tools.aspect
+        node = parse(data)
+        if not self.is_empty:
+            import_node = ImportFrom(module="tools.aspect",
+                                     names=[alias(name="instrument")],
+                                     level=0)
+        else:
+            import_node = ImportFrom(module="tools.aspect",
+                                     names=[alias(name="instrument_empty")],
+                                     level=0)
+
+        counter = 0
+        index = 0
+        for i in node.body:
+            index += 1
+            if isinstance(i, ImportFrom):
+                if i.module == "__future__":
+                    counter = index
+        node.body.insert(counter, import_node)
+
+        # Add @instrument annotation
+        if not self.is_empty:
+            transformer = ModuleTransformer()
+        else:
+            transformer = ModuleTransformer(True)
+        node = transformer.visit(node)
+        fix_missing_locations(node)
+        data = unparse(node)
+
+        try:
+            if self.debug_on:
+                # TODO: create log file o.s.
+                print(module.__name__)
+            exec(data, vars(module))
+
+        except:
+            # TODO: Meaningful exeception handling if any needed
+            pass
