@@ -12,12 +12,12 @@ setuptools.setup(
     description="Implementation of kieker-monitoring for pyhton",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    license="Apache-2.0",
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache License",
         "Operating System :: OS Independent",
     ],
-    packages=setuptools.find_packages(where='kieker',
+    packages=setuptools.find_packages(where="kieker",
                                       # include =['monitoring', 'tools']
                                       ),
     package_dir={"": "kieker"}
