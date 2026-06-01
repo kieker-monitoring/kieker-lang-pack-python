@@ -56,7 +56,7 @@ from monitoring.record.trace.operation.operationevent import (BeforeOperationEve
                                                               AfterOperationFailedEvent, 
                                                               )
                            
-ctrl = SingleMonitoringController('/path/to/config.ini')
+ctrl = MonitoringController('/path/to/config.ini')
 
 def some_function():
       trace_reg = con.trace_reg
@@ -65,11 +65,11 @@ def some_function():
             trace = trace_reg.register_trace()
             monitoring_controller.new_monitoring_record(trace)
       trace_id = trace.trace_id
-      timestamp = ctrl.time_source_controller.get_time()
+      timestamp = ctrl.timesource_ctrl.get_time()
       before_record = BeforeOperationevent(timestamp, trace_id, trace.get_next_order_id(), 'some_function','example.some_function')
       ctrl.new_monitoring_record(before_record)
       print('Hello World!')
-      timestamp = ctrl.time_source_controller.get_time()
+      timestamp = ctrl.timesource_ctrl.get_time()
       after_record = AfterOperationEvent(timestamp, trace_id, trace.get_next_order_id(), 'some_function','example.some_function')
       ctrl.new_monitoring_record(after_record)
 ```
@@ -81,9 +81,9 @@ The above method gives us full control over program instrumentation, but it also
 ```python
 example.py
 from tools.aspect import instrument
-from monitoring.controller import SingleMonitoringController
+from monitoring.controller import MonitoringController
 
-monitoring_controller = SingleMonitoringController('/path/to/config.ini') # Always instatiate a controller
+monitoring_controller = MonitoringController('/path/to/config.ini') # Always instatiate a controller
 
 @instrument
 def some_function():
@@ -101,11 +101,11 @@ Bellow we show all the necessary API to do that.
 
 ```python
 from tools.importhook import PostImportFinder
-from monitoring.controller import SingleMonitoringController
+from monitoring.controller import MonitoringController
 
 pattern_object = re.compile('YOUR REGEX') # Some regex to describe which modules should be instrumented
 exclude_modules = list() # List with explicit strings of modules which should be excluded from the instrumentations
-some_var = SingleMonitoringController('/path/to/config.ini')
+some_var = MonitoringController('/path/to/config.ini')
 sys.meta_path.insert(0, PostImportFinder(pattern_object, exclude_modules))
 
 ```

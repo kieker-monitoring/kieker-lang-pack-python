@@ -23,9 +23,9 @@ def some_function():
 ```python
 example.py
 
-from monitoring.controller import SingleMonitoringController
+from monitoring.controller import MonitoringController
 
-ctrl = SingleMonitoringController(path)
+ctrl = MonitoringController(path)
 def some_function():
       print('Hello World!')
 
@@ -42,11 +42,11 @@ Create a record object and pass it to the monitoring controler via `new_monitori
 ```python
 example.py
 
-from monitoring.controller import SingleMonitoringController
+from monitoring.controller import MonitoringController
 from monitoring.record import (BeforeOperationEvent, AfterOperationEvent)
 from monitoring.traceregistry import TraceRegistry
 
-ctrl = SingleMonitoringController()
+ctrl = MonitoringController()
 trace_reg = TraceRegistry()
 def some_function():
       trace = trace_reg.get_trace()
@@ -54,11 +54,11 @@ def some_function():
             trace = trace_reg.register_trace()
             monitoring_controller.new_monitoring_record(trace)
       trace_id = trace.trace_id
-      timestamp = ctrl.time_source_controller.get_time()
+      timestamp = ctrl.timesource_ctrl.get_time()
       before_record = BeforeOperationevent(timestamp, trace_id, trace.get_next_order_id(), 'some_function','example.some_function')
       ctrl.new_monitoring_record(before_record)
       print('Hello World!')
-      timestamp = ctrl.time_source_controller.get_time()
+      timestamp = ctrl.timesource_ctrl.get_time()
       after_record = AfterOperationEvent(timestamp, trace_id, trace.get_next_order_id(), 'some_function','example.some_function')
       ctrl.new_monitoring_record(after_record)
 
@@ -71,10 +71,10 @@ The above method gives us full control over program instrumentation, but it also
 
 ```python
 example.py
-from monitoring.controller import SingleMonitoringController
+from monitoring.controller import MonitoringController
 from tools.aspect import instrument
 
-monitoring_controller = SingleMonitoringController(path) # Always instatiate a controller
+monitoring_controller = MonitoringController(path) # Always instatiate a controller
 
 @instrument
 def some_function():
@@ -88,9 +88,9 @@ Alternatively, if you want to instrument all class methods at once, you do not h
 example.py
 
 from tools.Aspect import Instrumental
-from monitoring.controller import SingleMonitoringController
+from monitoring.controller import MonitoringController
 
-monitoring_controller = SingleMonitoringController(path) # Always instatiate a controller
+monitoring_controller = MonitoringController(path) # Always instatiate a controller
 class Foo:
       __metaclass__ = Instrumental
       
@@ -115,9 +115,9 @@ This approach assumes, that there is some entry point of a program. And that the
 
 some_main.py
 from tools.importhook import PostImportFinder
-from monitoring.controller import SingleMonitoringController
+from monitoring.controller import MonitoringController
 
-some_var = SingleMonitoringController(path) # always instatiate a controller
+some_var = MonitoringController(path) # always instatiate a controller
 my_list = list() # can be empty. Contains a list of module names, that must be skipped and not instrumented
 sys.meta_path.insert(0,PostImportFinder('root_name', my_list)) # first parameter is a root name of the modules e.g root_name.something.fancy
 ```

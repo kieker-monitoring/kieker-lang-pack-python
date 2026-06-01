@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from monitoring.controller import SingleMonitoringController
+from monitoring.controller import MonitoringController
 from monitoring.traceregistry import TraceRegistry
 from monitoring.record.trace.operation.operationevent import (
     BeforeOperationEvent,
@@ -7,7 +7,7 @@ from monitoring.record.trace.operation.operationevent import (
     AfterOperationFailedEvent,
 )
 
-monitoring_controller = SingleMonitoringController()  # Singleton
+monitoring_controller = MonitoringController()  # Singleton
 trace_reg = TraceRegistry()
 
 
@@ -21,7 +21,7 @@ def brefore_operation_event(func):
         monitoring_controller.new_monitoring_record(trace)
 
     trace_id = trace.trace_id
-    timestamp = monitoring_controller.time_source_controller.get_time()
+    timestamp = monitoring_controller.timesource_ctrl.get_time()
     func_module = func.__module__
     class_signature = func.__qualname__.split(".", 1)[0]
     qualname = (func.__module__ if class_signature == func.__name__ else
@@ -33,7 +33,7 @@ def brefore_operation_event(func):
 
 
 def after_operation_event(func):
-    timestamp = monitoring_controller.time_source_controller.get_time()
+    timestamp = monitoring_controller.timesource_ctrl.get_time()
     trace = trace_reg.get_trace()
     trace_id = trace.trace_id
     func_module = func.__module__
@@ -46,7 +46,7 @@ def after_operation_event(func):
 
 
 def after_operation_failed_event(func, exception):
-    timestamp = monitoring_controller.time_source_controller.get_time()
+    timestamp = monitoring_controller.timesource_ctrl.get_time()
     trace = trace_reg.get_trace()
     trace_id = trace.trace_id
     func_module = func.__module__

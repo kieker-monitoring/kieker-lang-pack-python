@@ -48,7 +48,9 @@ class FileWriter:
         self.map_file_writer.add(value, idee)
 
     def writeMonitoringRecord(self, record):
-        record_class_name = record.__class__.__module__ + record.__class__.__qualname__
+        __module = record.__class__.__module__
+        __qualname = record.__class__.__qualname__
+        record_class_name = __module + __qualname
         self.writer_registry.register(record_class_name)
         self._serialize(record, self.writer_registry.get_id(record_class_name))
 
@@ -93,7 +95,7 @@ time = TimeStamp()
 
 
 class TCPWriter:
-    '''THis class is used to send the record data to a remote data collector. '''
+    ''' Sends the record data to a remote data collector. '''
 
     def __init__(self, config):
         config_parser = ConfigParser()

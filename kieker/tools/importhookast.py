@@ -10,18 +10,20 @@ from importlib.abc import Loader, MetaPathFinder
 from importlib.util import spec_from_file_location
 from ast import ImportFrom, parse, alias, unparse, fix_missing_locations
 import os
-import re
-import tools.const as con
 from tools.ModuleTransformer import ModuleTransformer
 
 
 class InstrumentOnImportFinder(MetaPathFinder):
     ''' This class is a custom implementation of a MetaPathFinder.
-    It is used to find specs for     
+    It is used to find specs for
     '''
 
-    def __init__(self, ignore_list = [], instrument_pattern=None, empty: bool = False,
-                 debug_on: bool = False, debug_detail: bool = False):
+    def __init__(self,
+                 ignore_list=[],
+                 instrument_pattern=None,
+                 empty: bool = False,
+                 debug_on: bool = False,
+                 debug_detail: bool = False):
         self.__item_list: list = []
         self.__pattern = instrument_pattern
         self.debug_on: bool = debug_on
@@ -147,6 +149,7 @@ class InstLoader(Loader):
                 print(module.__name__)
             exec(data, vars(module))
 
-        except:
+        except Exception as e:
             # TODO: Meaningful exeception handling if any needed
+            print(e)
             pass

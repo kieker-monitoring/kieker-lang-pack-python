@@ -13,7 +13,7 @@ class WriterRegistry:
         try:
             value_id = self.storage[value]
             return value_id
-        except:
+        except (KeyError, TypeError):
             self.register(value)
             return self.storage[value]
 

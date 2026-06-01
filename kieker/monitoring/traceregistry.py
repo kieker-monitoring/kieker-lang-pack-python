@@ -50,7 +50,7 @@ class TraceRegistry:
         # TODO Enclosing traces and stuff
 
         enclosing_trace = self.get_trace()
-        if not enclosing_trace is None:
+        if enclosing_trace is not None:
             local_trace_stack = thread_local.trace_stack
             if local_trace_stack is None:
                 local_trace_stack = list()
@@ -63,11 +63,11 @@ class TraceRegistry:
         parent_trace_id = None
         parent_order_id = None
 
-        if not trace_point is None:
+        if trace_point is not None:
 
             parent_trace_id = trace_point.trace_id
             parent_order_id = trace_point.order_id
-        elif not enclosing_trace is None:
+        elif enclosing_trace is not None:
             parent_trace_id = enclosing_trace.trace_id
             parent_order_id = -1
         else:
@@ -82,14 +82,14 @@ class TraceRegistry:
     def unregister_trace(self):
         local_trace_stack = None
         if not hasattr(thread_local, "trace_stack"):
-             thread_local.trace_stack = None
-             local_trace_stack =thread_local.trace_stack
+            thread_local.trace_stack = None
+            local_trace_stack = thread_local.trace_stack
         else:
-            local_trace_stack =thread_local.trace_stack
+            local_trace_stack = thread_local.trace_stack
 
-       # local_trace_stack = thread_local.trace_stack
-        if not local_trace_stack is None:
-            if len(local_trace_stack)>0:
+        # local_trace_stack = thread_local.trace_stack
+        if local_trace_stack is not None:
+            if len(local_trace_stack) > 0:
                 thread_local.trace = thread_local.trace_stack.pop()
             else:
                 thread_local.trace_stack = None

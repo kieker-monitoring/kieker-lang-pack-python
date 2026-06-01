@@ -31,7 +31,7 @@ def instrument_v1(func, *args, **kwargs):
 
     con.monitoring_controller.new_monitoring_record(
         BeforeOperationEvent(
-            con.monitoring_controller.time_source_controller.get_time(),
+            con.monitoring_controller.timesource_ctrl.get_time(),
             trace_id, trace.get_next_order_id(), func_name, qualname))
 
     try:
@@ -42,7 +42,7 @@ def instrument_v1(func, *args, **kwargs):
 
         con.monitoring_controller.new_monitoring_record(
             AfterOperationFailedEvent(
-                con.monitoring_controller.time_source_controller.get_time(),
+                con.monitoring_controller.timesource_ctrl.get_time(),
                 trace_id, trace.get_next_order_id(), func_name, qualname,
                 repr(ex)))
         raise ex
@@ -54,7 +54,7 @@ def instrument_v1(func, *args, **kwargs):
 
     con.monitoring_controller.new_monitoring_record(
         AfterOperationEvent(
-            con.monitoring_controller.time_source_controller.get_time(),
+            con.monitoring_controller.timesource_ctrl.get_time(),
             trace_id, trace.get_next_order_id(), func_name, qualname))
 
     return result
@@ -65,8 +65,8 @@ def instrument_empty(func):
     def _instrument(*args, **kwargs):
         try:
             result = func(*args, **kwargs)
-        except:
-            raise
+        except Exception as e:
+            raise e
         return result
 
     _instrument.__name__ = func.__name__
@@ -97,7 +97,7 @@ def instrument(func):
 
         con.monitoring_controller.new_monitoring_record(
             BeforeOperationEvent(
-                con.monitoring_controller.time_source_controller.get_time(),
+                con.monitoring_controller.timesource_ctrl.get_time(),
                 trace_id, trace.get_next_order_id(), func_name, qualname))
 
         try:
@@ -108,7 +108,7 @@ def instrument(func):
 
             con.monitoring_controller.new_monitoring_record(
                 AfterOperationFailedEvent(
-                    con.monitoring_controller.time_source_controller.get_time(
+                    con.monitoring_controller.timesource_ctrl.get_time(
                     ), trace_id, trace.get_next_order_id(), func_name,
                     qualname, repr(e)))
             raise e
@@ -120,7 +120,7 @@ def instrument(func):
 
         con.monitoring_controller.new_monitoring_record(
             AfterOperationEvent(
-                con.monitoring_controller.time_source_controller.get_time(),
+                con.monitoring_controller.timesource_ctrl.get_time(),
                 trace_id, trace.get_next_order_id(), func_name, qualname))
 
         return result
@@ -145,11 +145,10 @@ def decorate_members(mod, empty=False):
 
     # Decorate classes
     for name, member in inspect.getmembers(mod, inspect.isclass):
-        if (member.__module__ == mod.__spec__.name
-            ):  # skip members of imported modules
+        # skip members of imported modules
+        if (member.__module__ == mod.__spec__.name):
             for k, v in inspect.getmembers(member, con.is_method_or_function):
                 try:
-
                     if isinstance(member.__dict__[k], classmethod):
                         funcobj = member.__dict__[k].__func__
                         setattr(member, k, classmethod(inst(funcobj)))
@@ -176,13 +175,10 @@ def decorate_members(mod, empty=False):
             mod.__dict__[name] = inst(member)
 
 
-#
-
-
 @decorator.decorator
 def decorate_find_spec(find_spec,
                        module_name=None,
-                       exclusion=None,
+                       excl=None,  # exclusion
                        *args,
                        **kwargs):
     result = find_spec(*args, **kwargs)
@@ -197,18 +193,18 @@ def decorate_find_spec(find_spec,
                 setattr(
                     result.loader, "exec_module",
                     classmethod(
-                        decorate_exec_module(funcobj, module_name, exclusion)))
+                        decorate_exec_module(funcobj, module_name, excl)))
             elif isinstance(exec_module, types.MethodType):
                 funcobj = exec_module.__func__
                 setattr(
                     result.loader, "exec_module",
                     types.MethodType(
-                        decorate_exec_module(funcobj, module_name, exclusion),
+                        decorate_exec_module(funcobj, module_name, excl),
                         result.loader))
             else:
                 setattr(
                     result.loader, "exec_module",
-                    decorate_exec_module(exec_module, module_name, exclusion))
+                    decorate_exec_module(exec_module, module_name, excl))
     except AssertionError:
         return result
     return result
@@ -217,7 +213,7 @@ def decorate_find_spec(find_spec,
 @decorator.decorator
 def decorate_exec_module(exec_module,
                          module_name=None,
-                         exclusion=None,
+                         excl=None,  # exclusion
                          *args,
                          **kwargs):
     exec_module(*args, **kwargs)
@@ -225,8 +221,8 @@ def decorate_exec_module(exec_module,
         decorate_members(sys.modules[args[1].__spec__.name])
 
 
-## Not sure if the return statement is important ##
-#    if exclusion in args[1].__spec__.name or args[1].__spec__.name in exclusion:
+#  Not sure if the return statement is important ##
+#    if excl in args[1].__spec__.name or args[1].__spec__.name in excl:
 #        return
 #    elif module_name in args[1].__spec__.name:
 #        decorate_members(sys.modules[args[1].__spec__.name])

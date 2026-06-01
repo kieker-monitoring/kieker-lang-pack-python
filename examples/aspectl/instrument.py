@@ -22,7 +22,7 @@ def wrapper(cutpoint, *args, **kwargs):
         
         trace_id = trace.trace_id
             
-        timestamp = monitoring_controller.time_source_controller.get_time()
+        timestamp = monitoring_controller.timesource_ctrl.get_time()
         func_module = cutpoint.__module__
         class_signature = cutpoint.__qualname__.split(".", 1)[0]
         monitoring_controller.new_monitoring_record(BeforeOperationEvent(
@@ -36,7 +36,7 @@ def wrapper(cutpoint, *args, **kwargs):
             result = yield aspectlib.Proceed
         except Exception as e:
             print('after failed')
-            timestamp = monitoring_controller.time_source_controller.get_time()
+            timestamp = monitoring_controller.timesource_ctrl.get_time()
             monitoring_controller.new_monitoring_record(
                 AfterOperationFailedEvent(timestamp,
                                           -1
@@ -47,7 +47,7 @@ def wrapper(cutpoint, *args, **kwargs):
 
             raise e
         print('after')
-        timestamp = monitoring_controller.time_source_controller.get_time()
+        timestamp = monitoring_controller.timesource_ctrl.get_time()
         monitoring_controller.new_monitoring_record(AfterOperationEvent(
             timestamp,
             trace_id,
