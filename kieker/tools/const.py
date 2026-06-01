@@ -1,9 +1,9 @@
 import inspect
 from monitoring.traceregistry import TraceRegistry
-from monitoring.controller import SingleMonitoringController
+from monitoring.controller import MonitoringController
 from tools.ModuleTransformer import ModuleTransformer
 
-### aspect.py ###
+# For aspect.py
 trace_reg = TraceRegistry()
 
 
@@ -11,7 +11,7 @@ def is_method_or_function(x):
     return inspect.isfunction(x) or inspect.ismethod(x)
 
 
-monitoring_controller = SingleMonitoringController()  # Singleton
+monitoring_controller = MonitoringController()  # Singleton
 
-### importhookast.py ###
+# For importhookast.py
 transformer = ModuleTransformer()
