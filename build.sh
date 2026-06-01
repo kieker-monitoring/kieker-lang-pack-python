@@ -7,7 +7,7 @@ PATH_CONFIG='/home/serafim/Desktop/collector-1.15-SNAPSHOT/bin/config.txt'
 
 cd $PATH_KIEKER
 python3 -m build
-pip install dist/kieker-monitoring-for-python-0.0.1.tar.gz
+pip install dist/kieker-monitoring-for-python-0.0.2.tar.gz
 
 
 if [[ $1 == -nc ]]
