@@ -1,6 +1,6 @@
 # noqa: E402
 # -*- coding: utf-8 -*-
-from monitoring.controller import WriterController
+from monitoring.writer_controller import WriterController
 import logging
 from abc import ABC, abstractmethod
 from monitoring.util import TimeStamp
