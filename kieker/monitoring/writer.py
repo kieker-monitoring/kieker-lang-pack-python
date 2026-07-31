@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import socket as s
+import errno
+import os
 import threading
 from monitoring.util import TimeStamp, get_prefix
 from struct import pack
@@ -106,10 +108,19 @@ class TCPWriter:
             'General', 'multiple_Connections')
         self.host = config_parser.get('Tcp', 'host')
         self.port = config_parser.getint('Tcp', 'port')
-        if not self.multConnections:
-            self.socket.connect_ex((self.host, self.port))
         self.connetction_timeout = config_parser.getint(
             'Tcp', 'connection_timeout')
+        self.max_retries = 1000000
+        if not self.multConnections:
+            for attempt in range(1, self.max_retries + 1):
+                ret = self.socket.connect_ex((self.host, self.port))
+                if ret == 0:
+                    break
+                elif ret == errno.ECONNREFUSED:
+                    continue
+                else:
+                    print(f"Connection failed with {os.strerror(ret)}. Aborting.")
+                    break
         self.writer_registry = WriterRegistry(self)
         self.serializer = BinarySerializer([], self.writer_registry)
 
