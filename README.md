@@ -16,11 +16,13 @@ Prerequisites:
 2. clone this repository
 3. cd ./kieker-lang-pack-python
 4. run python3 -m build 
-5. pip install dist/kieker_monitoring_for_python-0.0.2.tar.gz decorator
+5. pip install dist/kieker_monitoring_for_python-0.0.2.tar.gz
+6. pip install -r requirements.txt
 
 ### From PyPi:
 
-1. pip install kieker-monitoring-for-python decorator
+1. pip install kieker-monitoring-for-python
+2. pip install -r requirements.txt
 
 ## Instrumentation
 
