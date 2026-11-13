@@ -4,6 +4,7 @@ import socket as s
 import errno
 import os
 import threading
+from datetime import datetime
 from monitoring.util import TimeStamp, get_prefix
 from struct import pack
 from monitoring.serialization import Serializer, BinarySerializer
@@ -37,10 +38,13 @@ class DummyWriter:
 
 
 class FileWriter:
-    ''' This writer, is used to write the records directly into local files '''
+    ''' This writer, is used to write the records directly into local files. It gets the file_path of the created log files. '''
 
     def __init__(self, file_path, string_buffer):
-        self.file_path = file_path
+        # Ensure the wanted directory is actually created, iff it does not exist already.
+        os.makedirs(file_path, exist_ok=True)
+        filename = f"kieker-for-python-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.log"
+        self.file_path = os.path.join(file_path, filename)
         self.string_buffer = string_buffer
         self.serializer = Serializer(self.string_buffer)
         self.writer_registry = WriterRegistry(self)
@@ -64,10 +68,12 @@ class FileWriter:
         write_string = ''.join(map(str, self.string_buffer)) + '\n'
         # clear buffer
         self.string_buffer.clear()
-        # write to the file
-        file = open(self.file_path, 'a')
-        file.write(write_string)
-        file.close()
+        # write to the file. Create the file first, iff it does not already exist.
+        if not os.path.exists(self.file_path):
+            open(self.file_path, 'w').close()
+        with open(self.file_path, 'a') as file:
+            file.write(write_string)
+            file.close()
 
     def onStarting(self):
         pass
