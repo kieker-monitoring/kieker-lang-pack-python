@@ -50,7 +50,6 @@ class FileWriter:
         self.string_buffer = string_buffer
         self.serializer = Serializer(self.string_buffer)
         self.writer_registry = WriterRegistry(self)
-        self.map_file_writer = MappingFileWriter()
         self._file_lock = threading.Lock()
         self._day = None
         self._file_number = 0
@@ -58,13 +57,19 @@ class FileWriter:
 
     def _create_new_file(self, timestamp):
         day = timestamp.strftime('%Y-%m-%d')
-        if day != self._day:
+        day_changed = day != self._day
+        if day_changed:
             self._day = day
             self._file_number = 0
 
         day_directory = os.path.join(self.base_path, day)
         os.makedirs(day_directory, exist_ok=True)
         self._update_latest_link(day)
+        if day_changed:
+            # This way the mapping file is written in all log-dirs.
+            self.map_file_writer = MappingFileWriter(day_directory)
+            for event_type, event_id in self.writer_registry.storage.items():
+                self.map_file_writer.add(event_id, event_type)
         time = timestamp.strftime('%H-%M-%S')
 
         while True:
@@ -132,15 +137,13 @@ class FileWriter:
 
 class MappingFileWriter:
     ''' Creates a file, which maps the type of event to an corresponding id. '''
-    
-    def __init__(self):
-        self.file_path = './kieker.map'
+
+    def __init__(self, file_path):
+        self.file_path = os.path.join(file_path, 'kieker.map')
 
     def add(self, Id, class_name):
-        file = open(self.file_path, 'a')
-        write_string = f'${Id}={class_name} \n'
-        file.write(write_string)
-        file.close()
+        with open(self.file_path, 'a') as file:
+            file.write(f'${Id}={class_name}\n')
 
 
 lock = threading.Lock()
