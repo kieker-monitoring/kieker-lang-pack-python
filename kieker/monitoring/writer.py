@@ -92,8 +92,8 @@ class FileWriter:
 
         os.symlink(day, latest_path)
 
-    def on_new_registry_entry(self, value, idee):
-        self.map_file_writer.add(value, idee)
+    def on_new_registry_entry(self, value, Id):
+        self.map_file_writer.add(Id, value)
 
     def writeMonitoringRecord(self, record):
         __module = record.__class__.__module__
@@ -131,13 +131,14 @@ class FileWriter:
 
 
 class MappingFileWriter:
-
+    ''' Creates a file, which maps the type of event to an corresponding id. '''
+    
     def __init__(self):
-        self.file_path = './record-map.log'
+        self.file_path = './kieker.map'
 
     def add(self, Id, class_name):
         file = open(self.file_path, 'a')
-        write_string = f'$ {Id} = {class_name} \n'
+        write_string = f'${Id}={class_name} \n'
         file.write(write_string)
         file.close()
 
