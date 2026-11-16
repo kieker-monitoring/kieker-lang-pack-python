@@ -4,12 +4,15 @@ import socket as s
 import errno
 import os
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from monitoring.util import TimeStamp, get_prefix
 from struct import pack
 from monitoring.serialization import Serializer, BinarySerializer
 from monitoring.fileregistry import WriterRegistry
 from configparser import ConfigParser
+
+
+MAX_FILE_SIZE = 5 * 1024 * 1024
 
 
 class DummyWriter:
@@ -43,12 +46,38 @@ class FileWriter:
     def __init__(self, file_path, string_buffer):
         # Ensure the wanted directory is actually created, iff it does not exist already.
         os.makedirs(file_path, exist_ok=True)
-        filename = f"kieker-for-python-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.log"
-        self.file_path = os.path.join(file_path, filename)
+        self.base_path = file_path
         self.string_buffer = string_buffer
         self.serializer = Serializer(self.string_buffer)
         self.writer_registry = WriterRegistry(self)
         self.map_file_writer = MappingFileWriter()
+        self._file_lock = threading.Lock()
+        self._day = None
+        self._file_number = 0
+        self._create_new_file(datetime.now(timezone.utc))
+
+    def _create_new_file(self, timestamp):
+        day = timestamp.strftime('%Y-%m-%d')
+        if day != self._day:
+            self._day = day
+            self._file_number = 0
+
+        day_directory = os.path.join(self.base_path, day)
+        os.makedirs(day_directory, exist_ok=True)
+        time = timestamp.strftime('%H-%M-%S')
+
+        while True:
+            self._file_number += 1
+            filename = (
+                f"kieker-{day}-{time}-UTC-{self._file_number}.dat")
+            file_path = os.path.join(day_directory, filename)
+            try:
+                with open(file_path, 'x'):
+                    pass
+            except FileExistsError:
+                continue
+            self.file_path = file_path
+            return
 
     def on_new_registry_entry(self, value, idee):
         self.map_file_writer.add(value, idee)
@@ -61,19 +90,22 @@ class FileWriter:
         self._serialize(record, self.writer_registry.get_id(record_class_name))
 
     def _serialize(self, record, idee):
-        # fetch record line
-        header = f'{idee};'
-        self.string_buffer.append(header)
-        record.serialize(self.serializer)
-        write_string = ''.join(map(str, self.string_buffer)) + '\n'
-        # clear buffer
-        self.string_buffer.clear()
-        # write to the file. Create the file first, iff it does not already exist.
-        if not os.path.exists(self.file_path):
-            open(self.file_path, 'w').close()
-        with open(self.file_path, 'a') as file:
-            file.write(write_string)
-            file.close()
+        with self._file_lock:
+            timestamp = datetime.now(timezone.utc)
+            if timestamp.strftime('%Y-%m-%d') != self._day:
+                self._create_new_file(timestamp)
+
+            header = f'{idee};'
+            self.string_buffer.append(header)
+            record.serialize(self.serializer)
+            write_string = ''.join(map(str, self.string_buffer)) + '\n'
+            self.string_buffer.clear()
+            with open(self.file_path, 'a') as file:
+                file.write(write_string)
+                file.close()
+
+            if os.path.getsize(self.file_path) > MAX_FILE_SIZE:
+                self._create_new_file(datetime.now(timezone.utc))
 
     def onStarting(self):
         pass
