@@ -111,7 +111,7 @@ class FileWriter:
             header = f'{idee};'
             self.string_buffer.append(header)
             record.serialize(self.serializer)
-            write_string = ''.join(map(str, self.string_buffer)) + '\n'
+            write_string = '$' + ''.join(map(str, self.string_buffer)) + '\n'
             self.string_buffer.clear()
             with open(self.file_path, 'a') as file:
                 file.write(write_string)
