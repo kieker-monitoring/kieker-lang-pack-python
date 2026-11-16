@@ -64,6 +64,7 @@ class FileWriter:
 
         day_directory = os.path.join(self.base_path, day)
         os.makedirs(day_directory, exist_ok=True)
+        self._update_latest_link(day)
         time = timestamp.strftime('%H-%M-%S')
 
         while True:
@@ -78,6 +79,18 @@ class FileWriter:
                 continue
             self.file_path = file_path
             return
+
+    def _update_latest_link(self, day):
+        latest_path = os.path.join(self.base_path, 'latest')
+        if os.path.islink(latest_path):
+            if os.readlink(latest_path) == day:
+                return
+            os.unlink(latest_path)
+        elif os.path.lexists(latest_path):
+            raise FileExistsError(
+                f"Cannot create latest link: {latest_path} already exists.")
+
+        os.symlink(day, latest_path)
 
     def on_new_registry_entry(self, value, idee):
         self.map_file_writer.add(value, idee)
