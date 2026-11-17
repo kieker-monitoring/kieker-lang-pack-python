@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=84.2.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kieker-monitoring-for-python"
+version = "0.0.3"
+description = "Implementation of kieker monitoring for pyhton"
+readme = "README.md"
+requires-python = ">=3.15"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Serafim Simonov", email = "stu126367@mail.uni-kiel.de" },
+    { name = "Shinhyung Yang", email = "shinhyung.yang@email.uni-kiel.de" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "decorator>=5.3.1",
+]
+
+[tool.setuptools]
+package-dir = { "" = "kieker" }
+
+[tool.setuptools.packages.find]
+where = ["kieker"]
