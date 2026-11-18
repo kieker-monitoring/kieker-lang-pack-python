@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Modified by Natalie Kaufhold, November 2026
 
 import socket as s
 import errno
