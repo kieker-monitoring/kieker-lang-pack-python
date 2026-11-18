@@ -6,6 +6,10 @@ The Kieker language pack for Python is in an early stage. Thus, it may not opera
 expected in all scenarios. We applied it to the Spyder IDE and other programs successfully
 and to parts of Tensorflow with limited results.
 
+## Modifications
+
+- Modified by Natalie Kaufhold, November 2026
+
 ## Installation
 Prerequisites: 
 - python >=3.9
