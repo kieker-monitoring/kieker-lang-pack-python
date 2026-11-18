@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
+# Modified by Natalie Kaufhold, November 2026
 
 import socket as s
 import errno
 import os
 import threading
+from datetime import datetime, timezone
 from monitoring.util import TimeStamp, get_prefix
 from struct import pack
 from monitoring.serialization import Serializer, BinarySerializer
 from monitoring.fileregistry import WriterRegistry
 from configparser import ConfigParser
+
+
+MAX_FILE_SIZE = 5 * 1024 * 1024
 
 
 class DummyWriter:
@@ -37,17 +42,64 @@ class DummyWriter:
 
 
 class FileWriter:
-    ''' This writer, is used to write the records directly into local files '''
+    ''' This writer, is used to write the records directly into local files. It gets the file_path of the created log files. '''
 
     def __init__(self, file_path, string_buffer):
-        self.file_path = file_path
+        # Ensure the wanted directory is actually created, iff it does not exist already.
+        os.makedirs(file_path, exist_ok=True)
+        self.base_path = file_path
         self.string_buffer = string_buffer
         self.serializer = Serializer(self.string_buffer)
         self.writer_registry = WriterRegistry(self)
-        self.map_file_writer = MappingFileWriter()
+        self._file_lock = threading.Lock()
+        self._day = None
+        self._file_number = 0
+        self._create_new_file(datetime.now(timezone.utc))
 
-    def on_new_registry_entry(self, value, idee):
-        self.map_file_writer.add(value, idee)
+    def _create_new_file(self, timestamp):
+        day = timestamp.strftime('%Y-%m-%d')
+        day_changed = day != self._day
+        if day_changed:
+            self._day = day
+            self._file_number = 0
+
+        day_directory = os.path.join(self.base_path, day)
+        os.makedirs(day_directory, exist_ok=True)
+        self._update_latest_link(day)
+        if day_changed:
+            # This way the mapping file is written in all log-dirs.
+            self.map_file_writer = MappingFileWriter(day_directory)
+            for event_type, event_id in self.writer_registry.storage.items():
+                self.map_file_writer.add(event_id, event_type)
+        time = timestamp.strftime('%H-%M-%S')
+
+        while True:
+            self._file_number += 1
+            filename = (
+                f"kieker-{day}-{time}-UTC-{self._file_number}.dat")
+            file_path = os.path.join(day_directory, filename)
+            try:
+                with open(file_path, 'x'):
+                    pass
+            except FileExistsError:
+                continue
+            self.file_path = file_path
+            return
+
+    def _update_latest_link(self, day):
+        latest_path = os.path.join(self.base_path, 'latest')
+        if os.path.islink(latest_path):
+            if os.readlink(latest_path) == day:
+                return
+            os.unlink(latest_path)
+        elif os.path.lexists(latest_path):
+            raise FileExistsError(
+                f"Cannot create latest link: {latest_path} already exists.")
+
+        os.symlink(day, latest_path)
+
+    def on_new_registry_entry(self, value, Id):
+        self.map_file_writer.add(Id, value)
 
     def writeMonitoringRecord(self, record):
         __module = record.__class__.__module__
@@ -57,17 +109,22 @@ class FileWriter:
         self._serialize(record, self.writer_registry.get_id(record_class_name))
 
     def _serialize(self, record, idee):
-        # fetch record line
-        header = f'{idee};'
-        self.string_buffer.append(header)
-        record.serialize(self.serializer)
-        write_string = ''.join(map(str, self.string_buffer)) + '\n'
-        # clear buffer
-        self.string_buffer.clear()
-        # write to the file
-        file = open(self.file_path, 'a')
-        file.write(write_string)
-        file.close()
+        with self._file_lock:
+            timestamp = datetime.now(timezone.utc)
+            if timestamp.strftime('%Y-%m-%d') != self._day:
+                self._create_new_file(timestamp)
+
+            header = f'{idee};'
+            self.string_buffer.append(header)
+            record.serialize(self.serializer)
+            write_string = '$' + ''.join(map(str, self.string_buffer)) + '\n'
+            self.string_buffer.clear()
+            with open(self.file_path, 'a') as file:
+                file.write(write_string)
+                file.close()
+
+            if os.path.getsize(self.file_path) > MAX_FILE_SIZE:
+                self._create_new_file(datetime.now(timezone.utc))
 
     def onStarting(self):
         pass
@@ -80,15 +137,14 @@ class FileWriter:
 
 
 class MappingFileWriter:
+    ''' Creates a file, which maps the type of event to an corresponding id. '''
 
-    def __init__(self):
-        self.file_path = './record-map.log'
+    def __init__(self, file_path):
+        self.file_path = os.path.join(file_path, 'kieker.map')
 
     def add(self, Id, class_name):
-        file = open(self.file_path, 'a')
-        write_string = f'$ {Id} = {class_name} \n'
-        file.write(write_string)
-        file.close()
+        with open(self.file_path, 'a') as file:
+            file.write(f'${Id}={class_name}\n')
 
 
 lock = threading.Lock()
