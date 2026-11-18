@@ -13,14 +13,24 @@ and to parts of Tensorflow with limited results.
 ## Installation
 Prerequisites: 
 - python >=3.9
-- build package (pip install build)
 
-1. clone this repository
-2. cd ./kieker-lang-pack-python
-3. run python3 -m build 
-4. pip install dist/kieker-monitoring-for-python-0.0.2.tar.gz
+### From source:
+
+1. pip install build
+2. clone this repository
+3. cd ./kieker-lang-pack-python
+4. run python3 -m build 
+5. pip install dist/kieker_monitoring_for_python-0.0.2.tar.gz
+6. pip install -r requirements.txt
+
+### From PyPi:
+
+1. pip install kieker-monitoring-for-python
+2. pip install -r requirements.txt
 
 ## Instrumentation
+
+When we talk of a `monitoring.ini` the provided file in this project's Github-repository can be used.
 
 ### Invasive Approach
 
@@ -60,7 +70,7 @@ from monitoring.record.trace.operation.operationevent import (BeforeOperationEve
                                                               AfterOperationFailedEvent, 
                                                               )
                            
-ctrl = MonitoringController('/path/to/config.ini')
+ctrl = MonitoringController('/path/to/monitoring.ini')
 
 def some_function():
       trace_reg = con.trace_reg
@@ -87,7 +97,7 @@ example.py
 from tools.aspect import instrument
 from monitoring.controller import MonitoringController
 
-monitoring_controller = MonitoringController('/path/to/config.ini') # Always instatiate a controller
+monitoring_controller = MonitoringController('/path/to/monitoring.ini') # Always instatiate a controller
 
 @instrument
 def some_function():
@@ -109,7 +119,7 @@ from monitoring.controller import MonitoringController
 
 pattern_object = re.compile('YOUR REGEX') # Some regex to describe which modules should be instrumented
 exclude_modules = list() # List with explicit strings of modules which should be excluded from the instrumentations
-some_var = MonitoringController('/path/to/config.ini')
+some_var = MonitoringController('/path/to/monitoring.ini')
 sys.meta_path.insert(0, PostImportFinder(pattern_object, exclude_modules))
 
 ```
