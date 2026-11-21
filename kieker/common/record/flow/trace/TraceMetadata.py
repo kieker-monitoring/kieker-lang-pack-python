@@ -20,7 +20,7 @@ class TraceMetadata (IFlowRecord):
 			else hostname)
 		self.parent_trace_id = parent_trace_id
 		self.parent_order_id = parent_order_id
-		next_order_id = 0
+		self.next_order_id = 0
 
 	def serialize(self, serializer):
 		serializer.put_long(self.trace_id)
