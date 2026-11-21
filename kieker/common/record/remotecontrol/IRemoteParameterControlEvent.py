@@ -7,9 +7,9 @@ from kieker.common.record.remotecontrol.IRemoteControlEvent import IRemoteContro
 class IRemoteParameterControlEvent (IRemoteControlEvent):
 	def __init__(self, pattern, name, values):	
 		self.pattern = (""
-		      if pattern is None 
-		      else pattern)
+			if pattern is None 
+			else pattern)
 		self.name = (""
-		      if name is None 
-		      else name)
+			if name is None 
+			else name)
 		self.values = values

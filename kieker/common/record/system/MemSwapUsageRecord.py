@@ -7,8 +7,8 @@ class MemSwapUsageRecord:
 	def __init__(self, timestamp, hostname, mem_total, mem_used, mem_free, swap_total, swap_used, swap_free):
 		self.timestamp = timestamp
 		self.hostname = (self.HOSTNAME
-				      if hostname is None 
-				      else hostname)
+			if hostname is None 
+			else hostname)
 		self.mem_total = mem_total
 		self.mem_used = mem_used
 		self.mem_free = mem_free

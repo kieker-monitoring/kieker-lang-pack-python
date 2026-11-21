@@ -10,20 +10,20 @@ class KiekerMetadataRecord:
 	NO_TIMEUNIT = "NANOSECONDS"
 	def __init__(self, version, controller_name, hostname, experiment_id, debug_mode, time_offset, time_unit, number_of_records):
 		self.version = (self.VERSION
-				      if version is None 
-				      else version)
+			if version is None 
+			else version)
 		self.controller_name = (self.NO_CONTROLLERNAME
-				      if controller_name is None 
-				      else controller_name)
+			if controller_name is None 
+			else controller_name)
 		self.hostname = (self.NO_HOSTNAME
-				      if hostname is None 
-				      else hostname)
+			if hostname is None 
+			else hostname)
 		self.experiment_id = experiment_id
 		self.debug_mode = debug_mode
 		self.time_offset = time_offset
 		self.time_unit = (self.NO_TIMEUNIT
-				      if time_unit is None 
-				      else time_unit)
+			if time_unit is None 
+			else time_unit)
 		self.number_of_records = number_of_records
 
 	def serialize(self, serializer):

@@ -13,11 +13,11 @@ class TraceMetadata (IFlowRecord):
 		self.trace_id = trace_id
 		self.thread_id = thread_id
 		self.session_id = (self.NO_SESSION_ID
-				      if session_id is None 
-				      else session_id)
+			if session_id is None 
+			else session_id)
 		self.hostname = (self.NO_HOSTNAME
-				      if hostname is None 
-				      else hostname)
+			if hostname is None 
+			else hostname)
 		self.parent_trace_id = parent_trace_id
 		self.parent_order_id = parent_order_id
 		next_order_id = 0

@@ -7,11 +7,11 @@ class ResourceUtilizationRecord:
 	def __init__(self, timestamp, hostname, resource_name, utilization):
 		self.timestamp = timestamp
 		self.hostname = (self.HOSTNAME
-				      if hostname is None 
-				      else hostname)
+			if hostname is None 
+			else hostname)
 		self.resource_name = (self.RESOURCE_NAME
-				      if resource_name is None 
-				      else resource_name)
+			if resource_name is None 
+			else resource_name)
 		self.utilization = utilization
 
 	def serialize(self, serializer):

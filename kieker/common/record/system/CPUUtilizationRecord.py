@@ -7,11 +7,11 @@ class CPUUtilizationRecord:
 	def __init__(self, timestamp, hostname, cpu_id, user, system, wait, nice, irq, total_utilization, idle):
 		self.timestamp = timestamp
 		self.hostname = (self.HOSTNAME
-				      if hostname is None 
-				      else hostname)
+			if hostname is None 
+			else hostname)
 		self.cpu_id = (self.CPU_ID
-				      if cpu_id is None 
-				      else cpu_id)
+			if cpu_id is None 
+			else cpu_id)
 		self.user = user
 		self.system = system
 		self.wait = wait

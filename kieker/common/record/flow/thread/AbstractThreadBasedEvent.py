@@ -13,11 +13,11 @@ class AbstractThreadBasedEvent (AbstractEvent, IThreadBasedRecord, IOperationSig
 		self.thread_id = thread_id
 		self.order_index = order_index
 		self.operation_signature = (self.OPERATION_SIGNATURE
-				      if operation_signature is None 
-				      else operation_signature)
+			if operation_signature is None 
+			else operation_signature)
 		self.class_signature = (self.CLASS_SIGNATURE
-				      if class_signature is None 
-				      else class_signature)
+			if class_signature is None 
+			else class_signature)
 
 	def serialize(self, serializer):
 		super().serialize(serializer)

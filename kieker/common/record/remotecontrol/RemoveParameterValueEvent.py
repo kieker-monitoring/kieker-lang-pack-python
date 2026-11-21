@@ -7,14 +7,14 @@ from kieker.common.record.remotecontrol.IParameterValueEvent import IParameterVa
 class RemoveParameterValueEvent (IParameterValueEvent):
 	def __init__(self, pattern, name, value):
 		self.pattern = (""
-				      if pattern is None 
-				      else pattern)
+			if pattern is None 
+			else pattern)
 		self.name = (""
-				      if name is None 
-				      else name)
+			if name is None 
+			else name)
 		self.value = (""
-				      if value is None 
-				      else value)
+			if value is None 
+			else value)
 
 	def serialize(self, serializer):
 		serializer.put_string(self.pattern)

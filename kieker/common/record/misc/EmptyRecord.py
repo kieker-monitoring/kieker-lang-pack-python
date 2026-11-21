@@ -4,8 +4,10 @@
 
 
 class EmptyRecord:
-	def __init__(self, ):
+	def __init__(self):
+		pass
 
 	def serialize(self, serializer):
+		pass
 	
 	

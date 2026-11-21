@@ -9,8 +9,8 @@ class BeforeSentRemoteEvent:
 		self.trace_id = trace_id
 		self.order_index = order_index
 		self.technology = (self.TECHNOLOGY
-				      if technology is None 
-				      else technology)
+			if technology is None 
+			else technology)
 
 	def serialize(self, serializer):
 		serializer.put_long(self.timestamp)

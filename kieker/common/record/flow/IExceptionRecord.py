@@ -7,5 +7,5 @@ from kieker.common.record.flow.IFlowRecord import IFlowRecord
 class IExceptionRecord (IFlowRecord):
 	def __init__(self, cause):	
 		self.cause = (self.CAUSE
-		      if cause is None 
-		      else cause)
+			if cause is None 
+			else cause)

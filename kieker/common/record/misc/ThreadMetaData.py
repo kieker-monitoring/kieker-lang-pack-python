@@ -6,8 +6,8 @@
 class ThreadMetaData:
 	def __init__(self, hostname, thread_id):
 		self.hostname = (""
-				      if hostname is None 
-				      else hostname)
+			if hostname is None 
+			else hostname)
 		self.thread_id = thread_id
 
 	def serialize(self, serializer):

@@ -7,11 +7,11 @@ class AbstractJVMRecord:
 	def __init__(self, timestamp, hostname, vm_name):
 		self.timestamp = timestamp
 		self.hostname = (""
-				      if hostname is None 
-				      else hostname)
+			if hostname is None 
+			else hostname)
 		self.vm_name = (""
-				      if vm_name is None 
-				      else vm_name)
+			if vm_name is None 
+			else vm_name)
 
 	def serialize(self, serializer):
 		serializer.put_long(self.timestamp)
