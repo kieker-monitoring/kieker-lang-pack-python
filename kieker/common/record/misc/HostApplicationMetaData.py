@@ -1,15 +1,20 @@
-class HostApplicationMetaData :
-	def __init__(self, system_name, ip_address, hostname, application_name):	
-		system_name = (""
+# -*- coding: utf-8 -*-
+# version 1.13
+# author Christian Wulf
+
+
+class HostApplicationMetaData:
+	def __init__(self, system_name, ip_address, hostname, application_name):
+		self.system_name = (""
 				      if system_name is None 
 				      else system_name)
-		ip_address = (""
+		self.ip_address = (""
 				      if ip_address is None 
 				      else ip_address)
-		hostname = (""
+		self.hostname = (""
 				      if hostname is None 
 				      else hostname)
-		application_name = (""
+		self.application_name = (""
 				      if application_name is None 
 				      else application_name)
 

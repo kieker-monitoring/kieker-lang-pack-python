@@ -1,20 +1,15 @@
-class IRemoteParameterControlEvent (IRemoteControlEvent
-):
-	def __init__ (self):
-		self.name
-		values = None
-	@name.setter
-	def name(self, value):
-		if value.isinstance(string):
-			self.name = value 
-		else:
-			raise Exception(f"Property name has type string but
-					        a parameter with  type {value.type} was specified")
-	
-	@values.setter
-	def values(self, value):
-		if value.isinstance(string):
-			self.values = value 
-		else:
-			raise Exception(f"Property values has type string but
-					        a parameter with  type {value.type} was specified")
+# -*- coding: utf-8 -*-
+# version 2.0.4
+# author Generic Kieker
+
+from kieker.common.record.remotecontrol.IRemoteControlEvent import IRemoteControlEvent
+
+class IRemoteParameterControlEvent (IRemoteControlEvent):
+	def __init__(self, pattern, name, values):	
+		self.pattern = (""
+		      if pattern is None 
+		      else pattern)
+		self.name = (""
+		      if name is None 
+		      else name)
+		self.values = values

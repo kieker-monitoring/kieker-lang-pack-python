@@ -1,19 +1,25 @@
-class TraceMetadata :
+# -*- coding: utf-8 -*-
+# version 1.5
+# author Jan Waller
+
+from kieker.common.record.flow.IFlowRecord import IFlowRecord
+
+class TraceMetadata (IFlowRecord):
 	NO_PARENT_TRACEID = -1
 	NO_PARENT_ORDER_INDEX = -1
 	NO_SESSION_ID = "<no-session-id>"
 	NO_HOSTNAME = "<default-host>"
-	def __init__(self, trace_id, thread_id, session_id, hostname, parent_trace_id, parent_order_id):	
-		trace_id = trace_id
-		thread_id = thread_id
-		session_id = (self.NO_SESSION_ID
+	def __init__(self, trace_id, thread_id, session_id, hostname, parent_trace_id, parent_order_id):
+		self.trace_id = trace_id
+		self.thread_id = thread_id
+		self.session_id = (self.NO_SESSION_ID
 				      if session_id is None 
 				      else session_id)
-		hostname = (self.NO_HOSTNAME
+		self.hostname = (self.NO_HOSTNAME
 				      if hostname is None 
 				      else hostname)
-		parent_trace_id = parent_trace_id
-		parent_order_id = parent_order_id
+		self.parent_trace_id = parent_trace_id
+		self.parent_order_id = parent_order_id
 		next_order_id = 0
 
 	def serialize(self, serializer):

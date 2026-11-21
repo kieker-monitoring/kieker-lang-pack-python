@@ -1,10 +1,10 @@
+# -*- coding: utf-8 -*-
+# version 1.14
+# author Marc Adolf
+
+
 class IRemoteControlEvent:
-	def __init__ (self):
-		self.pattern = None
-	@pattern.setter
-	def pattern(self, value):
-		if value.isinstance(string):
-			self.pattern = value 
-		else:
-			raise Exception(f"Property pattern has type string but
-					        a parameter with  type {value.type} was specified")
+	def __init__(self, pattern):	
+		self.pattern = (""
+		      if pattern is None 
+		      else pattern)

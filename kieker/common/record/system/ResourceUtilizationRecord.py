@@ -1,13 +1,18 @@
-class ResourceUtilizationRecord :
-	def __init__(self, timestamp, hostname, resource_name, utilization):	
-		timestamp = timestamp
-		hostname = (self.HOSTNAME
+# -*- coding: utf-8 -*-
+# version 1.3
+# author Andre van Hoorn, Jan Waller
+
+
+class ResourceUtilizationRecord:
+	def __init__(self, timestamp, hostname, resource_name, utilization):
+		self.timestamp = timestamp
+		self.hostname = (self.HOSTNAME
 				      if hostname is None 
 				      else hostname)
-		resource_name = (self.RESOURCE_NAME
+		self.resource_name = (self.RESOURCE_NAME
 				      if resource_name is None 
 				      else resource_name)
-		utilization = utilization
+		self.utilization = utilization
 
 	def serialize(self, serializer):
 		serializer.put_long(self.timestamp)

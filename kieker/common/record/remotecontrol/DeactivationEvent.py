@@ -1,6 +1,12 @@
-class DeactivationEvent :
-	def __init__(self, pattern):	
-		pattern = (""
+# -*- coding: utf-8 -*-
+# version 1.14
+# author Marc Adolf
+
+from kieker.common.record.remotecontrol.IRemoteControlEvent import IRemoteControlEvent
+
+class DeactivationEvent (IRemoteControlEvent):
+	def __init__(self, pattern):
+		self.pattern = (""
 				      if pattern is None 
 				      else pattern)
 

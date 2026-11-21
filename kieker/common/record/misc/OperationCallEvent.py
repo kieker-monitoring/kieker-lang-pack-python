@@ -1,15 +1,20 @@
-class OperationCallEvent :
-	def __init__(self, source_component, source_operation, target_component, target_operation):	
-		source_component = (""
+# -*- coding: utf-8 -*-
+# version 2.0.0
+# author Reiner Jung
+
+
+class OperationCallEvent:
+	def __init__(self, source_component, source_operation, target_component, target_operation):
+		self.source_component = (""
 				      if source_component is None 
 				      else source_component)
-		source_operation = (""
+		self.source_operation = (""
 				      if source_operation is None 
 				      else source_operation)
-		target_component = (""
+		self.target_component = (""
 				      if target_component is None 
 				      else target_component)
-		target_operation = (""
+		self.target_operation = (""
 				      if target_operation is None 
 				      else target_operation)
 

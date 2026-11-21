@@ -1,19 +1,24 @@
-class CPUUtilizationRecord :
-	def __init__(self, timestamp, hostname, cpu_id, user, system, wait, nice, irq, total_utilization, idle):	
-		timestamp = timestamp
-		hostname = (self.HOSTNAME
+# -*- coding: utf-8 -*-
+# version 1.3
+# author Andre van Hoorn, Jan Waller
+
+
+class CPUUtilizationRecord:
+	def __init__(self, timestamp, hostname, cpu_id, user, system, wait, nice, irq, total_utilization, idle):
+		self.timestamp = timestamp
+		self.hostname = (self.HOSTNAME
 				      if hostname is None 
 				      else hostname)
-		cpu_id = (self.CPU_ID
+		self.cpu_id = (self.CPU_ID
 				      if cpu_id is None 
 				      else cpu_id)
-		user = user
-		system = system
-		wait = wait
-		nice = nice
-		irq = irq
-		total_utilization = total_utilization
-		idle = idle
+		self.user = user
+		self.system = system
+		self.wait = wait
+		self.nice = nice
+		self.irq = irq
+		self.total_utilization = total_utilization
+		self.idle = idle
 
 	def serialize(self, serializer):
 		serializer.put_long(self.timestamp)

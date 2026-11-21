@@ -1,12 +1,18 @@
-class UpdateParameterEvent :
-	def __init__(self, pattern, name, values):	
-		pattern = (""
+# -*- coding: utf-8 -*-
+# version 1.14
+# author Marc Adolf
+
+from kieker.common.record.remotecontrol.IRemoteParameterControlEvent import IRemoteParameterControlEvent
+
+class UpdateParameterEvent (IRemoteParameterControlEvent):
+	def __init__(self, pattern, name, values):
+		self.pattern = (""
 				      if pattern is None 
 				      else pattern)
-		name = (""
+		self.name = (""
 				      if name is None 
 				      else name)
-		values = values
+		self.values = values
 
 	def serialize(self, serializer):
 		serializer.put_string(self.pattern)

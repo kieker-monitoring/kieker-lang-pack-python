@@ -1,19 +1,13 @@
+# -*- coding: utf-8 -*-
+# version 2.0.0
+# author Reiner Jung
+
+
 class ISessionEvent:
-	def __init__ (self):
-		self.hostname
-		sessionId = None
-	@hostname.setter
-	def hostname(self, value):
-		if value.isinstance(string):
-			self.hostname = value 
-		else:
-			raise Exception(f"Property hostname has type string but
-					        a parameter with  type {value.type} was specified")
-	
-	@sessionId.setter
-	def sessionId(self, value):
-		if value.isinstance(string):
-			self.sessionId = value 
-		else:
-			raise Exception(f"Property sessionId has type string but
-					        a parameter with  type {value.type} was specified")
+	def __init__(self, hostname, session_id):	
+		self.hostname = (""
+		      if hostname is None 
+		      else hostname)
+		self.session_id = (""
+		      if session_id is None 
+		      else session_id)

@@ -1,9 +1,14 @@
-class BeforeSentRemoteEvent :
-	def __init__(self, timestamp, trace_id, order_index, technology):	
-		timestamp = timestamp
-		trace_id = trace_id
-		order_index = order_index
-		technology = (self.TECHNOLOGY
+# -*- coding: utf-8 -*-
+# version 1.14
+# author Felix Eichhorst
+
+
+class BeforeSentRemoteEvent:
+	def __init__(self, timestamp, trace_id, order_index, technology):
+		self.timestamp = timestamp
+		self.trace_id = trace_id
+		self.order_index = order_index
+		self.technology = (self.TECHNOLOGY
 				      if technology is None 
 				      else technology)
 

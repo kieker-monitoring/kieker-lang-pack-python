@@ -1,15 +1,20 @@
-class MemSwapUsageRecord :
-	def __init__(self, timestamp, hostname, mem_total, mem_used, mem_free, swap_total, swap_used, swap_free):	
-		timestamp = timestamp
-		hostname = (self.HOSTNAME
+# -*- coding: utf-8 -*-
+# version 1.3
+# author Andre van Hoorn, Jan Waller
+
+
+class MemSwapUsageRecord:
+	def __init__(self, timestamp, hostname, mem_total, mem_used, mem_free, swap_total, swap_used, swap_free):
+		self.timestamp = timestamp
+		self.hostname = (self.HOSTNAME
 				      if hostname is None 
 				      else hostname)
-		mem_total = mem_total
-		mem_used = mem_used
-		mem_free = mem_free
-		swap_total = swap_total
-		swap_used = swap_used
-		swap_free = swap_free
+		self.mem_total = mem_total
+		self.mem_used = mem_used
+		self.mem_free = mem_free
+		self.swap_total = swap_total
+		self.swap_used = swap_used
+		self.swap_free = swap_free
 
 	def serialize(self, serializer):
 		serializer.put_long(self.timestamp)

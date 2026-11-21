@@ -1,18 +1,23 @@
-class DiskUsageRecord :
-	def __init__(self, timestamp, hostname, device_name, queue, read_bytes_per_second, reads_per_second, service_time, write_bytes_per_second, writes_per_second):	
-		timestamp = timestamp
-		hostname = (self.HOSTNAME
+# -*- coding: utf-8 -*-
+# version 1.12
+# author Teerat Pitakrat
+
+
+class DiskUsageRecord:
+	def __init__(self, timestamp, hostname, device_name, queue, read_bytes_per_second, reads_per_second, service_time, write_bytes_per_second, writes_per_second):
+		self.timestamp = timestamp
+		self.hostname = (self.HOSTNAME
 				      if hostname is None 
 				      else hostname)
-		device_name = (self.DEVICE_NAME
+		self.device_name = (self.DEVICE_NAME
 				      if device_name is None 
 				      else device_name)
-		queue = queue
-		read_bytes_per_second = read_bytes_per_second
-		reads_per_second = reads_per_second
-		service_time = service_time
-		write_bytes_per_second = write_bytes_per_second
-		writes_per_second = writes_per_second
+		self.queue = queue
+		self.read_bytes_per_second = read_bytes_per_second
+		self.reads_per_second = reads_per_second
+		self.service_time = service_time
+		self.write_bytes_per_second = write_bytes_per_second
+		self.writes_per_second = writes_per_second
 
 	def serialize(self, serializer):
 		serializer.put_long(self.timestamp)

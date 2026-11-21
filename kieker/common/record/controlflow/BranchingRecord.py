@@ -1,8 +1,13 @@
-class BranchingRecord :
-	def __init__(self, timestamp, branch_id, branching_outcome):	
-		timestamp = timestamp
-		branch_id = branch_id
-		branching_outcome = branching_outcome
+# -*- coding: utf-8 -*-
+# version 1.2
+# author Andre van Hoorn, Jan Waller
+
+
+class BranchingRecord:
+	def __init__(self, timestamp, branch_id, branching_outcome):
+		self.timestamp = timestamp
+		self.branch_id = branch_id
+		self.branching_outcome = branching_outcome
 
 	def serialize(self, serializer):
 		serializer.put_long(self.timestamp)
