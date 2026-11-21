@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 # version 1.6
 # author Jan Waller
 
-from kieker.common.record.flow.IFlowRecord import IFlowRecord
 from kieker.common.record.flow.IClassSignature import IClassSignature
+from kieker.common.record.flow.IFlowRecord import IFlowRecord
+
 
 class IObjectRecord (IFlowRecord, IClassSignature):
 	def __init__(self, class_signature, object_id):	

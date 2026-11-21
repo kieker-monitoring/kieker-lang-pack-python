@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # version 1.10
 # author Nils Christian Ehmke
 
 from kieker.common.record.jvm.AbstractJVMRecord import AbstractJVMRecord
+
 
 class ClassLoadingRecord (AbstractJVMRecord):
 	def __init__(self, timestamp, hostname, vm_name, total_loaded_class_count, loaded_class_count, unloaded_class_count):

@@ -1,9 +1,11 @@
-# -*- coding: utf-8 -*-
 # version 1.6
 # author Jan Waller
 
-from kieker.common.record.flow.trace.operation.BeforeOperationEvent import BeforeOperationEvent
 from kieker.common.record.flow.IConstructorRecord import IConstructorRecord
+from kieker.common.record.flow.trace.operation.BeforeOperationEvent import (
+	BeforeOperationEvent,
+)
+
 
 class BeforeConstructorEvent (BeforeOperationEvent, IConstructorRecord):
 	def __init__(self, timestamp, trace_id, order_index, operation_signature, class_signature):

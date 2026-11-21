@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # version 1.8
 # author Jan Waller
 
 from kieker.common.record.flow.trace.AbstractTraceEvent import AbstractTraceEvent
+
 
 class JoinEvent (AbstractTraceEvent):
 	def __init__(self, timestamp, trace_id, order_index, joined_trace_id):

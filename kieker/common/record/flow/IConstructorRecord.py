@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # version 1.8
 # author Jan Waller
 
 from kieker.common.record.flow.IOperationRecord import IOperationRecord
+
 
 class IConstructorRecord (IOperationRecord):
 	def __init__(self, operation_signature, class_signature):	

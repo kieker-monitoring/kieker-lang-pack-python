@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 # version 1.5
 # author Jan Waller
 
+from kieker.common.record.flow.IClassSignature import IClassSignature
 from kieker.common.record.flow.IFlowRecord import IFlowRecord
 from kieker.common.record.flow.IOperationSignature import IOperationSignature
-from kieker.common.record.flow.IClassSignature import IClassSignature
+
 
 class IOperationRecord (IFlowRecord, IOperationSignature, IClassSignature):
 	def __init__(self, operation_signature, class_signature):	

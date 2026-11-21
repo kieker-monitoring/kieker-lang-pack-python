@@ -1,9 +1,13 @@
-# -*- coding: utf-8 -*-
 # version 2.0.0
 # author Reiner Jung
 
-from kieker.common.record.flow.trace.operation.BeforeOperationEvent import BeforeOperationEvent
-from kieker.common.record.flow.trace.operation.IPayloadCharacterization import IPayloadCharacterization
+from kieker.common.record.flow.trace.operation.BeforeOperationEvent import (
+	BeforeOperationEvent,
+)
+from kieker.common.record.flow.trace.operation.IPayloadCharacterization import (
+	IPayloadCharacterization,
+)
+
 
 class EntryLevelBeforeOperationEvent (BeforeOperationEvent, IPayloadCharacterization):
 	def __init__(self, timestamp, trace_id, order_index, operation_signature, class_signature, parameters, values, request_type):

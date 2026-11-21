@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # version 1.3
 # author Andre van Hoorn, Jan Waller
 

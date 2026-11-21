@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # version 1.5
 # author Jan Waller
 
 from kieker.common.record.flow.IFlowRecord import IFlowRecord
+
 
 class TraceMetadata (IFlowRecord):
 	NO_PARENT_TRACEID = -1

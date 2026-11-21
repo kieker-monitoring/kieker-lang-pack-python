@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 # version 2.0.0
 # author Reiner Jung
 
 from kieker.common.record.flow.IEventRecord import IEventRecord
 from kieker.common.record.session.ISessionEvent import ISessionEvent
+
 
 class SessionStartEvent (IEventRecord, ISessionEvent):
 	def __init__(self, timestamp, hostname, session_id):

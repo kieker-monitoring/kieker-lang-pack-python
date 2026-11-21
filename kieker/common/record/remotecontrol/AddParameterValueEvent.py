@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # version 1.15
 # author Reiner Jung
 
 from kieker.common.record.remotecontrol.IParameterValueEvent import IParameterValueEvent
+
 
 class AddParameterValueEvent (IParameterValueEvent):
 	def __init__(self, pattern, name, value):

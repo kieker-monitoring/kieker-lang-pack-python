@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 # version 1.6
 # author Jan Waller
 
 from kieker.common.record.flow.ICallRecord import ICallRecord
 from kieker.common.record.flow.IObjectRecord import IObjectRecord
+
 
 class ICallObjectRecord (ICallRecord, IObjectRecord):
 	def __init__(self, operation_signature, class_signature, callee_operation_signature, callee_class_signature, object_id, callee_object_id):	

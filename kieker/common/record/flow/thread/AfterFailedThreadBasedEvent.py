@@ -1,9 +1,11 @@
-# -*- coding: utf-8 -*-
 # version 1.13
 # author Christian Wulf
 
-from kieker.common.record.flow.thread.AbstractThreadBasedEvent import AbstractThreadBasedEvent
 from kieker.common.record.flow.IExceptionRecord import IExceptionRecord
+from kieker.common.record.flow.thread.AbstractThreadBasedEvent import (
+	AbstractThreadBasedEvent,
+)
+
 
 class AfterFailedThreadBasedEvent (AbstractThreadBasedEvent, IExceptionRecord):
 	def __init__(self, timestamp, thread_id, order_index, operation_signature, class_signature, cause):

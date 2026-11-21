@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # version 2.0.4
 # author Generic Kieker
 
 from kieker.common.record.remotecontrol.IRemoteControlEvent import IRemoteControlEvent
+
 
 class IRemoteParameterControlEvent (IRemoteControlEvent):
 	def __init__(self, pattern, name, values):	

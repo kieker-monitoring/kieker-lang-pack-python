@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # version 1.10
 # author Nils Christian Ehmke
 
 from kieker.common.record.jvm.AbstractJVMRecord import AbstractJVMRecord
+
 
 class ThreadsStatusRecord (AbstractJVMRecord):
 	def __init__(self, timestamp, hostname, vm_name, thread_count, daemon_thread_count, peak_thread_count, total_started_thread_count):

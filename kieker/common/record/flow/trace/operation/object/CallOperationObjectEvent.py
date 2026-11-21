@@ -1,9 +1,11 @@
-# -*- coding: utf-8 -*-
 # version 1.6
 # author Jan Waller
 
-from kieker.common.record.flow.trace.operation.CallOperationEvent import CallOperationEvent
 from kieker.common.record.flow.ICallObjectRecord import ICallObjectRecord
+from kieker.common.record.flow.trace.operation.CallOperationEvent import (
+	CallOperationEvent,
+)
+
 
 class CallOperationObjectEvent (CallOperationEvent, ICallObjectRecord):
 	def __init__(self, timestamp, trace_id, order_index, operation_signature, class_signature, callee_operation_signature, callee_class_signature, object_id, callee_object_id):

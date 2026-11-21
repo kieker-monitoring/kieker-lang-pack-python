@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # version 1.12
 # author Teerat Pitakrat
 

@@ -1,8 +1,10 @@
-# -*- coding: utf-8 -*-
 # version 1.8
 # author Jan Waller
 
-from kieker.common.record.flow.trace.concurrency.monitor.AbstractMonitorEvent import AbstractMonitorEvent
+from kieker.common.record.flow.trace.concurrency.monitor.AbstractMonitorEvent import (
+	AbstractMonitorEvent,
+)
+
 
 class MonitorWaitEvent (AbstractMonitorEvent):
 	def __init__(self, timestamp, trace_id, order_index, lock_id):

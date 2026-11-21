@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # version 1.10
 # author Nils Christian Ehmke
 
 from kieker.common.record.jvm.AbstractJVMRecord import AbstractJVMRecord
+
 
 class GCRecord (AbstractJVMRecord):
 	def __init__(self, timestamp, hostname, vm_name, gc_name, collection_count, collection_time_ms):

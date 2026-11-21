@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 # version 1.13
 # author Christian Wulf
 
 from kieker.common.record.flow.AbstractEvent import AbstractEvent
-from kieker.common.record.flow.IThreadBasedRecord import IThreadBasedRecord
-from kieker.common.record.flow.IOperationSignature import IOperationSignature
 from kieker.common.record.flow.IClassSignature import IClassSignature
+from kieker.common.record.flow.IOperationSignature import IOperationSignature
+from kieker.common.record.flow.IThreadBasedRecord import IThreadBasedRecord
+
 
 class AbstractThreadBasedEvent (AbstractEvent, IThreadBasedRecord, IOperationSignature, IClassSignature):
 	def __init__(self, timestamp, thread_id, order_index, operation_signature, class_signature):

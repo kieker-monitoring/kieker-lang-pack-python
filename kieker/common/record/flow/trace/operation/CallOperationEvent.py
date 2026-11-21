@@ -1,9 +1,11 @@
-# -*- coding: utf-8 -*-
 # version 1.5
 # author Andre van Hoorn, Holger Knoche, Jan Waller
 
-from kieker.common.record.flow.trace.operation.AbstractOperationEvent import AbstractOperationEvent
 from kieker.common.record.flow.ICallRecord import ICallRecord
+from kieker.common.record.flow.trace.operation.AbstractOperationEvent import (
+	AbstractOperationEvent,
+)
+
 
 class CallOperationEvent (AbstractOperationEvent, ICallRecord):
 	def __init__(self, timestamp, trace_id, order_index, operation_signature, class_signature, callee_operation_signature, callee_class_signature):

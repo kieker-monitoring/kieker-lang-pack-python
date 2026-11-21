@@ -1,8 +1,10 @@
-# -*- coding: utf-8 -*-
 # version 1.14
 # author Marc Adolf
 
-from kieker.common.record.remotecontrol.IRemoteParameterControlEvent import IRemoteParameterControlEvent
+from kieker.common.record.remotecontrol.IRemoteParameterControlEvent import (
+	IRemoteParameterControlEvent,
+)
+
 
 class ActivationParameterEvent (IRemoteParameterControlEvent):
 	def __init__(self, pattern, name, values):

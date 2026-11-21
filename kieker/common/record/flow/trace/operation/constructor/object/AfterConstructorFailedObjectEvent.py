@@ -1,9 +1,11 @@
-# -*- coding: utf-8 -*-
 # version 1.6
 # author Jan Waller
 
-from kieker.common.record.flow.trace.operation.constructor.AfterConstructorFailedEvent import AfterConstructorFailedEvent
 from kieker.common.record.flow.IObjectRecord import IObjectRecord
+from kieker.common.record.flow.trace.operation.constructor.AfterConstructorFailedEvent import (
+	AfterConstructorFailedEvent,
+)
+
 
 class AfterConstructorFailedObjectEvent (AfterConstructorFailedEvent, IObjectRecord):
 	def __init__(self, timestamp, trace_id, order_index, operation_signature, class_signature, cause, object_id):

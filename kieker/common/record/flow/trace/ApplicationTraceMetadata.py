@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # version 1.14
 # author Christian Zirkelbach
 
 from kieker.common.record.flow.trace.TraceMetadata import TraceMetadata
+
 
 class ApplicationTraceMetadata (TraceMetadata):
 	NO_APPLICATION_NAME = "<no-application-name>"

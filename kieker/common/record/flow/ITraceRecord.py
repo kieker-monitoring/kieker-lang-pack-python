@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # version 1.6
 # author Jan Waller
 
 from kieker.common.record.flow.IFlowRecord import IFlowRecord
+
 
 class ITraceRecord (IFlowRecord):
 	def __init__(self, trace_id, order_index):	
