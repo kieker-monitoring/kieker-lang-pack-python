@@ -1,16 +1,15 @@
-# version 1.8
+# since 1.8
 # author Jan Waller
 
 from kieker.common.record.flow.trace.concurrency.monitor.AbstractMonitorEvent import (
-	AbstractMonitorEvent,
+    AbstractMonitorEvent,
 )
 
 
 class MonitorNotifyEvent (AbstractMonitorEvent):
-	def __init__(self, timestamp, trace_id, order_index, lock_id):
-		super().__init__(timestamp, trace_id, order_index, lock_id)
+    def __init__(self, timestamp, trace_id, order_index, lock_id):
+        super().__init__(timestamp, trace_id, order_index, lock_id)
 
-	def serialize(self, serializer):
-		super().serialize(serializer)
-	
-	
+    def serialize(self, serializer):
+        super().serialize(serializer)
+

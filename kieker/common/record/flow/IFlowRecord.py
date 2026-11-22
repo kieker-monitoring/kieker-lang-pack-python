@@ -1,7 +1,8 @@
-# version 1.5
+# since 1.5
 # author Jan Waller
 
 
+
 class IFlowRecord:
-	def __init__(self):	
-		pass
+    def __init__(self):	
+        pass

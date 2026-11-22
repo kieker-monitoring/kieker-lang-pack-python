@@ -1,26 +1,26 @@
-# version 1.13
+# since 1.13
 # author Christian Wulf
 
 
-class HostApplicationMetaData:
-	def __init__(self, system_name, ip_address, hostname, application_name):
-		self.system_name = (""
-			if system_name is None 
-			else system_name)
-		self.ip_address = (""
-			if ip_address is None 
-			else ip_address)
-		self.hostname = (""
-			if hostname is None 
-			else hostname)
-		self.application_name = (""
-			if application_name is None 
-			else application_name)
 
-	def serialize(self, serializer):
-		serializer.put_string(self.system_name)
-		serializer.put_string(self.ip_address)
-		serializer.put_string(self.hostname)
-		serializer.put_string(self.application_name) 
-	
-	
+class HostApplicationMetaData:
+    def __init__(self, system_name, ip_address, hostname, application_name):
+        self.system_name = (""
+            if system_name is None 
+            else system_name)
+        self.ip_address = (""
+            if ip_address is None 
+            else ip_address)
+        self.hostname = (""
+            if hostname is None 
+            else hostname)
+        self.application_name = (""
+            if application_name is None 
+            else application_name)
+
+    def serialize(self, serializer):
+        serializer.put_string(self.system_name)
+        serializer.put_string(self.ip_address)
+        serializer.put_string(self.hostname)
+        serializer.put_string(self.application_name) 
+

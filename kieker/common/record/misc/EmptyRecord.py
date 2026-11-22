@@ -1,12 +1,12 @@
-# version 0.95a
+# since 0.95a
 # author Andre van Hoorn, Jan Waller
 
 
-class EmptyRecord:
-	def __init__(self):
-		pass
 
-	def serialize(self, serializer):
-		pass
-	
-	
+class EmptyRecord:
+    def __init__(self):
+        pass
+
+    def serialize(self, serializer):
+        pass
+
