@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 from monitoring.controller import MonitoringController
-from monitoring.traceregistry import TraceRegistry
 from monitoring.record.trace.operation.operationevent import (
-    BeforeOperationEvent,
     AfterOperationEvent,
     AfterOperationFailedEvent,
+    BeforeOperationEvent,
 )
+from monitoring.traceregistry import TraceRegistry
 
 monitoring_controller = MonitoringController()  # Singleton
 trace_reg = TraceRegistry()

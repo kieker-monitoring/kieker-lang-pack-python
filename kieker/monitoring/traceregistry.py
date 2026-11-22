@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 import threading
 
-# from socket import *
 from monitoring.record.trace.tracemetadata import TraceMetadata
 
 lock = threading.Lock()
@@ -53,7 +51,7 @@ class TraceRegistry:
         if enclosing_trace is not None:
             local_trace_stack = thread_local.trace_stack
             if local_trace_stack is None:
-                local_trace_stack = list()
+                local_trace_stack = []
                 thread_local.trace_stack = local_trace_stack
             local_trace_stack.append(enclosing_trace)
 
