@@ -14,5 +14,5 @@ class AbstractTraceEvent (AbstractEvent, ITraceRecord):
     def serialize(self, serializer):
         super().serialize(serializer)
         serializer.put_long(self.trace_id)
-        serializer.put_int(self.order_index) 
+        serializer.put_int(self.order_index)
 

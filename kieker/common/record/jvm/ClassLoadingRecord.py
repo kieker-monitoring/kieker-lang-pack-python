@@ -15,5 +15,5 @@ class ClassLoadingRecord (AbstractJVMRecord):
         super().serialize(serializer)
         serializer.put_long(self.total_loaded_class_count)
         serializer.put_int(self.loaded_class_count)
-        serializer.put_long(self.unloaded_class_count) 
+        serializer.put_long(self.unloaded_class_count)
 

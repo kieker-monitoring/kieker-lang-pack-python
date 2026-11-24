@@ -16,5 +16,5 @@ class BeforeReceivedRemoteEvent:
         serializer.put_long(self.caller_trace_id)
         serializer.put_int(self.caller_order_index)
         serializer.put_long(self.trace_id)
-        serializer.put_int(self.order_index) 
+        serializer.put_int(self.order_index)
 

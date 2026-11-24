@@ -27,5 +27,5 @@ class MemoryRecord (AbstractJVMRecord):
         serializer.put_long(self.non_heap_used_bytes)
         serializer.put_long(self.non_heap_committed_bytes)
         serializer.put_long(self.non_heap_init_bytes)
-        serializer.put_int(self.object_pending_finalization_count) 
+        serializer.put_int(self.object_pending_finalization_count)
 

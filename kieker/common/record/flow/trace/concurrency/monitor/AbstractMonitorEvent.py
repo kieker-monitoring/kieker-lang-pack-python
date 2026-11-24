@@ -13,5 +13,5 @@ class AbstractMonitorEvent (AbstractTraceEvent):
 
     def serialize(self, serializer):
         super().serialize(serializer)
-        serializer.put_int(self.lock_id) 
+        serializer.put_int(self.lock_id)
 

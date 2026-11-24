@@ -7,10 +7,10 @@ class CPUUtilizationRecord:
     def __init__(self, timestamp, hostname, cpu_id, user, system, wait, nice, irq, total_utilization, idle):
         self.timestamp = timestamp
         self.hostname = (self.HOSTNAME
-            if hostname is None 
+            if hostname is None
             else hostname)
         self.cpu_id = (self.CPU_ID
-            if cpu_id is None 
+            if cpu_id is None
             else cpu_id)
         self.user = user
         self.system = system
@@ -30,5 +30,5 @@ class CPUUtilizationRecord:
         serializer.put_double(self.nice)
         serializer.put_double(self.irq)
         serializer.put_double(self.total_utilization)
-        serializer.put_double(self.idle) 
+        serializer.put_double(self.idle)
 

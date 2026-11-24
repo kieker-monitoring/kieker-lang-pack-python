@@ -9,5 +9,5 @@ class AbstractEvent (IEventRecord):
         self.timestamp = timestamp
 
     def serialize(self, serializer):
-        serializer.put_long(self.timestamp) 
+        serializer.put_long(self.timestamp)
 

@@ -4,7 +4,7 @@
 
 
 class IClassSignature:
-    def __init__(self, class_signature):	
+    def __init__(self, class_signature):
         self.class_signature = (self.CLASS_SIGNATURE
-            if class_signature is None 
+            if class_signature is None
             else class_signature)

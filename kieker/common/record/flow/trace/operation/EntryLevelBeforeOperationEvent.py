@@ -20,5 +20,5 @@ class EntryLevelBeforeOperationEvent (BeforeOperationEvent, IPayloadCharacteriza
         super().serialize(serializer)
         serializer.put_string(self.parameters)
         serializer.put_string(self.values)
-        serializer.put_int(self.request_type) 
+        serializer.put_int(self.request_type)
 

@@ -13,10 +13,10 @@ class TraceMetadata (IFlowRecord):
         self.trace_id = trace_id
         self.thread_id = thread_id
         self.session_id = (self.NO_SESSION_ID
-            if session_id is None 
+            if session_id is None
             else session_id)
         self.hostname = (self.NO_HOSTNAME
-            if hostname is None 
+            if hostname is None
             else hostname)
         self.parent_trace_id = parent_trace_id
         self.parent_order_id = parent_order_id
@@ -28,7 +28,7 @@ class TraceMetadata (IFlowRecord):
         serializer.put_string(self.session_id)
         serializer.put_string(self.hostname)
         serializer.put_long(self.parent_trace_id)
-        serializer.put_int(self.parent_order_id) 
+        serializer.put_int(self.parent_order_id)
 
     def get_next_order_id(self):
         self.next_order_id +=1

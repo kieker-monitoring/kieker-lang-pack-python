@@ -13,5 +13,5 @@ class JoinEvent (AbstractTraceEvent):
 
     def serialize(self, serializer):
         super().serialize(serializer)
-        serializer.put_long(self.joined_trace_id) 
+        serializer.put_long(self.joined_trace_id)
 

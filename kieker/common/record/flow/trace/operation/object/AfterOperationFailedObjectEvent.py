@@ -14,5 +14,5 @@ class AfterOperationFailedObjectEvent (AfterOperationFailedEvent, IObjectRecord)
 
     def serialize(self, serializer):
         super().serialize(serializer)
-        serializer.put_int(self.object_id) 
+        serializer.put_int(self.object_id)
 

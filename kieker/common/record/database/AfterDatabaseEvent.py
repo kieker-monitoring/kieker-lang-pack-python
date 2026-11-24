@@ -11,15 +11,15 @@ class AfterDatabaseEvent (IEventRecord, IFlowRecord, IClassSignature, ITraceReco
     def __init__(self, timestamp, class_signature, trace_id, order_index, return_type, return_value):
         self.timestamp = timestamp
         self.class_signature = (self.CLASS_SIGNATURE
-            if class_signature is None 
+            if class_signature is None
             else class_signature)
         self.trace_id = trace_id
         self.order_index = order_index
         self.return_type = (""
-            if return_type is None 
+            if return_type is None
             else return_type)
         self.return_value = (""
-            if return_value is None 
+            if return_value is None
             else return_value)
 
     def serialize(self, serializer):
@@ -28,5 +28,5 @@ class AfterDatabaseEvent (IEventRecord, IFlowRecord, IClassSignature, ITraceReco
         serializer.put_long(self.trace_id)
         serializer.put_int(self.order_index)
         serializer.put_string(self.return_type)
-        serializer.put_string(self.return_value) 
+        serializer.put_string(self.return_value)
 

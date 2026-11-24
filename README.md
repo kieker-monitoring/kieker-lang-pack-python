@@ -8,13 +8,13 @@ and to parts of Tensorflow with limited results.
 
 ## Installation
 Prerequisites: 
-- python >=3.15
+- python >=3.12
 - build package (pip install build)
 
 1. clone this repository
 2. cd ./kieker-lang-pack-python
 3. run python3 -m build 
-4. pip install dist/kieker-monitoring-for-python-0.0.3.tar.gz
+4. pip install dist/kieker-monitoring-for-python-0.0.10.tar.gz
 
 ## Instrumentation
 

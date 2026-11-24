@@ -16,5 +16,5 @@ class CallOperationObjectEvent (CallOperationEvent, ICallObjectRecord):
     def serialize(self, serializer):
         super().serialize(serializer)
         serializer.put_int(self.object_id)
-        serializer.put_int(self.callee_object_id) 
+        serializer.put_int(self.callee_object_id)
 
