@@ -4,7 +4,7 @@
 
 
 class IRemoteControlEvent:
-    def __init__(self, pattern):	
+    def __init__(self, pattern):
         self.pattern = (""
-            if pattern is None 
+            if pattern is None
             else pattern)

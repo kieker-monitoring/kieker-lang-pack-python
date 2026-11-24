@@ -31,19 +31,19 @@ class CRM(metaclass=Instrumental):
    #__metaclass__=Instrumental
     def __init__(self, catalog):
         self.catalog = catalog
-    
-    
+
+
     def get_offers(self):
         self.catalog.get_book(False)
 
 
 class Bookstore(metaclass=Instrumental):
-   
-   
+
+
     def __init__(self):
         self.catalog = Catalog()
         self.crm = CRM(self.catalog)
-   
+
     def search_book(self):
         self.catalog.get_book(False)
         self.crm.get_offers()
@@ -62,7 +62,7 @@ def main():
             raise TypeError
     except IndexError:
         num_traces = 1
-        
+
     bookstore.search_book()
     print("Starting trace number %s")
        # threading.Thread(target=run_bookstore, args=(bookstore,)).start

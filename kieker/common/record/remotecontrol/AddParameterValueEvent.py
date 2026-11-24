@@ -9,17 +9,17 @@ from kieker.common.record.remotecontrol.IParameterValueEvent import (
 class AddParameterValueEvent (IParameterValueEvent):
     def __init__(self, pattern, name, value):
         self.pattern = (""
-            if pattern is None 
+            if pattern is None
             else pattern)
         self.name = (""
-            if name is None 
+            if name is None
             else name)
         self.value = (""
-            if value is None 
+            if value is None
             else value)
 
     def serialize(self, serializer):
         serializer.put_string(self.pattern)
         serializer.put_string(self.name)
-        serializer.put_string(self.value) 
+        serializer.put_string(self.value)
 

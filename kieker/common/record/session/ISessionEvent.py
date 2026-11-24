@@ -4,10 +4,10 @@
 
 
 class ISessionEvent:
-    def __init__(self, hostname, session_id):	
+    def __init__(self, hostname, session_id):
         self.hostname = (""
-            if hostname is None 
+            if hostname is None
             else hostname)
         self.session_id = (""
-            if session_id is None 
+            if session_id is None
             else session_id)

@@ -11,5 +11,5 @@ class UptimeRecord (AbstractJVMRecord):
 
     def serialize(self, serializer):
         super().serialize(serializer)
-        serializer.put_long(self.uptime_ms) 
+        serializer.put_long(self.uptime_ms)
 

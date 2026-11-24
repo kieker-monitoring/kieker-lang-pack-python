@@ -17,5 +17,5 @@ class ThreadsStatusRecord (AbstractJVMRecord):
         serializer.put_long(self.thread_count)
         serializer.put_long(self.daemon_thread_count)
         serializer.put_long(self.peak_thread_count)
-        serializer.put_long(self.total_started_thread_count) 
+        serializer.put_long(self.total_started_thread_count)
 

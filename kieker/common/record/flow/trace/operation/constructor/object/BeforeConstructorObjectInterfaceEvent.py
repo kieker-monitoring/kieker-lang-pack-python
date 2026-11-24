@@ -11,10 +11,10 @@ class BeforeConstructorObjectInterfaceEvent (BeforeConstructorObjectEvent, IInte
     def __init__(self, timestamp, trace_id, order_index, operation_signature, class_signature, object_id, interface):
         super().__init__(timestamp, trace_id, order_index, operation_signature, class_signature, object_id)
         self.interface = (""
-            if interface is None 
+            if interface is None
             else interface)
 
     def serialize(self, serializer):
         super().serialize(serializer)
-        serializer.put_string(self.interface) 
+        serializer.put_string(self.interface)
 

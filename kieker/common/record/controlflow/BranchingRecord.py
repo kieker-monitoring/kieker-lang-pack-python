@@ -12,5 +12,5 @@ class BranchingRecord:
     def serialize(self, serializer):
         serializer.put_long(self.timestamp)
         serializer.put_int(self.branch_id)
-        serializer.put_int(self.branching_outcome) 
+        serializer.put_int(self.branching_outcome)
 

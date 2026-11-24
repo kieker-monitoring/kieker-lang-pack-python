@@ -4,7 +4,7 @@
 
 
 class IPayloadCharacterization:
-    def __init__(self, parameters, values, request_type):	
+    def __init__(self, parameters, values, request_type):
         self.parameters = parameters
         self.values = values
         self.request_type = request_type

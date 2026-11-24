@@ -11,15 +11,15 @@ class BeforeDatabaseEvent (IEventRecord, IFlowRecord, IClassSignature, ITraceRec
     def __init__(self, timestamp, class_signature, trace_id, order_index, parameters, technology):
         self.timestamp = timestamp
         self.class_signature = (self.CLASS_SIGNATURE
-            if class_signature is None 
+            if class_signature is None
             else class_signature)
         self.trace_id = trace_id
         self.order_index = order_index
         self.parameters = (""
-            if parameters is None 
+            if parameters is None
             else parameters)
         self.technology = (""
-            if technology is None 
+            if technology is None
             else technology)
 
     def serialize(self, serializer):
@@ -28,5 +28,5 @@ class BeforeDatabaseEvent (IEventRecord, IFlowRecord, IClassSignature, ITraceRec
         serializer.put_long(self.trace_id)
         serializer.put_int(self.order_index)
         serializer.put_string(self.parameters)
-        serializer.put_string(self.technology) 
+        serializer.put_string(self.technology)
 

@@ -7,7 +7,7 @@ class MemSwapUsageRecord:
     def __init__(self, timestamp, hostname, mem_total, mem_used, mem_free, swap_total, swap_used, swap_free):
         self.timestamp = timestamp
         self.hostname = (self.HOSTNAME
-            if hostname is None 
+            if hostname is None
             else hostname)
         self.mem_total = mem_total
         self.mem_used = mem_used
@@ -24,5 +24,5 @@ class MemSwapUsageRecord:
         serializer.put_long(self.mem_free)
         serializer.put_long(self.swap_total)
         serializer.put_long(self.swap_used)
-        serializer.put_long(self.swap_free) 
+        serializer.put_long(self.swap_free)
 
