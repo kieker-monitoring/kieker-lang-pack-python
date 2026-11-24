@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 
 from configparser import ConfigParser
-from monitoring.writer import FileWriter, TCPWriter, DummyWriter
+
+from monitoring.writer import DummyWriter, FileWriter, TCPWriter
 
 
 class WriterController:

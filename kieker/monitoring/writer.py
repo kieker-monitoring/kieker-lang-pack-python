@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-
 
-import socket as s
 import errno
 import os
+import socket as s
 import threading
-from monitoring.util import TimeStamp, get_prefix
-from struct import pack
-from monitoring.serialization import Serializer, BinarySerializer
-from monitoring.fileregistry import WriterRegistry
 from configparser import ConfigParser
+from struct import pack
+
+from monitoring.fileregistry import WriterRegistry
+from monitoring.serialization import BinarySerializer, Serializer
+from monitoring.util import TimeStamp, get_prefix
 
 
 class DummyWriter:
@@ -65,9 +65,9 @@ class FileWriter:
         # clear buffer
         self.string_buffer.clear()
         # write to the file
-        file = open(self.file_path, 'a')
-        file.write(write_string)
-        file.close()
+        with open(self.file_path, 'a') as file:
+            file.write(write_string)
+            file.close()
 
     def onStarting(self):
         pass
@@ -85,10 +85,10 @@ class MappingFileWriter:
         self.file_path = './record-map.log'
 
     def add(self, Id, class_name):
-        file = open(self.file_path, 'a')
-        write_string = f'$ {Id} = {class_name} \n'
-        file.write(write_string)
-        file.close()
+        with open(self.file_path, 'a') as file:
+            write_string = f'$ {Id} = {class_name} \n'
+            file.write(write_string)
+            file.close()
 
 
 lock = threading.Lock()
@@ -138,7 +138,7 @@ class TCPWriter:
                 self.socket.close()
             else:
                 self.socket.sendall(result)
-        except Exception as e:
+        except OSError as e:
             print(repr(e))  # TODO: better exception handling
 
     def writeMonitoringRecord(self, record):
@@ -163,7 +163,7 @@ class TCPWriter:
                 self.socket.close()
             else:
                 self.socket.sendall(binarized_record)
-        except Exception as e:
+        except OSError as e:
             # TODO: Better exception handling for tcp
             print(repr(e))
 

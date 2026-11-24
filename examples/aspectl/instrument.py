@@ -19,9 +19,9 @@ def wrapper(cutpoint, *args, **kwargs):
         if(trace is None):
             trace = trace_reg.register_trace()
             monitoring_controller.new_monitoring_record(trace)
-        
+
         trace_id = trace.trace_id
-            
+
         timestamp = monitoring_controller.timesource_ctrl.get_time()
         func_module = cutpoint.__module__
         class_signature = cutpoint.__qualname__.split(".", 1)[0]
@@ -40,7 +40,7 @@ def wrapper(cutpoint, *args, **kwargs):
             monitoring_controller.new_monitoring_record(
                 AfterOperationFailedEvent(timestamp,
                                           -1
-                                          -2, 
+                                          -2,
                                           cutpoint.__name__,
                                           f'{func_module}.{class_signature}',
                                           repr(e)))
@@ -59,7 +59,7 @@ def wrapper(cutpoint, *args, **kwargs):
 
 @aspectlib.Aspect
 def test():
-    result = yield 
+    result = yield
     yield aspectlib.Return(1)
 
 
