@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Sat May 28 23:53:36 2022
 
+@deprecated since 0.0.10
 @author: serafim
 """
 

@@ -1,0 +1,8 @@
+# since 1.5
+# author Jan Waller
+
+
+
+class IFlowRecord:
+    def __init__(self):
+        pass

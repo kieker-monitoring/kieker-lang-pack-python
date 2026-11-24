@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # Modified by Natalie Kaufhold, November 2026
 
-import socket as s
 import errno
 import os
+import socket as s
 import threading
 from datetime import datetime, timezone
 from monitoring.util import TimeStamp, get_prefix
@@ -11,6 +11,11 @@ from struct import pack
 from monitoring.serialization import Serializer, BinarySerializer
 from monitoring.fileregistry import WriterRegistry
 from configparser import ConfigParser
+from struct import pack
+
+from monitoring.fileregistry import WriterRegistry
+from monitoring.serialization import BinarySerializer, Serializer
+from monitoring.util import TimeStamp, get_prefix
 
 
 MAX_FILE_SIZE = 5 * 1024 * 1024
@@ -145,7 +150,7 @@ class MappingFileWriter:
     def add(self, Id, class_name):
         with open(self.file_path, 'a') as file:
             file.write(f'${Id}={class_name}\n')
-
+            file.close()
 
 lock = threading.Lock()
 
@@ -194,7 +199,7 @@ class TCPWriter:
                 self.socket.close()
             else:
                 self.socket.sendall(result)
-        except Exception as e:
+        except OSError as e:
             print(repr(e))  # TODO: better exception handling
 
     def writeMonitoringRecord(self, record):
@@ -219,7 +224,7 @@ class TCPWriter:
                 self.socket.close()
             else:
                 self.socket.sendall(binarized_record)
-        except Exception as e:
+        except OSError as e:
             # TODO: Better exception handling for tcp
             print(repr(e))
 

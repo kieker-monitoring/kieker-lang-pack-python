@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-
+# @deprecated sind 0.0.10
+# remove
 
 class OperationExecutionRecord:
 
@@ -55,7 +55,6 @@ class TraceMetadata:
         self.parent_trace_id = parent_trace_id
         self.parent_order_id = parent_order_id
         self.next_order_id = 0
-        pass
 
     def serialize(self, serializer):
         serializer.put_long(self.trace_id)
