@@ -1,8 +1,9 @@
 # since 1.10
 # author Florian Fittkau
 
-from kieker.common.record.flow.IInterfaceRecord import IInterfaceRecord
-from kieker.common.record.flow.trace.operation.object.BeforeOperationObjectEvent import (
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.IInterfaceRecord import IInterfaceRecord
+from common.record.flow.trace.operation.object.BeforeOperationObjectEvent import (
     BeforeOperationObjectEvent,
 )
 

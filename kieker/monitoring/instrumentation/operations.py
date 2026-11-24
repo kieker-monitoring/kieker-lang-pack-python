@@ -1,7 +1,13 @@
+# Modified by Natalie Kaufhold, 2026
+
 from monitoring.controller import MonitoringController
-from monitoring.record.trace.operation.operationevent import (
+from common.record.flow.trace.operation.AfterOperationEvent import (
     AfterOperationEvent,
+)
+from common.record.flow.trace.operation.AfterOperationFailedEvent import (
     AfterOperationFailedEvent,
+)
+from common.record.flow.trace.operation.BeforeOperationEvent import (
     BeforeOperationEvent,
 )
 from monitoring.traceregistry import TraceRegistry

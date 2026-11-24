@@ -1,8 +1,9 @@
 # since 1.6
 # author Jan Waller
 
-from kieker.common.record.flow.ICallRecord import ICallRecord
-from kieker.common.record.flow.IObjectRecord import IObjectRecord
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.ICallRecord import ICallRecord
+from common.record.flow.IObjectRecord import IObjectRecord
 
 
 class ICallObjectRecord (ICallRecord, IObjectRecord):

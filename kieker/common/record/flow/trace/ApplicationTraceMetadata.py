@@ -1,7 +1,8 @@
 # since 1.14
 # author Christian Zirkelbach
 
-from kieker.common.record.flow.trace.TraceMetadata import TraceMetadata
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.trace.TraceMetadata import TraceMetadata
 
 
 class ApplicationTraceMetadata (TraceMetadata):

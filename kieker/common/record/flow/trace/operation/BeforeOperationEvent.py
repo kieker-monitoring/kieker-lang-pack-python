@@ -1,7 +1,8 @@
 # since 1.5
 # author Jan Waller
 
-from kieker.common.record.flow.trace.operation.AbstractOperationEvent import (
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.trace.operation.AbstractOperationEvent import (
     AbstractOperationEvent,
 )
 

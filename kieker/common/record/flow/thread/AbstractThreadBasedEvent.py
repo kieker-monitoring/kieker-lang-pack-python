@@ -1,10 +1,11 @@
 # since 1.13
 # author Christian Wulf
 
-from kieker.common.record.flow.AbstractEvent import AbstractEvent
-from kieker.common.record.flow.IClassSignature import IClassSignature
-from kieker.common.record.flow.IOperationSignature import IOperationSignature
-from kieker.common.record.flow.IThreadBasedRecord import IThreadBasedRecord
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.AbstractEvent import AbstractEvent
+from common.record.flow.IClassSignature import IClassSignature
+from common.record.flow.IOperationSignature import IOperationSignature
+from common.record.flow.IThreadBasedRecord import IThreadBasedRecord
 
 
 class AbstractThreadBasedEvent (AbstractEvent, IThreadBasedRecord, IOperationSignature, IClassSignature):

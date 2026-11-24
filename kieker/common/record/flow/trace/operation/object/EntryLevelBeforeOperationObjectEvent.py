@@ -1,10 +1,11 @@
 # since 2.0.0
 # author Reiner Jung
 
-from kieker.common.record.flow.trace.operation.IPayloadCharacterization import (
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.trace.operation.IPayloadCharacterization import (
     IPayloadCharacterization,
 )
-from kieker.common.record.flow.trace.operation.object.BeforeOperationObjectEvent import (
+from common.record.flow.trace.operation.object.BeforeOperationObjectEvent import (
     BeforeOperationObjectEvent,
 )
 

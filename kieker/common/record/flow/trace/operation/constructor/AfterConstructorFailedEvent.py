@@ -1,8 +1,9 @@
 # since 1.6
 # author Jan Waller
 
-from kieker.common.record.flow.IConstructorRecord import IConstructorRecord
-from kieker.common.record.flow.trace.operation.AfterOperationFailedEvent import (
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.IConstructorRecord import IConstructorRecord
+from common.record.flow.trace.operation.AfterOperationFailedEvent import (
     AfterOperationFailedEvent,
 )
 

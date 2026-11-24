@@ -1,8 +1,9 @@
 # since 1.5
 # author Jan Waller
 
-from kieker.common.record.flow.AbstractEvent import AbstractEvent
-from kieker.common.record.flow.ITraceRecord import ITraceRecord
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.AbstractEvent import AbstractEvent
+from common.record.flow.ITraceRecord import ITraceRecord
 
 
 class AbstractTraceEvent (AbstractEvent, ITraceRecord):

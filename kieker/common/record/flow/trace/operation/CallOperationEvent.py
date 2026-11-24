@@ -1,8 +1,9 @@
 # since 1.5
 # author Andre van Hoorn, Holger Knoche, Jan Waller
 
-from kieker.common.record.flow.ICallRecord import ICallRecord
-from kieker.common.record.flow.trace.operation.AbstractOperationEvent import (
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.ICallRecord import ICallRecord
+from common.record.flow.trace.operation.AbstractOperationEvent import (
     AbstractOperationEvent,
 )
 

@@ -1,7 +1,8 @@
 # since 1.6
 # author Jan Waller
 
-from kieker.common.record.flow.IOperationRecord import IOperationRecord
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.IOperationRecord import IOperationRecord
 
 
 class ICallRecord (IOperationRecord):

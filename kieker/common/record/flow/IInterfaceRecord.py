@@ -1,7 +1,8 @@
 # since 1.10
 # author Florian Fittkau
 
-from kieker.common.record.flow.IFlowRecord import IFlowRecord
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.IFlowRecord import IFlowRecord
 
 
 class IInterfaceRecord (IFlowRecord):

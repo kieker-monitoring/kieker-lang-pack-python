@@ -1,8 +1,9 @@
 # since 1.6
 # author Jan Waller
 
-from kieker.common.record.flow.ICallObjectRecord import ICallObjectRecord
-from kieker.common.record.flow.trace.operation.CallOperationEvent import (
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.ICallObjectRecord import ICallObjectRecord
+from common.record.flow.trace.operation.CallOperationEvent import (
     CallOperationEvent,
 )
 

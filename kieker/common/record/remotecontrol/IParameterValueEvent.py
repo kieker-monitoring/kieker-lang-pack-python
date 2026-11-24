@@ -1,7 +1,8 @@
 # since 1.15
 # author Reiner Jung
 
-from kieker.common.record.remotecontrol.IRemoteControlEvent import (
+# Modified by Natalie Kaufhold, 2026
+from common.record.remotecontrol.IRemoteControlEvent import (
     IRemoteControlEvent,
 )
 

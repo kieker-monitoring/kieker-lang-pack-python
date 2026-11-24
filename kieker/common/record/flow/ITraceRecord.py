@@ -1,7 +1,8 @@
 # since 1.6
 # author Jan Waller
 
-from kieker.common.record.flow.IFlowRecord import IFlowRecord
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.IFlowRecord import IFlowRecord
 
 
 class ITraceRecord (IFlowRecord):

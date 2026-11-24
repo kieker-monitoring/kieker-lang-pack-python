@@ -1,8 +1,9 @@
 # since 1.6
 # author Jan Waller
 
-from kieker.common.record.flow.IClassSignature import IClassSignature
-from kieker.common.record.flow.IFlowRecord import IFlowRecord
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.IClassSignature import IClassSignature
+from common.record.flow.IFlowRecord import IFlowRecord
 
 
 class IObjectRecord (IFlowRecord, IClassSignature):

@@ -1,11 +1,12 @@
 # since 1.14
 # author Christian Zirkelbach (czi@informatik.uni-kiel.de)
 
-from kieker.common.record.flow.IClassSignature import IClassSignature
-from kieker.common.record.flow.IEventRecord import IEventRecord
-from kieker.common.record.flow.IExceptionRecord import IExceptionRecord
-from kieker.common.record.flow.IFlowRecord import IFlowRecord
-from kieker.common.record.flow.ITraceRecord import ITraceRecord
+# Modified by Natalie Kaufhold, 2026
+from common.record.flow.IClassSignature import IClassSignature
+from common.record.flow.IEventRecord import IEventRecord
+from common.record.flow.IExceptionRecord import IExceptionRecord
+from common.record.flow.IFlowRecord import IFlowRecord
+from common.record.flow.ITraceRecord import ITraceRecord
 
 
 class DatabaseFailedEvent (IEventRecord, IFlowRecord, IClassSignature, ITraceRecord, IExceptionRecord):

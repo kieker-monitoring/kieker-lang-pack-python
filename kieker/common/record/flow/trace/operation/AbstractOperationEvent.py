@@ -1,8 +1,9 @@
 # since 1.5
 # author Jan Waller
+# Modified by Natalie Kaufhold, 2026
 
-from kieker.common.record.flow.IOperationRecord import IOperationRecord
-from kieker.common.record.flow.trace.AbstractTraceEvent import (
+from common.record.flow.IOperationRecord import IOperationRecord
+from common.record.flow.trace.AbstractTraceEvent import (
     AbstractTraceEvent,
 )
 

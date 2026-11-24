@@ -1,7 +1,8 @@
 # since 2.0.4
 # author Generic Kieker
 
-from kieker.common.record.remotecontrol.IRemoteControlEvent import (
+# Modified by Natalie Kaufhold, 2026
+from common.record.remotecontrol.IRemoteControlEvent import (
     IRemoteControlEvent,
 )
 

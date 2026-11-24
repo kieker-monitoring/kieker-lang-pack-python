@@ -1,7 +1,8 @@
 # since 1.10
 # author Nils Christian Ehmke
 
-from kieker.common.record.jvm.AbstractJVMRecord import AbstractJVMRecord
+# Modified by Natalie Kaufhold, 2026
+from common.record.jvm.AbstractJVMRecord import AbstractJVMRecord
 
 
 class MemoryRecord (AbstractJVMRecord):
