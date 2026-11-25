@@ -6,16 +6,16 @@ import os
 import socket as s
 import threading
 from datetime import datetime, timezone
-from monitoring.util import TimeStamp, get_prefix
+from kieker.monitoring.util import TimeStamp, get_prefix
 from struct import pack
-from monitoring.serialization import Serializer, BinarySerializer
-from monitoring.fileregistry import WriterRegistry
+from kieker.monitoring.serialization import Serializer, BinarySerializer
+from kieker.monitoring.fileregistry import WriterRegistry
 from configparser import ConfigParser
 from struct import pack
 
-from monitoring.fileregistry import WriterRegistry
-from monitoring.serialization import BinarySerializer, Serializer
-from monitoring.util import TimeStamp, get_prefix
+from kieker.monitoring.fileregistry import WriterRegistry
+from kieker.monitoring.serialization import BinarySerializer, Serializer
+from kieker.monitoring.util import TimeStamp, get_prefix
 
 
 MAX_FILE_SIZE = 5 * 1024 * 1024

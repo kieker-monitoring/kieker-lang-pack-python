@@ -3,13 +3,14 @@ import types
 import sys
 import decorator
 
-from monitoring.record.trace.operation.operationevent import (
+# Modified by Natalie Kaufhold, 2026
+from kieker.common.record.flow.trace.operation import (
     BeforeOperationEvent,
     AfterOperationEvent,
     AfterOperationFailedEvent,
 )
 
-import tools.const as con
+import kieker.tools.const as con
 
 
 @decorator.decorator

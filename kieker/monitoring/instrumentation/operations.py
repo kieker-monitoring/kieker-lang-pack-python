@@ -1,10 +1,11 @@
-from monitoring.controller import MonitoringController
-from monitoring.record.trace.operation.operationevent import (
+from kieker.monitoring.controller import MonitoringController
+# Modified by Natalie Kaufhold, 2026
+from kieker.common.record.flow.trace.operation import (
     AfterOperationEvent,
     AfterOperationFailedEvent,
     BeforeOperationEvent,
 )
-from monitoring.traceregistry import TraceRegistry
+from kieker.monitoring.traceregistry import TraceRegistry
 
 monitoring_controller = MonitoringController()  # Singleton
 trace_reg = TraceRegistry()

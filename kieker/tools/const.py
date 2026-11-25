@@ -1,7 +1,9 @@
 import inspect
-from monitoring.traceregistry import TraceRegistry
-from monitoring.controller import MonitoringController
-from tools.ModuleTransformer import ModuleTransformer
+
+# Modified by Natalie Kaufhold, 2026
+from kieker.monitoring.traceregistry import TraceRegistry
+from kieker.monitoring.controller import MonitoringController
+from kieker.tools.ModuleTransformer import ModuleTransformer
 
 # For aspect.py
 trace_reg = TraceRegistry()

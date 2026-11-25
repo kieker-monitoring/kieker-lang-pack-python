@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+# Modified by Natalie Kaufhold, 2026
 
 import examples.automatic.Bookstore
-from tools.Aspect import ModuleAspectizer
+from kieker.tools.aspect import ModuleAspectizer
 
 
 

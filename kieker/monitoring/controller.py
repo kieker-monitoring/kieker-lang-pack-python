@@ -1,8 +1,9 @@
 import logging
 from abc import ABC, abstractmethod
 
-from monitoring.util import TimeStamp
-from monitoring.writer_controller import WriterController
+# Modified by Natalie Kaufhold, 2026
+from kieker.monitoring.util import TimeStamp
+from kieker.monitoring.writer_controller import WriterController
 
 # I think that calss can/should be removed. But in the future we might
 # have more complex MonitoringController

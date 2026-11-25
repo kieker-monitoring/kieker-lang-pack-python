@@ -5,12 +5,13 @@ Created on Thu Jul 28 13:24:25 2022
 
 @author: serafim
 """
+# Modified by Natalie Kaufhold, 2026
 
 from importlib.abc import Loader, MetaPathFinder
 from importlib.util import spec_from_file_location
 from ast import ImportFrom, parse, alias, unparse, fix_missing_locations
 import os
-from tools.ModuleTransformer import ModuleTransformer
+from kieker.tools.ModuleTransformer import ModuleTransformer
 
 
 class InstrumentOnImportFinder(MetaPathFinder):
@@ -100,10 +101,12 @@ class InstLoader(Loader):
     def exec_module(self, module):
 
         ex = [
-            "tools.aspect", "monitoring.record", "monitoring.record.trace",
-            "monitoring.record.trace.operation",
-            "monitoring.record.trace.operation.operationevent",
-            "monitoring.traceregistry", "monitoring.record.trace.tracemetadata"
+            "kieker.tools.aspect", "kieker.monitoring.record",
+            "kieker.monitoring.record.trace",
+            "kieker.monitoring.record.trace.operation",
+            "kieker.monitoring.record.trace.operation.operationevent",
+            "kieker.monitoring.traceregistry",
+            "kieker.monitoring.record.trace.tracemetadata"
         ]
 
         # Read module source code
@@ -111,17 +114,17 @@ class InstLoader(Loader):
             data = f.read()
         # If the module should not be instrumented
         # execute it normally
-        if module.__name__ in self.ignore_list or module.__name__ in ex:
+        if (module.__name__ in self.ignore_list or module.__name__ in ex or module.__name__.startswith("kieker.common.record.")):
             exec(data, vars(module))
             return
-        # parse and inject import of tools.aspect
+        # parse and inject import of kieker.tools.aspect
         node = parse(data)
         if not self.is_empty:
-            import_node = ImportFrom(module="tools.aspect",
+            import_node = ImportFrom(module="kieker.tools.aspect",
                                      names=[alias(name="instrument")],
                                      level=0)
         else:
-            import_node = ImportFrom(module="tools.aspect",
+            import_node = ImportFrom(module="kieker.tools.aspect",
                                      names=[alias(name="instrument_empty")],
                                      level=0)
 

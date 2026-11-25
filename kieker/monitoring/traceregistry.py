@@ -1,6 +1,7 @@
 import threading
 
-from monitoring.record.trace.tracemetadata import TraceMetadata
+# Modified by Natalie Kaufhold, 2026
+from kieker.common.record.flow.trace.TraceMetadata import TraceMetadata
 
 lock = threading.Lock()
 thread_local = threading.local()

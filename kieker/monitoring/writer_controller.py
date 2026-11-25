@@ -1,7 +1,8 @@
 
 from configparser import ConfigParser
 
-from monitoring.writer import DummyWriter, FileWriter, TCPWriter
+# Modified by Natalie Kaufhold, 2026
+from kieker.monitoring.writer import DummyWriter, FileWriter, TCPWriter
 
 
 class WriterController:
