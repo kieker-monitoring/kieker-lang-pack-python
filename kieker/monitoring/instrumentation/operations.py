@@ -1,8 +1,12 @@
 from kieker.monitoring.controller import MonitoringController
 # Modified by Natalie Kaufhold, 2026
-from kieker.common.record.flow.trace.operation import (
+from kieker.common.record.flow.trace.operation.AfterOperationEvent import (
     AfterOperationEvent,
+)
+from kieker.common.record.flow.trace.operation.AfterOperationFailedEvent import (
     AfterOperationFailedEvent,
+)
+from kieker.common.record.flow.trace.operation.BeforeOperationEvent import (
     BeforeOperationEvent,
 )
 from kieker.monitoring.traceregistry import TraceRegistry
