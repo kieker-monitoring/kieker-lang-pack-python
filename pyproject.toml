@@ -24,8 +24,11 @@ dependencies = [
     "decorator>=5.3.1",
 ]
 
+# Modified by Natalie Kaufhold, 2026
 [tool.setuptools]
-package-dir = { "" = "kieker" }
+package-dir = { "" = "." }
 
 [tool.setuptools.packages.find]
-where = ["kieker"]
+where = ["."]
+include = ["kieker*"]
+namespaces = true

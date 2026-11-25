@@ -1,9 +1,10 @@
+# Modified by Natalie Kaufhold, 2026
 import importlib
 import os
 import sys
-from importlib.abc import Loader, MetaPathFinder
 from importlib.util import spec_from_file_location
-from tools.aspect import decorate_members
+
+from kieker.tools.aspect import decorate_members
 
 # sys.meta_path = MyLIst(sys.MetaPath)
 

@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
+# Modified by Natalie Kaufhold, 2026
 import aspectlib
 import examples.aspectl.bookstore as mod
 import examples.aspectl.run as rn
-from monitoring.Record import (BeforeOperationEvent,
-                               AfterOperationFailedEvent, AfterOperationEvent)
-from monitoring.Controller import MonitoringController, WriterController
+from kieker.monitoring.record.trace.operation.operationevent import (
+    BeforeOperationEvent,
+    AfterOperationFailedEvent,
+    AfterOperationEvent,
+)
+from kieker.monitoring.controller import MonitoringController
+from kieker.monitoring.writer_controller import WriterController
 
-from monitoring.traceregistry import TraceRegistry
+from kieker.monitoring.traceregistry import TraceRegistry
 
 monitoring_controller = MonitoringController(WriterController())
 trace_reg = TraceRegistry()

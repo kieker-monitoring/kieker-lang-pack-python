@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+# Modified by Natalie Kaufhold, 2026
 import time
 import sys
-import threading
-from tools.Aspect import Instrumental, instrument
+from kieker.tools.aspect import Instrumental
 
 def mydecorator(func):
     def wrapper(*args, **kwargs):
