@@ -107,9 +107,17 @@ class FileWriter:
         self.map_file_writer.add(Id, value)
 
     def writeMonitoringRecord(self, record):
-        __module = record.__class__.__module__
-        __qualname = record.__class__.__qualname__
-        record_class_name = __module + __qualname
+        record_type = record.__class__
+        module_name = record_type.__module__
+        qualified_name = record_type.__qualname__
+        module_leaf = module_name.rpartition('.')[2]
+        if qualified_name == module_leaf:
+            record_class_name = module_name
+        elif qualified_name.startswith(f'{module_leaf}.'):
+            record_class_name = (
+                f'{module_name}.{qualified_name[len(module_leaf) + 1:]}')
+        else:
+            record_class_name = f'{module_name}.{qualified_name}'
         self.writer_registry.register(record_class_name)
         self._serialize(record, self.writer_registry.get_id(record_class_name))
 
@@ -206,8 +214,8 @@ class TCPWriter:
         # fetch record name
         lock.acquire()
         record_class_name = record.__class__.__name__
-        prefix = get_prefix(record_class_name)
-        record_class_name = prefix + record_class_name
+        # prefix = get_prefix(record_class_name)
+        # record_class_name = prefix + record_class_name
         # register class name and append it to the sent record
         self.writer_registry.register(record_class_name)
         self.serializer.put_string(record_class_name)
