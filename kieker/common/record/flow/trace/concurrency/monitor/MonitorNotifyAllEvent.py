@@ -1,8 +1,7 @@
 # since 1.8
 # author Jan Waller
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.flow.trace.concurrency.monitor.AbstractMonitorEvent import (
+from kieker.common.record.flow.trace.concurrency.monitor.AbstractMonitorEvent import (
     AbstractMonitorEvent,
 )
 

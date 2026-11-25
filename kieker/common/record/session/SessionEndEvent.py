@@ -1,9 +1,8 @@
 # since 2.0.0
 # author Reiner Jung
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.flow.IEventRecord import IEventRecord
-from common.record.session.ISessionEvent import ISessionEvent
+from kieker.common.record.flow.IEventRecord import IEventRecord
+from kieker.common.record.session.ISessionEvent import ISessionEvent
 
 
 class SessionEndEvent (IEventRecord, ISessionEvent):

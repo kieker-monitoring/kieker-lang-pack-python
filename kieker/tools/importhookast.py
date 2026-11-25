@@ -6,8 +6,6 @@ Created on Thu Jul 28 13:24:25 2022
 @author: serafim
 """
 
-# Modified by Natalie Kaufhold, 2026
-
 from importlib.abc import Loader, MetaPathFinder
 from importlib.util import spec_from_file_location
 from ast import ImportFrom, parse, alias, unparse, fix_missing_locations
@@ -113,8 +111,7 @@ class InstLoader(Loader):
             data = f.read()
         # If the module should not be instrumented
         # execute it normally
-        if (module.__name__ in self.ignore_list or module.__name__ in ex
-                or module.__name__.startswith("common.record.")):
+        if module.__name__ in self.ignore_list or module.__name__ in ex:
             exec(data, vars(module))
             return
         # parse and inject import of tools.aspect

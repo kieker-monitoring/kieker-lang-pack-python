@@ -1,18 +1,12 @@
-# Modified by Natalie Kaufhold, 2026
-
 import inspect
 import types
 import sys
 import decorator
 
-from common.record.flow.trace.operation.AfterOperationEvent import (
-    AfterOperationEvent,
-)
-from common.record.flow.trace.operation.AfterOperationFailedEvent import (
-    AfterOperationFailedEvent,
-)
-from common.record.flow.trace.operation.BeforeOperationEvent import (
+from monitoring.record.trace.operation.operationevent import (
     BeforeOperationEvent,
+    AfterOperationEvent,
+    AfterOperationFailedEvent,
 )
 
 import tools.const as con

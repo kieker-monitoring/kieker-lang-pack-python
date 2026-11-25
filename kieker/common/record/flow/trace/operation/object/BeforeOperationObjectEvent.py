@@ -1,9 +1,8 @@
 # since 1.6
 # author Jan Waller
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.flow.IObjectRecord import IObjectRecord
-from common.record.flow.trace.operation.BeforeOperationEvent import (
+from kieker.common.record.flow.IObjectRecord import IObjectRecord
+from kieker.common.record.flow.trace.operation.BeforeOperationEvent import (
     BeforeOperationEvent,
 )
 

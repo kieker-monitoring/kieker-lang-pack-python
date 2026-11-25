@@ -1,8 +1,7 @@
 # since 1.14
 # author Marc Adolf
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.remotecontrol.IRemoteParameterControlEvent import (
+from kieker.common.record.remotecontrol.IRemoteParameterControlEvent import (
     IRemoteParameterControlEvent,
 )
 

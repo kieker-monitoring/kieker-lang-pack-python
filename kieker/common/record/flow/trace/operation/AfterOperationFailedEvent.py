@@ -1,9 +1,8 @@
 # since 1.5
 # author Jan Waller
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.flow.IExceptionRecord import IExceptionRecord
-from common.record.flow.trace.operation.AfterOperationEvent import (
+from kieker.common.record.flow.IExceptionRecord import IExceptionRecord
+from kieker.common.record.flow.trace.operation.AfterOperationEvent import (
     AfterOperationEvent,
 )
 

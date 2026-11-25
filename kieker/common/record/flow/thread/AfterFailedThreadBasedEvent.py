@@ -1,9 +1,8 @@
 # since 1.13
 # author Christian Wulf
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.flow.IExceptionRecord import IExceptionRecord
-from common.record.flow.thread.AbstractThreadBasedEvent import (
+from kieker.common.record.flow.IExceptionRecord import IExceptionRecord
+from kieker.common.record.flow.thread.AbstractThreadBasedEvent import (
     AbstractThreadBasedEvent,
 )
 

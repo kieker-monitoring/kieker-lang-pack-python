@@ -1,10 +1,9 @@
 # since 1.5
 # author Jan Waller
-# Modified by Natalie Kaufhold, 2026
 
-from common.record.flow.IClassSignature import IClassSignature
-from common.record.flow.IFlowRecord import IFlowRecord
-from common.record.flow.IOperationSignature import IOperationSignature
+from kieker.common.record.flow.IClassSignature import IClassSignature
+from kieker.common.record.flow.IFlowRecord import IFlowRecord
+from kieker.common.record.flow.IOperationSignature import IOperationSignature
 
 
 class IOperationRecord (IFlowRecord, IOperationSignature, IClassSignature):

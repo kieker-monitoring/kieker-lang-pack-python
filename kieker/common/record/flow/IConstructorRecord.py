@@ -1,8 +1,7 @@
 # since 1.8
 # author Jan Waller
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.flow.IOperationRecord import IOperationRecord
+from kieker.common.record.flow.IOperationRecord import IOperationRecord
 
 
 class IConstructorRecord (IOperationRecord):

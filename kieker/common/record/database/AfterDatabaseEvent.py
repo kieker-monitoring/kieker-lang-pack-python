@@ -1,11 +1,10 @@
 # since 1.14
 # author Christian Zirkelbach (czi@informatik.uni-kiel.de)
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.flow.IClassSignature import IClassSignature
-from common.record.flow.IEventRecord import IEventRecord
-from common.record.flow.IFlowRecord import IFlowRecord
-from common.record.flow.ITraceRecord import ITraceRecord
+from kieker.common.record.flow.IClassSignature import IClassSignature
+from kieker.common.record.flow.IEventRecord import IEventRecord
+from kieker.common.record.flow.IFlowRecord import IFlowRecord
+from kieker.common.record.flow.ITraceRecord import ITraceRecord
 
 
 class AfterDatabaseEvent (IEventRecord, IFlowRecord, IClassSignature, ITraceRecord):

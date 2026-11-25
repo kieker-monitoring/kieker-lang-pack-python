@@ -1,8 +1,7 @@
 # since 1.13
 # author Christian Wulf
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.flow.IFlowRecord import IFlowRecord
+from kieker.common.record.flow.IFlowRecord import IFlowRecord
 
 
 class IThreadBasedRecord (IFlowRecord):

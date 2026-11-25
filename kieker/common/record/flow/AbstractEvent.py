@@ -1,8 +1,7 @@
 # since 1.5
 # author Jan Waller
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.flow.IEventRecord import IEventRecord
+from kieker.common.record.flow.IEventRecord import IEventRecord
 
 
 class AbstractEvent (IEventRecord):

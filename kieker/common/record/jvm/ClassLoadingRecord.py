@@ -1,8 +1,7 @@
 # since 1.10
 # author Nils Christian Ehmke
 
-# Modified by Natalie Kaufhold, 2026
-from common.record.jvm.AbstractJVMRecord import AbstractJVMRecord
+from kieker.common.record.jvm.AbstractJVMRecord import AbstractJVMRecord
 
 
 class ClassLoadingRecord (AbstractJVMRecord):

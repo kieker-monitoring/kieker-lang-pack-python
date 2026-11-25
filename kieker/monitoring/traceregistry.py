@@ -1,13 +1,12 @@
-# Modified by Natalie Kaufhold, 2026
-
 import threading
 
-from common.record.flow.trace.TraceMetadata import TraceMetadata
+from monitoring.record.trace.tracemetadata import TraceMetadata
 
 lock = threading.Lock()
 thread_local = threading.local()
 thread_local.trace = None
 thread_local.trace_stack = None
+
 
 class _PointTrace:
 
